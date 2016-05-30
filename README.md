@@ -1,7 +1,2 @@
 # WurfelEngineSDK
-A repo for the Wurfel Engine SDK. Not for development on the engine itself.
-
-Please visit wurfelengine.net for further details.
-An offline version of the wiki is included in the docs folder.
-
-Currently the WurfelEngine.jar is not intended to work as a stand-alone application.
+Unlike the original repository, this _is_ for developing the engine. Going to be using the engine as a building block to improve it and tailor it specifically to games that I make.
