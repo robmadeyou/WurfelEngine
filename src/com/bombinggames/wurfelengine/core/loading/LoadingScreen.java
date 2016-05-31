@@ -47,7 +47,7 @@ public class LoadingScreen extends WEScreen {
         AssetManager manager = WE.getAssetManager();
                 
         // Tell the manager to load assets for the loading screen
-        manager.load("com/bombinggames/wurfelengine/core/Loading/loading.txt", TextureAtlas.class);
+        manager.load("com/bombinggames/wurfelengine/core/loading/loading.txt", TextureAtlas.class);
         // Wait until they are finished loading
         manager.finishLoading();
         
@@ -85,7 +85,7 @@ public class LoadingScreen extends WEScreen {
         stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), WE.getEngineView().getSpriteBatch());
 
         // Get our textureatlas from the manager
-        TextureAtlas GUItexture = WE.getAsset("com/bombinggames/wurfelengine/core/Loading/loading.txt");
+        TextureAtlas GUItexture = WE.getAsset("com/bombinggames/wurfelengine/core/loading/loading.txt");
         // Grab the regions from the atlas and create some images
         logo = new Image(GUItexture.findRegion("banner_medium"));
         loadingFrame = new Image(GUItexture.findRegion("loading-frame"));
