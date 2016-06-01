@@ -40,6 +40,7 @@ import com.bombinggames.wurfelengine.core.gameobjects.Cursor;
 import com.bombinggames.wurfelengine.core.gameobjects.EntityShadow;
 import com.bombinggames.wurfelengine.core.lightengine.LightEngine;
 import com.bombinggames.wurfelengine.core.map.Chunk;
+import com.bombinggames.wurfelengine.core.map.Generators.IslandGenerator;
 import com.bombinggames.wurfelengine.core.map.Map;
 import com.bombinggames.wurfelengine.core.map.Point;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
@@ -288,6 +289,7 @@ public class Controller implements GameManager {
 		if (WE.getCVars().getValueB("enableLightEngine") && Controller.lightEngine == null) {
 			lightEngine = new LightEngine(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
 		}
+		map.setGenerator ( new IslandGenerator () );
 
 		initalized = true;
 	}

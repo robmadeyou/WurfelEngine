@@ -67,8 +67,8 @@ public class CVarSystemRoot extends AbstractCVarSystem {
 		register(new BooleanCVar(true), "enableHSD");
 		register(new BooleanCVar(true), "mapChunkSwitch");
 		register(new BooleanCVar(true), "mapUseChunks");
-		register(new BooleanCVar(false), "DevMode");
-		register(new BooleanCVar(false), "DevDebugRendering");
+		register(new BooleanCVar(true), "DevMode");
+		register(new BooleanCVar(true), "DevDebugRendering");
 		register(new BooleanCVar(false), "editorVisible");
 		register(new IntCVar(2), "groundBlockID");
 		register(new BooleanCVar(true), "preventUnloading");

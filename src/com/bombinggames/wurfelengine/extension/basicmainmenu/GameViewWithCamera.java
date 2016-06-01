@@ -31,6 +31,7 @@
 
 package com.bombinggames.wurfelengine.extension.basicmainmenu;
 
+import com.badlogic.gdx.Gdx;
 import com.bombinggames.wurfelengine.core.Camera;
 import com.bombinggames.wurfelengine.core.Controller;
 import com.bombinggames.wurfelengine.core.GameView;
@@ -44,6 +45,13 @@ public class GameViewWithCamera extends GameView {
 	@Override
 	public void init(Controller controller, GameView oldView) {
 		super.init(controller, oldView);
-		addCamera(new Camera(this));
+
+		addCamera(new Camera(
+				this,
+				0,
+				0,
+				Gdx.graphics.getWidth(),
+				Gdx.graphics.getHeight()
+		));
 	}
 }

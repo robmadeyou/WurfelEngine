@@ -39,8 +39,7 @@ package com.bombinggames.wurfelengine;
 public interface LaunchCommand {
 	
 	/**
-	 *
+	 * Method to execute the launch command
 	 */
-	public void perform();
-	
+	void perform();
 }

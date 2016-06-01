@@ -36,20 +36,22 @@ import com.bombinggames.wurfelengine.WE;
 
 /**
  * Something shiny infinetelly far away. Stores postiion and color.
+ *
  * @author Benedikt Vogler
  */
-public class GlobalLightSource {   
+public class GlobalLightSource
+{
     /**
-     *The brightness of the light source. Scalar. Not clamped.
+     * The brightness of the light source. Scalar. Not clamped.
      */
     private float power;
-	/**
-	 * the color of the light. vector
-	 */
+    /**
+     * the color of the light. vector
+     */
     private Color tone;
-	/**
-	 * the color of the ambient light. vector
-	 */
+    /**
+     * the color of the ambient light. vector
+     */
     private final Color ambient;
     /**
      * Current height above horizon.
@@ -60,135 +62,151 @@ public class GlobalLightSource {
      */
     private float azimuth;
     private final int amplitude; //the max possible angle (from horizon) the sun can has
-	/**
-	 * if true movement is deactivated
-	 */
-	private boolean fixedPosition;	
-	private final float brightnessF;
+    /**
+     * if true movement is deactivated
+     */
+    private boolean fixedPosition;
+    private final float brightnessF;
 
     /**
      * A GlobalLightSource can be the moon, the sun or even something new.
-     * @param azimuth The starting position in degrees from left. CCW
-     * @param height The starting position in degrees above the horizon.
-     * @param tone the starting color of the light. With this parameter you do not controll its brightness.
-     * @param ambient color vector
-	 * @param brghtFac brightness factor 0.5f is default. the higher the brighter
+     *
+     * @param azimuth         The starting position in degrees from left. CCW
+     * @param height          The starting position in degrees above the horizon.
+     * @param tone            the starting color of the light. With this parameter you do not controll its brightness.
+     * @param ambient         color vector
+     * @param brghtFac        brightness factor 0.5f is default. the higher the brighter
      * @param amplitudeHeight the maximum degree during a day the LightSource rises
      */
-    public GlobalLightSource(float azimuth, float height, Color tone, Color ambient, float brghtFac, int amplitudeHeight) {
-        setAzimuth(azimuth);
+    public GlobalLightSource (float azimuth, float height, Color tone, Color ambient, float brghtFac, int amplitudeHeight)
+    {
+        setAzimuth ( azimuth );
         this.height = height;
         this.tone = tone;
         this.ambient = ambient;
-		this.brightnessF = brghtFac;
+        this.brightnessF = brghtFac;
         this.amplitude = amplitudeHeight;
     }
 
     /**
      * A light source shines can shine brighter and darker. This amplitude is called power. What it real emits says the resulting light.
+     *
      * @return a value between 0 and 1
      */
-    public float getPower() {
+    public float getPower ()
+    {
         return power;
-    }
-    
-    /**
-     *
-     * @return
-     */
-    public Color getTone() {
-        return tone.cpy();
     }
 
     /**
-     *current height above horizon
+     * @return
+     */
+    public Color getTone ()
+    {
+        return tone.cpy ();
+    }
+
+    /**
+     * current height above horizon
+     *
      * @return in degrees 0-360°
      */
-    public float getHeight() {
+    public float getHeight ()
+    {
         return height;
     }
 
     /**
      * origin is left side
+     *
      * @return in degrees 0-360°
      */
-    public float getAzimuth() {
+    public float getAzimuth ()
+    {
         return azimuth;
     }
 
     /**
-     *
      * @return
      */
-    public float getAzimuthSpeed() {
-        return WE.getCVars().getValueF("LEAzimutSpeed");
+    public float getAzimuthSpeed ()
+    {
+        return WE.getCVars ().getValueF ( "LEAzimutSpeed" );
     }
 
     /**
-     *
      * @return
      */
-    public int getMaxAngle() {
+    public int getMaxAngle ()
+    {
         return amplitude;
     }
 
     /**
-     *The Latitude posiiton. 
+     * The Latitude posiiton.
+     *
      * @param height in degrees 0-360°
      */
-    public void setHeight(final float height) {
+    public void setHeight (final float height)
+    {
         this.height = height % 360;
-        if (this.height < 0)
+        if ( this.height < 0 )
             this.height += 360;
     }
 
     /**
-     *The longitudinal position
+     * The longitudinal position
+     *
      * @param azimuth in degrees 0-360°
      */
-    public void setAzimuth(final float azimuth) {
+    public void setAzimuth (final float azimuth)
+    {
         this.azimuth = azimuth % 360;
-        if (this.azimuth < 0)
+        if ( this.azimuth < 0 )
             this.azimuth += 360;
     }
 
     /**
-     *
      * @param tone
      */
-    public void setTone(final Color tone) {
+    public void setTone (final Color tone)
+    {
         this.tone = tone;
     }
 
-	/**
-	 * 
-	 * @param fixedPosition if true does not move
-	 */
-	public void setFixedPosition(boolean fixedPosition) {
-		this.fixedPosition = fixedPosition;
-	}
-	
     /**
-     *
+     * @param fixedPosition if true does not move
+     */
+    public void setFixedPosition (boolean fixedPosition)
+    {
+        this.fixedPosition = fixedPosition;
+    }
+
+    /**
      * @param dt
      */
-    public void update(float dt) {    
+    public void update (float dt)
+    {
         //automove
-		if (!fixedPosition && getAzimuthSpeed() != 0) {
-			setAzimuth(getAzimuth() + getAzimuthSpeed() * dt);
-			height = (float) (amplitude * Math.sin((azimuth + WE.getCVars().getValueI("worldSpinAngle")) * Math.PI / 180));
-		}
+        if ( !fixedPosition && getAzimuthSpeed () != 0 )
+        {
+            setAzimuth ( getAzimuth () + getAzimuthSpeed () * dt );
+            height = ( float ) ( amplitude * Math.sin ( ( azimuth + WE.getCVars ().getValueI ( "worldSpinAngle" ) ) * Math.PI / 180 ) );
+        }
 
-		//brightness calculation
-		//clamp at night
-		if (height < -amplitude / 2) {
-			power = 0;//night
-		} else if (height < amplitude / 2) {
-			power = (float) (0.5f + brightnessF * Math.sin(height * Math.PI / amplitude)); //morning & evening
-		} else {
-			power = 0.5f + brightnessF;
-		}
-        
+        //brightness calculation
+        //clamp at night
+        if ( height < -amplitude / 2 )
+        {
+            power = 0;//night
+        } else if ( height < amplitude / 2 )
+        {
+            power = ( float ) ( 0.5f + brightnessF * Math.sin ( height * Math.PI / amplitude ) ); //morning & evening
+        } else
+        {
+            power = 0.5f + brightnessF;
+        }
+
         //if (azimuth>180+IGLPrototype.TWISTDIRECTION)
         //color = new Color(127 + (int) (power * 128), 255, 255);
         //else color = new Color(1f,1f,1f);
@@ -197,29 +215,29 @@ public class GlobalLightSource {
 
     /**
      * Returns the diffuse light which this object emits.
+     *
      * @return copy safe
      */
-    public Color getLight() {
-        return tone.cpy().mul(power);
+    public Color getLight ()
+    {
+        return tone.cpy ().mul ( power );
     }
-    
+
     /**
      * Returns the ambient light the GLS emits.
+     *
      * @return copy safe
      */
-    public Color getAmbient() {
-        return ambient.cpy().mul(power);
+    public Color getAmbient ()
+    {
+        return ambient.cpy ().mul ( power );
     }
-	
-	/**
-	 *
-	 * @return the normal of the GlobalLightSource
-	 */
-	public Vector3 getNormal() {
-		return new Vector3(
-			(float) -Math.cos(getAzimuth() * Math.PI / 180f),
-			(float) Math.sin(getAzimuth() * Math.PI / 180f),
-			(float) Math.sin(getHeight() * Math.PI / 180f)
-		).nor();
-	}
+
+    /**
+     * @return the normal of the GlobalLightSource
+     */
+    public Vector3 getNormal ()
+    {
+        return new Vector3 ( ( float ) -Math.cos ( getAzimuth () * Math.PI / 180f ), ( float ) Math.sin ( getAzimuth () * Math.PI / 180f ), ( float ) Math.sin ( getHeight () * Math.PI / 180f ) ).nor ();
+    }
 }

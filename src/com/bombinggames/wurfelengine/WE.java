@@ -49,7 +49,7 @@ import com.bombinggames.wurfelengine.core.Controller;
 import com.bombinggames.wurfelengine.core.EngineView;
 import com.bombinggames.wurfelengine.core.GameView;
 import com.bombinggames.wurfelengine.core.GameplayScreen;
-import com.bombinggames.wurfelengine.core.Loading.LoadingScreen;
+import com.bombinggames.wurfelengine.core.loading.LoadingScreen;
 import com.bombinggames.wurfelengine.core.WEScreen;
 import com.bombinggames.wurfelengine.core.WorkingDirectory;
 import com.bombinggames.wurfelengine.core.console.Console;
@@ -76,6 +76,7 @@ public class WE {
 	 * The version of the Engine
 	 */
 	public static final String VERSION = "1.7.3";
+	public static final String ENGINE_NAME = "Wurfel Engine";
 	/**
 	 * the working directory where the config and files are saved
 	 */
@@ -265,9 +266,9 @@ public class WE {
 	 */
 	public static void initAndStartGame(final Controller controller, final GameView view, LoadingScreen customLoadingScreen) {
 		if (GAME != null) {
-			Gdx.app.log("Wurfel Engine", "Initializing game using Controller:" + controller.toString());
-			Gdx.app.log("Wurfel Engine", "and View:" + view.toString());
-			Gdx.app.log("Wurfel Engine", "and Config:" + CONFIG.toString());
+			Gdx.app.log(ENGINE_NAME, "Initializing game using Controller:" + controller.toString());
+			Gdx.app.log(ENGINE_NAME, "and View:" + view.toString());
+			Gdx.app.log(ENGINE_NAME, "and Config:" + CONFIG.toString());
 
 			getEngineView().getEditorToggler().setGameplayManagers(
 				view
@@ -284,7 +285,7 @@ public class WE {
 			getConsole().setGameplayRef(gameplayScreen);
 			mainMenu.dispose();
 		} else {
-			Gdx.app.error("Wurfel Engine", "You must construct a WE instance first before calling initGame.");
+			Gdx.app.error(ENGINE_NAME, "You must construct a WE instance first before calling initGame.");
 		}
 	}
 
@@ -296,8 +297,8 @@ public class WE {
 	 * @param view the new view
 	 */
 	public static void switchSetupWithInit(final Controller controller, final GameView view) {
-		Gdx.app.debug("Wurfel Engine", "Switching setup and ReInit using Controller:" + controller.toString());
-		Gdx.app.debug("Wurfel Engine", "and View:" + view.toString());
+		Gdx.app.debug(ENGINE_NAME, "Switching setup and ReInit using Controller:" + controller.toString());
+		Gdx.app.debug(ENGINE_NAME, "and View:" + view.toString());
 		inGame = true;
 		inEditor = false;
 		getEngineView().getEditorToggler().setGameplayManagers(
@@ -337,8 +338,8 @@ public class WE {
 	 * @param editor true if this is the editor setup
 	 */
 	private static void switchSetup(final Controller controller, final GameView view, final boolean editor) {
-		Gdx.app.debug("Wurfel Engine", "Switching setup using Controller: " + controller.toString());
-		Gdx.app.debug("Wurfel Engine", "and View: " + view.toString());
+		Gdx.app.debug(ENGINE_NAME, "Switching setup using Controller: " + controller.toString());
+		Gdx.app.debug(ENGINE_NAME, "and View: " + view.toString());
 		inGame = true;
 		inEditor = editor;
 		if (!inEditor) {
@@ -371,7 +372,7 @@ public class WE {
 	 * @param editor true if this is the editor setup
 	 */
 	public static void switchView(final GameView view, boolean editor) {
-		Gdx.app.debug("Wurfel Engine", "View switch: " + view.toString());
+		Gdx.app.debug(ENGINE_NAME, "View switch: " + view.toString());
 		inEditor = editor;
 		if (!inEditor) {
 			getEngineView().getEditorToggler().setGameplayManagers(
@@ -413,7 +414,7 @@ public class WE {
 	 */
 	public static void startGame() {
 		SOUND.disposeMusic();
-		Gdx.app.log("Wurfel Engine", "Starting the gameplay…");
+		Gdx.app.log(ENGINE_NAME, "Starting the gameplay…");
 		GAME.setScreen(gameplayScreen);
 		inGame = true;
 		inEditor = false;
@@ -450,12 +451,12 @@ public class WE {
 	 */
 	public final static String getCredits() {
 		String newline = System.getProperty("line.separator");
-		return "Wurfel Engine (" + VERSION + ")" + newline + newline
+		return ENGINE_NAME + "(" + VERSION + ")" + newline + newline
 			+ "Created by:" + newline
 			+ "Benedikt S. Vogler" + newline + newline
 			+ "Quality Assurance:" + newline
 			+ "Thomas Vogt" + newline + newline
-			+ "Wurfel Engine uses libGDX." + newline;
+			+ ENGINE_NAME + " uses libGDX." + newline;
 	}
 
 	/**
@@ -481,7 +482,7 @@ public class WE {
 			Gdx.graphics.setWindowedMode(currentMode.width, currentMode.height);
 		}
 		CONFIG.fullscreen = Gdx.graphics.isFullscreen();
-		Gdx.app.debug("Wurfel Engine", "Set to fullscreen:" + fullscreen + " It is now:" + Gdx.graphics.isFullscreen());
+		Gdx.app.debug(ENGINE_NAME, "Set to fullscreen:" + fullscreen + " It is now:" + Gdx.graphics.isFullscreen());
 	}
 
 	/**
@@ -504,7 +505,7 @@ public class WE {
 		if (GAME != null) {
 			return ASSETMANAGER;
 		} else {
-			Gdx.app.error("Wurfel Engine", "There is no instance of the engine. You should call initGame first.");
+			Gdx.app.error(ENGINE_NAME, "There is no instance of the engine. You should call initGame first.");
 			return null;
 		}
 	}
@@ -693,9 +694,7 @@ public class WE {
 				setScreen(mainMenu);
 			}
 
-			POSTLAUNCHCOMMANDS.forEach(a -> {
-				a.perform();
-			});
+			POSTLAUNCHCOMMANDS.forEach(a -> a.perform());
 		}
 
 		@Override

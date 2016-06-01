@@ -2,7 +2,7 @@
  * This class is public domain.
  */
 
-package com.bombinggames.wurfelengine.core.Loading;
+package com.bombinggames.wurfelengine.core.loading;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
