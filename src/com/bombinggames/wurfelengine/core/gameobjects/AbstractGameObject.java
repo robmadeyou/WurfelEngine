@@ -165,7 +165,7 @@ public abstract class AbstractGameObject implements Serializable, Renderable {
 		}
 		textureDiff = spritesheet.getTextures().first();
 		if (WE.getCVars().getValueB("LEnormalMapRendering")) {
-			textureNormal = WE.getAsset(spritesheetPath + "Normal.png");
+			textureNormal = WE.getAsset(spritesheetPath + ".png");
 		}
 
 		//load again for pixmap, allows access to image color data;
