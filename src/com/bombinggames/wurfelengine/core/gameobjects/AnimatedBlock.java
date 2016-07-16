@@ -31,85 +31,89 @@ package com.bombinggames.wurfelengine.core.gameobjects;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
 
 /**
- *A block which has an animation.
+ * A block which has an animation.
+ *
  * @author Benedikt
  */
-public class AnimatedBlock extends RenderCell implements Animatable{
-	private static final long serialVersionUID = 1L;
+public class AnimatedBlock extends RenderCell implements Animatable {
+    private static final long serialVersionUID = 1L;
     private final int[] animationsduration;
+    private final boolean loop;
     private int counter = 0;
     private boolean running;
-    private final boolean loop;
-	private boolean bob;
-	/**
-	 * true if running forth, false if back
-	 */
-	private boolean runningForth;
-    
+    private boolean bob;
+    /**
+     * true if running forth, false if back
+     */
+    private boolean runningForth;
+
     /**
      * Create this RenderCell with an array wich has the time of every animation step in ms in it.
-	 * @param id
-	 * @param value
-     * @param animationsinformation  an array wich has the duraion of every animationstep inside
-     * @param  autostart True when it should automatically start.
-     * @param loop Set to true when it should loop, when false it stops after one time. 
+     *
+     * @param id
+     * @param value
+     * @param animationsinformation an array wich has the duraion of every animationstep inside
+     * @param autostart             True when it should automatically start.
+     * @param loop                  Set to true when it should loop, when false it stops after one time.
      */
-    public AnimatedBlock(byte id, byte value, int[] animationsinformation, boolean autostart, boolean loop){
+    public AnimatedBlock(byte id, byte value, int[] animationsinformation, boolean autostart, boolean loop) {
         super(id, value);
         this.animationsduration = animationsinformation;
         this.running = autostart;
         this.loop = loop;
     }
 
-	/**
-	 * play the animation back and forth
-	 * @param bob 
-	 */
-	public void setBounce(boolean bob) {
-		this.bob = bob;
-	}
-	
-    
-   /**
+    /**
+     * play the animation back and forth
+     *
+     * @param bob
+     */
+    public void setBounce(boolean bob) {
+        this.bob = bob;
+    }
+
+
+    /**
      * updates the block and the animation.
+     *
      * @param dt the time wich has passed since last update
      */
     @Override
     public void update(float dt) {
         if (running) {
             counter += dt;
-            if (counter >= animationsduration[getSpriteValue()]){
+            if (counter >= animationsduration[getSpriteValue()]) {
                 counter %= animationsduration[getSpriteValue()];//stay in circle
-				if (runningForth)
-					setSpriteValue((byte) (getSpriteValue()+1));
-				else
-					setSpriteValue((byte) (getSpriteValue()-1));
-				
+                if (runningForth)
+                    setSpriteValue((byte) (getSpriteValue() + 1));
+                else
+                    setSpriteValue((byte) (getSpriteValue() - 1));
+
                 if (getSpriteValue() >= animationsduration.length) {//if over animation array
                     if (loop) {
-						if (bob && runningForth) {
-							runningForth=false;//go back
-							setSpriteValue((byte) (animationsduration.length-2));//reverse step and go in different direction
-						} else
-							setSpriteValue((byte) 0);
-					} else {
-						//stop animation
+                        if (bob && runningForth) {
+                            runningForth = false;//go back
+                            setSpriteValue((byte) (animationsduration.length - 2));//reverse step and go in different direction
+                        } else
+                            setSpriteValue((byte) 0);
+                    } else {
+                        //stop animation
                         running = false;
-                        setSpriteValue((byte) (animationsduration.length-1));
+                        setSpriteValue((byte) (animationsduration.length - 1));
                     }
-				} else if (getSpriteValue() < 0) {
-					if (loop) {
-						if (bob && !runningForth) {
-							runningForth=true;//go forth
-							setSpriteValue((byte) 1);
-						} else
-							setSpriteValue((byte) (animationsduration.length-1));
-					} else {
-						//stop animation
-						running = false;
-						setSpriteValue((byte) 0);
-					}
-				}
+                } else if (getSpriteValue() < 0) {
+                    if (loop) {
+                        if (bob && !runningForth) {
+                            runningForth = true;//go forth
+                            setSpriteValue((byte) 1);
+                        } else
+                            setSpriteValue((byte) (animationsduration.length - 1));
+                    } else {
+                        //stop animation
+                        running = false;
+                        setSpriteValue((byte) 0);
+                    }
+                }
             }
         }
     }

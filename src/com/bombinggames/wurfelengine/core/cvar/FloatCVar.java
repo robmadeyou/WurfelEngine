@@ -33,74 +33,68 @@ package com.bombinggames.wurfelengine.core.cvar;
 import com.bombinggames.wurfelengine.WE;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class FloatCVar extends CVar {
-	private float value;
-	private float defaultValue;
+    private float value;
+    private float defaultValue;
 
-	/**
-	 *
-	 * @param value
-	 */
-	public FloatCVar(float value) {
-		this.value = value;
-		defaultValue =value;
-	}
-	
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public Float getValue() {
-		return value;
-	}
+    /**
+     * @param value
+     */
+    public FloatCVar(float value) {
+        this.value = value;
+        defaultValue = value;
+    }
 
-	/**
-	 *
-	 * @param value
-	 */
-	@Override
-	public void setValue(Object value) {
-		try {
-			if (value instanceof String) {
-				this.value = Float.parseFloat((String) value);
-			} else if (value instanceof Double) {
-				this.value = ((Double) value).floatValue();
-			}else {
-				this.value = (float) value;
-			}
-		} catch (NumberFormatException e) {
-			WE.getConsole().add("Error setting \""+ getName() + "\" to "+value+"\n", "System");
-		}
-		if (flags == CVarFlags.CVAR_ARCHIVE) {
-			parent.save();
-		}
-	}
+    /**
+     * @return
+     */
+    @Override
+    public Float getValue() {
+        return value;
+    }
 
-	@Override
-	public String toString() {
-		return Float.toString(value);
-	}
+    /**
+     * @param value
+     */
+    @Override
+    public void setValue(Object value) {
+        try {
+            if (value instanceof String) {
+                this.value = Float.parseFloat((String) value);
+            } else if (value instanceof Double) {
+                this.value = ((Double) value).floatValue();
+            } else {
+                this.value = (float) value;
+            }
+        } catch (NumberFormatException e) {
+            WE.getConsole().add("Error setting \"" + getName() + "\" to " + value + "\n", "System");
+        }
+        if (flags == CVarFlags.CVAR_ARCHIVE) {
+            parent.save();
+        }
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public Float getDefaultValue() {
-		return defaultValue;
-	}
+    @Override
+    public String toString() {
+        return Float.toString(value);
+    }
 
-	/**
-	 *
-	 * @param defaultValue
-	 */
-	@Override
-	public void setDefaultValue(Object defaultValue) {
-		this.defaultValue = (float) defaultValue;
-	}
-	
+    /**
+     * @return
+     */
+    @Override
+    public Float getDefaultValue() {
+        return defaultValue;
+    }
+
+    /**
+     * @param defaultValue
+     */
+    @Override
+    public void setDefaultValue(Object defaultValue) {
+        this.defaultValue = (float) defaultValue;
+    }
+
 }

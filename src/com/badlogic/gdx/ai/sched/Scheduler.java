@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -37,19 +37,19 @@ package com.badlogic.gdx.ai.sched;
  * don't need to know which behavior each character is running. A flat structure would mean removing and registering behaviors
  * with the main scheduler each time.</li>
  * </ul>
- * 
+ *
  * @author davebaol */
 public interface Scheduler extends Schedulable {
 
-	/** Adds the {@code schedulable} to the list using the given {@code frequency} and a phase calculated by this scheduler.
-	 * @param schedulable the task to schedule
-	 * @param frequency the frequency */
-	public void addWithAutomaticPhasing (Schedulable schedulable, int frequency);
+    /** Adds the {@code schedulable} to the list using the given {@code frequency} and a phase calculated by this scheduler.
+     * @param schedulable the task to schedule
+     * @param frequency the frequency */
+    public void addWithAutomaticPhasing(Schedulable schedulable, int frequency);
 
-	/** Adds the {@code schedulable} to the list using the given {@code frequency} and {@code phase}
-	 * @param schedulable the task to schedule
-	 * @param frequency the frequency
-	 * @param phase the phase */
-	public void add (Schedulable schedulable, int frequency, int phase);
+    /** Adds the {@code schedulable} to the list using the given {@code frequency} and {@code phase}
+     * @param schedulable the task to schedule
+     * @param frequency the frequency
+     * @param phase the phase */
+    public void add(Schedulable schedulable, int frequency, int phase);
 
 }

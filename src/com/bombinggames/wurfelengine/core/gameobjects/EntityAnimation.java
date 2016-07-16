@@ -30,54 +30,57 @@ package com.bombinggames.wurfelengine.core.gameobjects;
 
 /**
  * An animation interface for entitys.
+ *
  * @author Benedikt
  */
 public class EntityAnimation implements Animatable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     private final int[] animationsduration;
+    private final boolean loop;
     private float counter = 0;
     private boolean running;
-    private final boolean loop;
-	private AbstractEntity parent;
-    
-   /**
+    private AbstractEntity parent;
+
+    /**
      * Create an entity with an animation with an array wich has the time of every animation step in ms in it.
-     * @param animationsinformation  the time in ms for each animation step
-     * @param autostart True when it should automatically start.
-     * @param loop Set to true when it should loop, when false it stops after one time.
+     *
+     * @param animationsinformation the time in ms for each animation step
+     * @param autostart             True when it should automatically start.
+     * @param loop                  Set to true when it should loop, when false it stops after one time.
      */
-    public EntityAnimation(int[] animationsinformation, boolean autostart, boolean loop){
+    public EntityAnimation(int[] animationsinformation, boolean autostart, boolean loop) {
         this.animationsduration = animationsinformation;
         this.running = autostart;
         this.loop = loop;
     }
-    
-   /**
+
+    /**
      * updates the entity and the animation.
+     *
      * @param dt the time wich has passed since last update
      */
     public void update(float dt) {
         if (running && parent != null) {
-			counter += dt;
-			int value = parent.getSpriteValue();
-			if (value < 0) {
-				parent.dispose();
-				running = false;
-				return;
-			}
-			if (value >= animationsduration.length) { //stop the animation if value is suddenly too big
-				running = false;
-			} else if (counter >= animationsduration[value]) {
-				parent.setSpriteValue((byte) (parent.getSpriteValue() + 0b1));
-				counter = 0;
-				if (parent.getSpriteValue() >= animationsduration.length) {//if over animation array
-					if (loop) {
-						parent.setSpriteValue((byte) 0);
-					} else {//delete
-						parent.dispose();
-					}
-				}
-			}
+            counter += dt;
+            int value = parent.getSpriteValue();
+            if (value < 0) {
+                parent.dispose();
+                running = false;
+                return;
+            }
+            if (value >= animationsduration.length) { //stop the animation if value is suddenly too big
+                running = false;
+            } else if (counter >= animationsduration[value]) {
+                parent.setSpriteValue((byte) (parent.getSpriteValue() + 0b1));
+                counter = 0;
+                if (parent.getSpriteValue() >= animationsduration.length) {//if over animation array
+                    if (loop) {
+                        parent.setSpriteValue((byte) 0);
+                    } else {//delete
+                        parent.dispose();
+                    }
+                }
+            }
         }
     }
 
@@ -91,17 +94,18 @@ public class EntityAnimation implements Animatable {
         running = false;
     }
 
-	void setParent(AbstractEntity parent) {
-		this.parent = parent;
-	}
+    void setParent(AbstractEntity parent) {
+        this.parent = parent;
+    }
 
-	/**
-	 * set an offset in time.
-	 * @param time in ms
-	 */
-	public void setOffset(float time) {
-		counter = time;
-	}
-    
-    
+    /**
+     * set an offset in time.
+     *
+     * @param time in ms
+     */
+    public void setOffset(float time) {
+        counter = time;
+    }
+
+
 }

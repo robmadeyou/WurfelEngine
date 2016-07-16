@@ -31,80 +31,77 @@
 package com.bombinggames.wurfelengine.core;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public enum Events {
-	
-	/**
-	 *an entitiy which will receive this event will be damaged
-	 */
-	damage(11),
 
-	/**
-	 *
-	 */
-	collided(12),
+    /**
+     * an entitiy which will receive this event will be damaged
+     */
+    damage(11),
 
-	/**
-	 *
-	 */
-	steppedOn(13),
+    /**
+     *
+     */
+    collided(12),
 
-	/**
-	 *
-	 */
-	selectInEditor(14),
+    /**
+     *
+     */
+    steppedOn(13),
 
-	/**
-	 *
-	 */
-	deselectInEditor(15),
+    /**
+     *
+     */
+    selectInEditor(14),
 
-	/**
-	 *
-	 */
-	destroyed(16),
+    /**
+     *
+     */
+    deselectInEditor(15),
 
-	/**
-	 *
-	 */
-	landed(17),
+    /**
+     *
+     */
+    destroyed(16),
 
-	/**
-	 *moves an object. extra information must contain {@link com.bombinggames.wurfelengine.core.map.Point}
-	 */
-	moveTo(18),
+    /**
+     *
+     */
+    landed(17),
 
-	/**
-	 *
-	 */
-	standStill(19),
-	
-	/**
-	 * extra information must contain {@link com.bombinggames.wurfelengine.core.map.Point}
-	 */
-	teleport(20),
-	
-	chunkChanged(21),
-	
-	mapChanged(22),
-	
-	mapReloaded(23)
-	;
-	
-	private final int id;
+    /**
+     * moves an object. extra information must contain {@link com.bombinggames.wurfelengine.core.map.Point}
+     */
+    moveTo(18),
 
-	private Events(int messageId) {
-		id = messageId;
-	}
+    /**
+     *
+     */
+    standStill(19),
 
-	/**
-	 *
-	 * @return
-	 */
-	public int getId() {
-		return id;
-	}
-	
+    /**
+     * extra information must contain {@link com.bombinggames.wurfelengine.core.map.Point}
+     */
+    teleport(20),
+
+    chunkChanged(21),
+
+    mapChanged(22),
+
+    mapReloaded(23);
+
+    private final int id;
+
+    private Events(int messageId) {
+        id = messageId;
+    }
+
+    /**
+     * @return
+     */
+    public int getId() {
+        return id;
+    }
+
 }

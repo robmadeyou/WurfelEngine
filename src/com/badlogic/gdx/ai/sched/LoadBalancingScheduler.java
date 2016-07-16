@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -45,73 +45,73 @@ import com.badlogic.gdx.utils.TimeUtils;
  * we have an LCM of 2310). Despite being a good approach in practice, it has a theoretical chance that it will still produce
  * heavy spikes, if the lookahead isn't at least as large as the size of the LCM.</li>
  * </ul>
- * 
+ *
  * @author davebaol */
 public class LoadBalancingScheduler extends SchedulerBase<SchedulableRecord> {
 
-	/** The current frame number */
-	protected int frame;
+    /** The current frame number */
+    protected int frame;
 
-	/** Creates a {@code LoadBalancingScheduler}.
-	 * @param dryRunFrames number of frames simulated by the dry run to calculate the phase when adding a schedulable via
-	 *           {@link #addWithAutomaticPhasing(Schedulable, int)} */
-	public LoadBalancingScheduler (int dryRunFrames) {
-		super(dryRunFrames);
-		this.frame = 0;
-	}
+    /** Creates a {@code LoadBalancingScheduler}.
+     * @param dryRunFrames number of frames simulated by the dry run to calculate the phase when adding a schedulable via
+     *           {@link #addWithAutomaticPhasing(Schedulable, int)} */
+    public LoadBalancingScheduler(int dryRunFrames) {
+        super(dryRunFrames);
+        this.frame = 0;
+    }
 
-	/** Adds the {@code schedulable} to the list using the given {@code frequency} and a phase calculated by a dry run of the
-	 * scheduler.
-	 * @param schedulable the task to schedule
-	 * @param frequency the frequency */
-	@Override
-	public void addWithAutomaticPhasing (Schedulable schedulable, int frequency) {
-		// Calculate the phase and add the schedulable to the list
-		add(schedulable, frequency, calculatePhase(frequency));
-	}
+    /** Adds the {@code schedulable} to the list using the given {@code frequency} and a phase calculated by a dry run of the
+     * scheduler.
+     * @param schedulable the task to schedule
+     * @param frequency the frequency */
+    @Override
+    public void addWithAutomaticPhasing(Schedulable schedulable, int frequency) {
+        // Calculate the phase and add the schedulable to the list
+        add(schedulable, frequency, calculatePhase(frequency));
+    }
 
-	@Override
-	public void add (Schedulable schedulable, int frequency, int phase) {
-		// Compile the record and add it to the list
-		schedulableRecords.add(new SchedulableRecord(schedulable, frequency, phase));
-	}
+    @Override
+    public void add(Schedulable schedulable, int frequency, int phase) {
+        // Compile the record and add it to the list
+        schedulableRecords.add(new SchedulableRecord(schedulable, frequency, phase));
+    }
 
-	/** Executes scheduled tasks based on their frequency and phase. This method must be called once per frame.
-	 * @param timeToRun the maximum time in nanoseconds this scheduler should run on the current frame. */
-	@Override
-	public void run (long timeToRun) {
-		// Increment the frame number
-		frame++;
+    /** Executes scheduled tasks based on their frequency and phase. This method must be called once per frame.
+     * @param timeToRun the maximum time in nanoseconds this scheduler should run on the current frame. */
+    @Override
+    public void run(long timeToRun) {
+        // Increment the frame number
+        frame++;
 
-		// Clear the list of tasks to run
-		runList.size = 0;
+        // Clear the list of tasks to run
+        runList.size = 0;
 
-		// Go through each task
-		for (int i = 0; i < schedulableRecords.size; i++) {
-			SchedulableRecord record = schedulableRecords.get(i);
-			// If it is due, schedule it
-			if ((frame + record.phase) % record.frequency == 0) runList.add(record);
-		}
+        // Go through each task
+        for (int i = 0; i < schedulableRecords.size; i++) {
+            SchedulableRecord record = schedulableRecords.get(i);
+            // If it is due, schedule it
+            if ((frame + record.phase) % record.frequency == 0) runList.add(record);
+        }
 
-		// Keep track of the current time
-		long lastTime = TimeUtils.nanoTime();
+        // Keep track of the current time
+        long lastTime = TimeUtils.nanoTime();
 
-		// Find the number of tasks we need to run
-		int numToRun = runList.size;
+        // Find the number of tasks we need to run
+        int numToRun = runList.size;
 
-		// Go through the tasks to run
-		for (int i = 0; i < numToRun; i++) {
-			// Find the available time
-			long currentTime = TimeUtils.nanoTime();
-			timeToRun -= currentTime - lastTime;
-			long availableTime = timeToRun / (numToRun - i);
+        // Go through the tasks to run
+        for (int i = 0; i < numToRun; i++) {
+            // Find the available time
+            long currentTime = TimeUtils.nanoTime();
+            timeToRun -= currentTime - lastTime;
+            long availableTime = timeToRun / (numToRun - i);
 
-			// Run the schedulable object
-			runList.get(i).schedulable.run(availableTime);
+            // Run the schedulable object
+            runList.get(i).schedulable.run(availableTime);
 
-			// Store the current time
-			lastTime = currentTime;
-		}
-	}
+            // Store the current time
+            lastTime = currentTime;
+        }
+    }
 
 }

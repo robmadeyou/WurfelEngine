@@ -32,36 +32,37 @@
 package com.bombinggames.wurfelengine.core;
 
 /**
- *A test to group view and controllers. May be deleted again if useless.
+ * A test to group view and controllers. May be deleted again if useless.
+ *
  * @author Benedikt Vogler
  * @since 1.2.
  */
 public interface GameManager {
-    
+
     /**
      * Overriding method should contain what should happen when the manager becomes active.
      */
     public void onEnter();
-    
-    /**
-     * Should be called when the manager becomes active. Calls {@link  #onEnter()}.
-     * @see #onEnter() 
-     */
-    public void enter();
-	
-	  /**
-     * Should get called when you leave the editor. To extend this method you should overwrite adn call super ethod.
-     */
-	public void exit();
 
     /**
+     * Should be called when the manager becomes active. Calls {@link  #onEnter()}.
      *
+     * @see #onEnter()
+     */
+    public void enter();
+
+    /**
+     * Should get called when you leave the editor. To extend this method you should overwrite adn call super ethod.
+     */
+    public void exit();
+
+    /**
      * @return
      */
     public boolean isInitalized();
-	
-	/**
-	 * should be called if removed from memory
-	 */
-	public void dispose();
+
+    /**
+     * should be called if removed from memory
+     */
+    public void dispose();
 }

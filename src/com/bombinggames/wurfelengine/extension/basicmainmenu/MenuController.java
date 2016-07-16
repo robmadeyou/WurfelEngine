@@ -39,44 +39,43 @@ import com.badlogic.gdx.Gdx;
  */
 public class MenuController {
 
-	private final BasicMenuItem[] menuItems;
+    private final BasicMenuItem[] menuItems;
 
-	/**
-	 * Creates a new Controller
-	 *
-	 * @param menuItems
-	 */
-	public MenuController(BasicMenuItem[] menuItems) {
-		this.menuItems = menuItems;
-		BasicMenuItem.setSound(Gdx.audio.newSound(Gdx.files.internal("com/bombinggames/wurfelengine/extension/basicmainmenu/click2.wav")));
-	}
+    /**
+     * Creates a new Controller
+     *
+     * @param menuItems
+     */
+    public MenuController(BasicMenuItem[] menuItems) {
+        this.menuItems = menuItems;
+        BasicMenuItem.setSound(Gdx.audio.newSound(Gdx.files.internal("com/bombinggames/wurfelengine/extension/basicmainmenu/click2.wav")));
+    }
 
-	/**
-	 * updates screen logic
-	 *
-	 * @param dt
-	 */
-	public void update(float dt) {
-		for (BasicMenuItem basicMenuItem : menuItems) {
-			if (basicMenuItem.isClicked()) {
-				basicMenuItem.action();
-			}
-		}
-	}
+    /**
+     * updates screen logic
+     *
+     * @param dt
+     */
+    public void update(float dt) {
+        for (BasicMenuItem basicMenuItem : menuItems) {
+            if (basicMenuItem.isClicked()) {
+                basicMenuItem.action();
+            }
+        }
+    }
 
-	/**
-	 *
-	 */
-	public void show() {
+    /**
+     *
+     */
+    public void show() {
 
-	}
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public BasicMenuItem[] getMenuItems() {
-		return menuItems;
-	}
+    /**
+     * @return
+     */
+    public BasicMenuItem[] getMenuItems() {
+        return menuItems;
+    }
 
 }

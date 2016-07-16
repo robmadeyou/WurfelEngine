@@ -31,67 +31,61 @@
 package com.bombinggames.wurfelengine.core.cvar;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class BooleanCVar extends CVar {
-	private boolean value;
-	private Boolean defaultValue;
-	
-	/**
-	 *
-	 * @param value
-	 */
-	public BooleanCVar(boolean value) {
-		this.value = value;
-		this.defaultValue = value;
-	}
-	
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public Boolean getValue() {
-		return value;
-	}
+    private boolean value;
+    private Boolean defaultValue;
 
-	/**
-	 *
-	 * @param value
-	 */
-	@Override
-	public void setValue(Object value) {
-		if (value instanceof String) 
-			this.value = value.equals("1");
-		else 
-			this.value = (boolean) value;
-		if (flags == CVarFlags.CVAR_ARCHIVE) parent.save();
-	}
+    /**
+     * @param value
+     */
+    public BooleanCVar(boolean value) {
+        this.value = value;
+        this.defaultValue = value;
+    }
 
-	@Override
-	public String toString() {
-		if (value)
-			return "1";
-		else
-			return "0";
-	}
+    /**
+     * @return
+     */
+    @Override
+    public Boolean getValue() {
+        return value;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public Boolean getDefaultValue() {
-		return defaultValue;
-	}
+    /**
+     * @param value
+     */
+    @Override
+    public void setValue(Object value) {
+        if (value instanceof String)
+            this.value = value.equals("1");
+        else
+            this.value = (boolean) value;
+        if (flags == CVarFlags.CVAR_ARCHIVE) parent.save();
+    }
 
-	/**
-	 *
-	 * @param defaultValue
-	 */
-	public void setDefaultValue(Object defaultValue) {
-		this.defaultValue = (Boolean) defaultValue;
-	}
-	
+    @Override
+    public String toString() {
+        if (value)
+            return "1";
+        else
+            return "0";
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public Boolean getDefaultValue() {
+        return defaultValue;
+    }
+
+    /**
+     * @param defaultValue
+     */
+    public void setDefaultValue(Object defaultValue) {
+        this.defaultValue = (Boolean) defaultValue;
+    }
+
 }

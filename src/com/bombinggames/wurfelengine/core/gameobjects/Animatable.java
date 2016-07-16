@@ -29,15 +29,17 @@
 package com.bombinggames.wurfelengine.core.gameobjects;
 
 /**
- *An object wich is animatable.
+ * An object wich is animatable.
+ *
  * @author Benedikt
  */
 public interface Animatable {
-    
+
     /**
      * Starts the animation.
      */
     void start();
+
     /**
      * Stops the animation.
      */

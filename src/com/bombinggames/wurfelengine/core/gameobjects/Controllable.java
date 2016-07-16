@@ -31,21 +31,20 @@
 package com.bombinggames.wurfelengine.core.gameobjects;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public interface Controllable {
 
-	/**
-	 * Lets the object walk. Replaces the horizontal movement.
-	 *
-	 * @param up move up?
-	 * @param down move down?
-	 * @param left move left?
-	 * @param right move right?
-	 * @param walkingspeed the higher the speed the bigger the steps. Should be
-	 * in m/s.
-	 * @param dt
-	 */
-	public void walk(boolean up, boolean down, boolean left, boolean right, float walkingspeed, float dt);
+    /**
+     * Lets the object walk. Replaces the horizontal movement.
+     *
+     * @param up           move up?
+     * @param down         move down?
+     * @param left         move left?
+     * @param right        move right?
+     * @param walkingspeed the higher the speed the bigger the steps. Should be
+     *                     in m/s.
+     * @param dt
+     */
+    public void walk(boolean up, boolean down, boolean left, boolean right, float walkingspeed, float dt);
 }

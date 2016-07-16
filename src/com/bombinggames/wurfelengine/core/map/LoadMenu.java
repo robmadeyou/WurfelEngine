@@ -36,18 +36,16 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.bombinggames.wurfelengine.WE;
 import com.bombinggames.wurfelengine.core.GameView;
 import com.bombinggames.wurfelengine.core.WorkingDirectory;
+
 import java.io.File;
 
 /**
- *A menu for choosing a map.
+ * A menu for choosing a map.
+ *
  * @author Benedikt Vogler
  */
 public class LoadMenu extends Window {
@@ -59,7 +57,7 @@ public class LoadMenu extends Window {
     private boolean initialized = false;
     private LoadMenuListener listener;
 
-        /**
+    /**
      * Setups the window.
      */
     public LoadMenu() {
@@ -67,12 +65,11 @@ public class LoadMenu extends Window {
     }
 
     /**
-     * 
-     * @param view 
+     * @param view
      */
-    public void init(GameView view){
-        setWidth(Gdx.graphics.getWidth()-margin*2);
-        setHeight(Gdx.graphics.getHeight()-margin*2);
+    public void init(GameView view) {
+        setWidth(Gdx.graphics.getWidth() - margin * 2);
+        setHeight(Gdx.graphics.getHeight() - margin * 2);
         setX(margin);
         setY(margin);
         setKeepWithinStage(true);
@@ -96,7 +93,7 @@ public class LoadMenu extends Window {
             @Override
             public boolean keyDown(InputEvent event, int keycode) {
                 //if (keycode 1== Input.Keys.ENTER)
-                    //rearrangeTable();
+                //rearrangeTable();
 
                 // Gdx.app.log("KEY", String.valueOf(keycode));
 
@@ -121,21 +118,22 @@ public class LoadMenu extends Window {
 
         add(scroll).fill().expand();
         row();
-        
+
         stageRef.addActor(this);//add the window to the view's stage.
-        initialized=true;
+        initialized = true;
     }
-    
+
     /**
      * Open/close the window
+     *
      * @param view if not intialized it initializes it. can be null if definetly initialized.
      * @param open should be open or closed?
      */
     public void setOpen(GameView view, boolean open) {
-        if (initialized || open){//if initialized or should be opened
+        if (initialized || open) {//if initialized or should be opened
             if (!initialized) init(view);
-            if (!isVisible()){//opening
-                int i=0;
+            if (!isVisible()) {//opening
+                int i = 0;
                 File mapsFolder = WorkingDirectory.getMapsFolder();
                 for (final File fileEntry : mapsFolder.listFiles()) {
                     if (fileEntry.isDirectory()) {
@@ -151,35 +149,35 @@ public class LoadMenu extends Window {
                 listener = new LoadMenuListener(this);
                 stageRef.addListener(listener);
                 WE.getEngineView().focusInputProcessor(stageRef);
-            }else{ //closing
+            } else { //closing
                 clear();
                 clearListeners();
                 scroll.clearListeners();
                 stageRef.removeListener(listener);
-                initialized=false;
+                initialized = false;
                 WE.getEngineView().unfocusInputProcessor();
             }
             setVisible(open);
         }
     }
-    
-	/**
-	 *
-	 */
-	public void close(){
+
+    /**
+     *
+     */
+    public void close() {
         setOpen(null, false);
     }
-    
-    private static class LoadMenuListener extends InputListener{
+
+    private static class LoadMenuListener extends InputListener {
         private final LoadMenu parent;
-        
+
         protected LoadMenuListener(LoadMenu parent) {
             this.parent = parent;
         }
 
         @Override
         public boolean keyDown(InputEvent event, int keycode) {
-            if (keycode == Input.Keys.ESCAPE){
+            if (keycode == Input.Keys.ESCAPE) {
                 parent.close();
             }
             return true;

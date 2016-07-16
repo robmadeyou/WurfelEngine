@@ -41,6 +41,7 @@ import com.bombinggames.wurfelengine.WE;
 import com.bombinggames.wurfelengine.core.Controller;
 import com.bombinggames.wurfelengine.core.GameView;
 import com.bombinggames.wurfelengine.core.loading.LoadingScreen;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -51,151 +52,146 @@ import java.util.logging.Logger;
  */
 public class BasicMenuItem {
 
-	private static Sound sound;
-	private static int highlight = 0;
-	private final Class<? extends Controller> gameController;
-	private final Class<? extends GameView> gameView;
-	private int x;
-	private int y;
-	private final int index;
-	private final String label;
-	private final int width;
-	private final int height = 50;
+    private static Sound sound;
+    private static int highlight = 0;
+    private final Class<? extends Controller> gameController;
+    private final Class<? extends GameView> gameView;
+    private final int index;
+    private final String label;
+    private final int width;
+    private final int height = 50;
+    private int x;
+    private int y;
 
-	/**
-	 * Create a new menu Item which can launch a game.
-	 *
-	 * @param index the index of the button
-	 * @param label the string displayed by the button. If "exit" or "options"
-	 * they change their behaviour.
-	 * @param gameController Your game controller class for this menu item
-	 * @param gameView Your game view class for this menu item
-	 */
-	public BasicMenuItem(int index, String label, Class<? extends Controller> gameController, Class<? extends GameView> gameView) {
-		this.gameController = gameController;
-		this.gameView = gameView;
-		this.index = index;
-		this.label = label;
-		this.width = this.label.length() * 20;
-	}
+    /**
+     * Create a new menu Item which can launch a game.
+     *
+     * @param index          the index of the button
+     * @param label          the string displayed by the button. If "exit" or "options"
+     *                       they change their behaviour.
+     * @param gameController Your game controller class for this menu item
+     * @param gameView       Your game view class for this menu item
+     */
+    public BasicMenuItem(int index, String label, Class<? extends Controller> gameController, Class<? extends GameView> gameView) {
+        this.gameController = gameController;
+        this.gameView = gameView;
+        this.index = index;
+        this.label = label;
+        this.width = this.label.length() * 20;
+    }
 
-	/**
-	 * Create a new menu Item which does something specific like exiting or
-	 * showing the option screen.
-	 *
-	 * @param index the index of the button
-	 * @param label the string displayed by the button. If "exit" or "options"
-	 * they cahnge they behaviour.
-	 */
-	public BasicMenuItem(int index, String label) {
-		this.gameController = null;
-		this.gameView = null;
-		this.index = index;
-		this.label = label;
-		this.width = this.label.length() * 20;
-	}
+    /**
+     * Create a new menu Item which does something specific like exiting or
+     * showing the option screen.
+     *
+     * @param index the index of the button
+     * @param label the string displayed by the button. If "exit" or "options"
+     *              they cahnge they behaviour.
+     */
+    public BasicMenuItem(int index, String label) {
+        this.gameController = null;
+        this.gameView = null;
+        this.index = index;
+        this.label = label;
+        this.width = this.label.length() * 20;
+    }
 
-	/**
-	 * Renders the menu item.
-	 *
-	 * @param font
-	 * @param batch
-	 * @param sr
-	 */
-	public void render(BitmapFont font, SpriteBatch batch, ShapeRenderer sr) {
-		this.x = ((Gdx.graphics.getWidth() - 50) / 2);
-		this.y = (Gdx.graphics.getHeight() / 2 + 120 - index * 80);
+    /**
+     * @param sound
+     */
+    public static void setSound(Sound sound) {
+        BasicMenuItem.sound = sound;
+    }
 
-		if (highlight == index) {
-			sr.setColor(Color.LIGHT_GRAY.cpy());
-		} else {
-			sr.setColor(Color.DARK_GRAY.cpy());
-		}
-		batch.end();
-		sr.begin(ShapeRenderer.ShapeType.Filled);
-		sr.rect(x, y, width, height);
-		sr.end();
-		batch.begin();
-		font.draw(batch, label, x, y);
-	}
+    /**
+     * @return
+     */
+    public static int getHighlight() {
+        return highlight;
+    }
 
-	/**
-	 * Check if the mouse clicked the menuItem.
-	 *
-	 * @return
-	 */
-	public boolean isClicked() {
-		int mouseX = Gdx.input.getX();
-		int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
+    /**
+     * @param highlight
+     */
+    public static void setHighlight(int highlight) {
+        BasicMenuItem.highlight = highlight;
+    }
 
-		return (Gdx.input.isButtonPressed(Buttons.LEFT)
-			&& (mouseX >= x && mouseX <= x + width)
-			&& (mouseY >= y && mouseY <= y + height));
-	}
+    /**
+     * Renders the menu item.
+     *
+     * @param font
+     * @param batch
+     * @param sr
+     */
+    public void render(BitmapFont font, SpriteBatch batch, ShapeRenderer sr) {
+        this.x = ((Gdx.graphics.getWidth() - 50) / 2);
+        this.y = (Gdx.graphics.getHeight() / 2 + 120 - index * 80);
 
-	/**
-	 *
-	 * @return
-	 */
-	public Class<? extends Controller> getGameController() {
-		return gameController;
-	}
+        if (highlight == index) {
+            sr.setColor(Color.LIGHT_GRAY.cpy());
+        } else {
+            sr.setColor(Color.DARK_GRAY.cpy());
+        }
+        batch.end();
+        sr.begin(ShapeRenderer.ShapeType.Filled);
+        sr.rect(x, y, width, height);
+        sr.end();
+        batch.begin();
+        font.draw(batch, label, x, y);
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public Class<? extends GameView> getGameView() {
-		return gameView;
-	}
+    /**
+     * Check if the mouse clicked the menuItem.
+     *
+     * @return
+     */
+    public boolean isClicked() {
+        int mouseX = Gdx.input.getX();
+        int mouseY = Gdx.graphics.getHeight() - Gdx.input.getY();
 
-	/**
-	 *
-	 */
-	public void action() {
-		if (sound != null) {
-			sound.play();
-		}
+        return (Gdx.input.isButtonPressed(Buttons.LEFT)
+                && (mouseX >= x && mouseX <= x + width)
+                && (mouseY >= y && mouseY <= y + height));
+    }
 
-		if (label.equalsIgnoreCase("exit")) {
-			Gdx.app.exit();
-		} else {
-			try {
-				Controller c = getGameController().newInstance();
-				GameView v = getGameView().newInstance();
-				WE.initAndStartGame(c, v, new LoadingScreen());
-			} catch (InstantiationException ex) {
-				Gdx.app.error("BasicMenuItem", "Failed intitalizing game by creating new instances of a class.");
-				Logger.getLogger(BasicMenuItem.class.getName()).log(Level.SEVERE, null, ex);
-			} catch (IllegalAccessException ex) {
-				Gdx.app.error("BasicMenuItem", "Failed intitalizing game.");
-				Logger.getLogger(BasicMenuItem.class.getName()).log(Level.SEVERE, null, ex);
-			}
-		}
-	}
+    /**
+     * @return
+     */
+    public Class<? extends Controller> getGameController() {
+        return gameController;
+    }
 
-	/**
-	 *
-	 * @param sound
-	 */
-	public static void setSound(Sound sound) {
-		BasicMenuItem.sound = sound;
-	}
+    /**
+     * @return
+     */
+    public Class<? extends GameView> getGameView() {
+        return gameView;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public static int getHighlight() {
-		return highlight;
-	}
+    /**
+     *
+     */
+    public void action() {
+        if (sound != null) {
+            sound.play();
+        }
 
-	/**
-	 *
-	 * @param highlight
-	 */
-	public static void setHighlight(int highlight) {
-		BasicMenuItem.highlight = highlight;
-	}
+        if (label.equalsIgnoreCase("exit")) {
+            Gdx.app.exit();
+        } else {
+            try {
+                Controller c = getGameController().newInstance();
+                GameView v = getGameView().newInstance();
+                WE.initAndStartGame(c, v, new LoadingScreen());
+            } catch (InstantiationException ex) {
+                Gdx.app.error("BasicMenuItem", "Failed intitalizing game by creating new instances of a class.");
+                Logger.getLogger(BasicMenuItem.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IllegalAccessException ex) {
+                Gdx.app.error("BasicMenuItem", "Failed intitalizing game.");
+                Logger.getLogger(BasicMenuItem.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
 
 }

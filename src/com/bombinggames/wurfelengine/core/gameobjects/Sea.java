@@ -29,15 +29,16 @@
 package com.bombinggames.wurfelengine.core.gameobjects;
 
 /**
- *A Sea Block which has a "waves" effect.
+ * A Sea Block which has a "waves" effect.
+ *
  * @author Benedikt Vogler
  */
 public class Sea extends AnimatedBlock {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	public Sea(final byte id, byte value) {
-		super(id, value,new int[]{400,400,400,400}, true, true);
-		setBounce(true);
-		setSpriteValue((byte) (Math.random()*4));
+    public Sea(final byte id, byte value) {
+        super(id, value, new int[]{400, 400, 400, 400}, true, true);
+        setBounce(true);
+        setSpriteValue((byte) (Math.random() * 4));
     }
 }

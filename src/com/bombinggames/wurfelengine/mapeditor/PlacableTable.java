@@ -38,6 +38,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.bombinggames.wurfelengine.core.GameView;
 import com.bombinggames.wurfelengine.core.gameobjects.AbstractEntity;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
+
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.logging.Level;
@@ -50,284 +51,280 @@ import java.util.logging.Logger;
  */
 public class PlacableTable extends Table {
 
-	private boolean placeBlocks = true;
-	/**
-	 * list position
-	 */
-	private byte selected;
-	private byte id;
-	private byte value;
-	private Class<? extends AbstractEntity> entityClass;
-	/**
-	 * stores the block drawables
-	 */
-	private final ArrayList<BlockDrawable> blockDrawables = new ArrayList<>(40);
-	
-	private Toolbar parent;
+    /**
+     * stores the block drawables
+     */
+    private final ArrayList<BlockDrawable> blockDrawables = new ArrayList<>(40);
+    private boolean placeBlocks = true;
+    /**
+     * list position
+     */
+    private byte selected;
+    private byte id;
+    private byte value;
+    private Class<? extends AbstractEntity> entityClass;
+    private Toolbar parent;
 
-	/**
-	 *
-	 * @param parent
-	 */
-	public PlacableTable(Toolbar parent) {
-		setWidth(400);
-		setHeight(Gdx.graphics.getHeight() * 0.80f);
-		setY(10);
-		setX(30);
-		this.parent = parent;
-	}
+    /**
+     * @param parent
+     */
+    public PlacableTable(Toolbar parent) {
+        setWidth(400);
+        setHeight(Gdx.graphics.getHeight() * 0.80f);
+        setY(10);
+        setX(30);
+        this.parent = parent;
+    }
 
-	/**
-	 *
-	 * @param view
-	 */
-	public void show(GameView view) {
-		if (!isVisible()) {
-			setVisible(true);
-		}
+    /**
+     * @param view
+     */
+    public void show(GameView view) {
+        if (!isVisible()) {
+            setVisible(true);
+        }
 
-		//setScale(5f);
-		if (!hasChildren()) {
-			byte foundItems = 0;
-			if (placeBlocks) {//add blocks
-				blockDrawables.clear();
-				//add air
-				BlockDrawable blockDrawable = new BlockDrawable((byte) 0, (byte) 0, 0.35f);
-				blockDrawables.add(blockDrawable);
-				add(
-					new PlacableItem(
-						blockDrawable,
-						new BlockListener((byte) 0, (byte) 0)
-					)
-				);
-				foundItems++;
-				//add rest
-				for (byte i = 1; i < RenderCell.OBJECTTYPESNUM; i++) {//add every possible block
-					if (RenderCell.isSpriteDefined(i,(byte)0) //add defined blocks
-						|| !RenderCell.getName(i, (byte) 0).equals("undefined")) {
-						blockDrawable = new BlockDrawable(i, (byte) 0, 0.35f);
-						blockDrawables.add(blockDrawable);
-						add(
-							new PlacableItem(
-								blockDrawable,
-								new BlockListener(foundItems, i)
-							)
-						);
-						foundItems++;
-						if (foundItems % 4 == 0) {
-							row();//make new row
-						}
-					}
-				}
-			} else {
-				//add every registered entity class
-				for (Map.Entry<String, Class<? extends AbstractEntity>> entry
-					: AbstractEntity.getRegisteredEntities().entrySet()
-				) {
-					try {
-						add(
-							new PlacableItem(
-								new EntityDrawable(entry.getValue()),
-								new EntityListener(entry.getKey(), entry.getValue(), foundItems)
-							)
-						);
-					} catch (InstantiationException | IllegalAccessException ex) {
-						Gdx.app.error(this.getClass().getName(), "Please make sure that every registered entity has a construcor without arguments");
-						Logger.getLogger(PlacableTable.class.getName()).log(Level.SEVERE, null, ex);
-					}
-					foundItems++;
-					if (foundItems % 4 == 0) {
-						row();//make new row
-					}
-				}
-			}
-		}
-	}
+        //setScale(5f);
+        if (!hasChildren()) {
+            byte foundItems = 0;
+            if (placeBlocks) {//add blocks
+                blockDrawables.clear();
+                //add air
+                BlockDrawable blockDrawable = new BlockDrawable((byte) 0, (byte) 0, 0.35f);
+                blockDrawables.add(blockDrawable);
+                add(
+                        new PlacableItem(
+                                blockDrawable,
+                                new BlockListener((byte) 0, (byte) 0)
+                        )
+                );
+                foundItems++;
+                //add rest
+                for (byte i = 1; i < RenderCell.OBJECTTYPESNUM; i++) {//add every possible block
+                    if (RenderCell.isSpriteDefined(i, (byte) 0) //add defined blocks
+                            || !RenderCell.getName(i, (byte) 0).equals("undefined")) {
+                        blockDrawable = new BlockDrawable(i, (byte) 0, 0.35f);
+                        blockDrawables.add(blockDrawable);
+                        add(
+                                new PlacableItem(
+                                        blockDrawable,
+                                        new BlockListener(foundItems, i)
+                                )
+                        );
+                        foundItems++;
+                        if (foundItems % 4 == 0) {
+                            row();//make new row
+                        }
+                    }
+                }
+            } else {
+                //add every registered entity class
+                for (Map.Entry<String, Class<? extends AbstractEntity>> entry
+                        : AbstractEntity.getRegisteredEntities().entrySet()
+                        ) {
+                    try {
+                        add(
+                                new PlacableItem(
+                                        new EntityDrawable(entry.getValue()),
+                                        new EntityListener(entry.getKey(), entry.getValue(), foundItems)
+                                )
+                        );
+                    } catch (InstantiationException | IllegalAccessException ex) {
+                        Gdx.app.error(this.getClass().getName(), "Please make sure that every registered entity has a construcor without arguments");
+                        Logger.getLogger(PlacableTable.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    foundItems++;
+                    if (foundItems % 4 == 0) {
+                        row();//make new row
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 *
-	 */
-	public void hide() {
-		if (hasChildren()) {
-			clear();
-		}
+    /**
+     *
+     */
+    public void hide() {
+        if (hasChildren()) {
+            clear();
+        }
 
-		if (isVisible()) {
-			setVisible(false);
-		}
-	}
+        if (isVisible()) {
+            setVisible(false);
+        }
+    }
 
-	/**
-	 *
-	 * @param view
-	 */
-	protected void showBlocks(GameView view) {
-		placeBlocks = true;
-		clearChildren();
-		show(view);
-	}
+    /**
+     * @param view
+     */
+    protected void showBlocks(GameView view) {
+        placeBlocks = true;
+        clearChildren();
+        show(view);
+    }
 
-	/**
-	 *
-	 * @param view
-	 */
-	protected void showEntities(GameView view) {
-		placeBlocks = false;
-		if (getEntity() == null) {//no init value for entity
-			setEntity(
-				AbstractEntity.getRegisteredEntities().keySet().iterator().next(),
-				AbstractEntity.getRegisteredEntities().values().iterator().next()
-			);
-		}
+    /**
+     * @param view
+     */
+    protected void showEntities(GameView view) {
+        placeBlocks = false;
+        if (getEntity() == null) {//no init value for entity
+            setEntity(
+                    AbstractEntity.getRegisteredEntities().keySet().iterator().next(),
+                    AbstractEntity.getRegisteredEntities().values().iterator().next()
+            );
+        }
 
-		clearChildren();
-		show(view);
-	}
+        clearChildren();
+        show(view);
+    }
 
-	/**
-	 * selects the item //TODO needs more generic method including entities
-	 * @param pos the pos of the listener
-	 */
-	void selectBlock(byte pos) {
-		if (pos <= getChildren().size) {
-			selected = pos;
-			for (Actor c : getChildren()) {
-				c.setScale(0.35f);
-			}
-			getChildren().get(selected).setScale(0.4f);
-		}
-	}
+    /**
+     * selects the item //TODO needs more generic method including entities
+     *
+     * @param pos the pos of the listener
+     */
+    void selectBlock(byte pos) {
+        if (pos <= getChildren().size) {
+            selected = pos;
+            for (Actor c : getChildren()) {
+                c.setScale(0.35f);
+            }
+            getChildren().get(selected).setScale(0.4f);
+        }
+    }
 
-	/**
-	 * sets the value of the selected
-	 * @param value 
-	 */
-	void setValue(byte value) {
-		this.value = value;
-		blockDrawables.get(selected).setValue(value);
-	}
-	
-	/**
-	 * Trys returning a new instance of a selected entity class.
-	 * @return if it fails returns null 
-	 */
-	public AbstractEntity getEntity(){
-		if (entityClass == null) {
-			return null;
-		}
-		try {
-			AbstractEntity ent = entityClass.newInstance();
-			if (value > -1) {
-				ent.setSpriteValue(value);
-			}
-			return ent;
-		} catch (InstantiationException | IllegalAccessException ex) {
-			Logger.getLogger(CursorInfo.class.getName()).log(Level.SEVERE, null, ex);
-		}
-		return null;
-	}
+    /**
+     * Trys returning a new instance of a selected entity class.
+     *
+     * @return if it fails returns null
+     */
+    public AbstractEntity getEntity() {
+        if (entityClass == null) {
+            return null;
+        }
+        try {
+            AbstractEntity ent = entityClass.newInstance();
+            if (value > -1) {
+                ent.setSpriteValue(value);
+            }
+            return ent;
+        } catch (InstantiationException | IllegalAccessException ex) {
+            Logger.getLogger(CursorInfo.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
 
-	/**
-	 * Sets the current color to this entity class.
-	 * @param name name which gets displayed
-	 * @param entclass
-	 */
-	public void setEntity(String name, Class<? extends AbstractEntity> entclass) {
-		entityClass = entclass;
-		//label.setText(name);
-	}
-	
-	private void setId(byte id) {
-		this.id = id;
-	}
-	/**
-	 *
-	 * @return
-	 */
-	public byte getId() {
-		return id;
-	}
-		
-	/**
-	 *
-	 * @return
-	 */
-	public byte getValue() {
-		return value;
-	}
-	
-	public int getBlock(){
-		return (value<<8)+id;
-	}
+    /**
+     * Sets the current color to this entity class.
+     *
+     * @param name     name which gets displayed
+     * @param entclass
+     */
+    public void setEntity(String name, Class<? extends AbstractEntity> entclass) {
+        entityClass = entclass;
+        //label.setText(name);
+    }
 
-	void select(byte blockId, byte blockValue) {
+    /**
+     * @return
+     */
+    public byte getId() {
+        return id;
+    }
+
+    private void setId(byte id) {
+        this.id = id;
+    }
+
+    /**
+     * @return
+     */
+    public byte getValue() {
+        return value;
+    }
+
+    /**
+     * sets the value of the selected
+     *
+     * @param value
+     */
+    void setValue(byte value) {
+        this.value = value;
+        blockDrawables.get(selected).setValue(value);
+    }
+
+    public int getBlock() {
+        return (value << 8) + id;
+    }
+
+    void select(byte blockId, byte blockValue) {
 //		for (Actor ch : getChildren()) {
 //			((PlacableItem) ch).getget(id);
 //		}
 //		selectBlock(id);
-	}
+    }
 
-	/**
-	 * detects a click on an entity in the list
-	 */
-	private class EntityListener extends ClickListener {
+    /**
+     * detects a click on an entity in the list
+     */
+    private class EntityListener extends ClickListener {
 
-		private final Class<? extends AbstractEntity> entclass;
-		private final String name;
-		/**
-		 * id of this listener
-		 */
-		private final byte id;
+        private final Class<? extends AbstractEntity> entclass;
+        private final String name;
+        /**
+         * id of this listener
+         */
+        private final byte id;
 
-		/**
-		 * 
-		 * @param name
-		 * @param entclass
-		 * @param id id of this listener
-		 */
-		EntityListener(String name, Class<? extends AbstractEntity> entclass, byte id) {
-			this.entclass = entclass;
-			this.name = name;
-			this.id = id;
-		}
+        /**
+         * @param name
+         * @param entclass
+         * @param id       id of this listener
+         */
+        EntityListener(String name, Class<? extends AbstractEntity> entclass, byte id) {
+            this.entclass = entclass;
+            this.name = name;
+            this.id = id;
+        }
 
-		@Override
-		public void clicked(InputEvent event, float x, float y) {
-			setEntity(name, entclass);
-			if (id <= getChildren().size) {
-				for (Actor c : getChildren()) {
-					c.setScale(0.5f);
-				}
-				getChildren().get(id).setScale(0.6f);
-			}
-		}
-	}
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            setEntity(name, entclass);
+            if (id <= getChildren().size) {
+                for (Actor c : getChildren()) {
+                    c.setScale(0.5f);
+                }
+                getChildren().get(id).setScale(0.6f);
+            }
+        }
+    }
 
-	/**
-	 * detects a click on the RenderCell in the list
-	 */
-	private class BlockListener extends ClickListener {
+    /**
+     * detects a click on the RenderCell in the list
+     */
+    private class BlockListener extends ClickListener {
 
-		/**
-		 * id of represented block
-		 */
-		private final byte blockId;
-		private final byte id;
+        /**
+         * id of represented block
+         */
+        private final byte blockId;
+        private final byte id;
 
-		/**
-		 * 
-		 * @param id id of the listener
-		 * @param blockId representing block id
-		 */
-		BlockListener(byte id, byte blockId) {
-			this.blockId = blockId;
-			this.id = id;
-		}
+        /**
+         * @param id      id of the listener
+         * @param blockId representing block id
+         */
+        BlockListener(byte id, byte blockId) {
+            this.blockId = blockId;
+            this.id = id;
+        }
 
-		@Override
-		public void clicked(InputEvent event, float x, float y) {
-			PlacableTable.this.setId(blockId);
-			selectBlock(id);
-		}
-	}
+        @Override
+        public void clicked(InputEvent event, float x, float y) {
+            PlacableTable.this.setId(blockId);
+            selectBlock(id);
+        }
+    }
 }

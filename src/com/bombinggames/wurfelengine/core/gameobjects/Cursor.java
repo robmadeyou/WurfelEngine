@@ -41,67 +41,105 @@ import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
 import com.bombinggames.wurfelengine.mapeditor.CursorInfo;
 
 /**
- *The seletion indicator in the level editor.
+ * The seletion indicator in the level editor.
+ *
  * @author Benedikt Vogler
  */
 public class Cursor extends AbstractEntity {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
     private final SimpleEntity normal;
     private Side normalSide;
-	private CursorInfo selDet;
-    
+    private CursorInfo selDet;
+
     /**
-     *
-	 * @param selDet
+     * @param selDet
      */
     public Cursor() {
         super((byte) 13);
-		setSaveToDisk(false);
-		setName("selectionEntity");
-		
-        normal = new SimpleEntity((byte) 14);
-		EntityAnimation anim = new EntityAnimation(new int[]{200,200}, true, true);
-		normal.setUseRawDelta(true);
-		//normal.enableShadow();
-		normal.setAnimation(anim);
-        normal.setLightlevel(10);
-		normal.setSaveToDisk(false);
-		normal.setName("normal");
-    }
-	
-	public void setInfo(CursorInfo selDet){
-		this.selDet = selDet;
-	}
+        setSaveToDisk(false);
+        setName("selectionEntity");
 
-	@Override
-	public AbstractEntity spawn(Point point) {
-		normal.spawn(point);
-		return super.spawn(point);
-	}
-	
-	@Override
-	public void setPosition(Position pos) {
-		setPosition(pos.toPoint());
-	}
-	
+        normal = new SimpleEntity((byte) 14);
+        EntityAnimation anim = new EntityAnimation(new int[]{200, 200}, true, true);
+        normal.setUseRawDelta(true);
+        //normal.enableShadow();
+        normal.setAnimation(anim);
+        normal.setLightlevel(10);
+        normal.setSaveToDisk(false);
+        normal.setName("normal");
+    }
+
+    public void setInfo(CursorInfo selDet) {
+        this.selDet = selDet;
+    }
+
+    @Override
+    public AbstractEntity spawn(Point point) {
+        normal.spawn(point);
+        return super.spawn(point);
+    }
+
+    @Override
+    public void setPosition(Position pos) {
+        setPosition(pos.toPoint());
+    }
+
     @Override
     public void setPosition(Point pos) {
-		Coordinate coord = pos.toCoord();
-        super.setPosition( coord);
+        Coordinate coord = pos.toCoord();
+        super.setPosition(coord);
         setHidden(getPosition().getZ() < 0);//hide if is under map
-		Point isectP = pos.cpy();
-		if (normalSide == Side.TOP) {
-			isectP.setZ((isectP.getZGrid() + 1) * RenderCell.GAME_EDGELENGTH);
-		}
+        Point isectP = pos.cpy();
+        if (normalSide == Side.TOP) {
+            isectP.setZ((isectP.getZGrid() + 1) * RenderCell.GAME_EDGELENGTH);
+        }
         normal.getPosition().set(isectP);
-		selDet.updateFrom(pos.getBlock(), coord);
+        selDet.updateFrom(pos.getBlock(), coord);
     }
-        
+
     /**
+     * @return
+     */
+    public Side getNormalSide() {
+        return normalSide;
+    }
+
+    /**
+     * if at ground does not move up
      *
+     * @return the neighbour coordinate where the normal points to. cpy safe
+     */
+    public Coordinate getCoordInNormalDirection() {
+        Coordinate coords = getPosition().toCoord();
+        if (normal.getPosition().getZ() > 0 && normalSide != null) {
+            switch (normalSide) {
+                case LEFT:
+                    coords = coords.goToNeighbour(5);
+                    break;
+                case TOP:
+                    coords.add(0, 0, 1);
+                    break;
+                case RIGHT:
+                    coords = coords.goToNeighbour(3);
+                    break;
+            }
+        }
+        return coords;
+    }
+
+    /**
+     * The normal object. Position
+     *
+     * @return
+     */
+    public SimpleEntity getNormal() {
+        return normal;
+    }
+
+    /**
      * @param side
      */
-    public void setNormal(Side side){
+    public void setNormal(Side side) {
         normalSide = side;
         if (side == Side.LEFT)
             normal.setRotation(120);
@@ -112,68 +150,30 @@ public class Cursor extends AbstractEntity {
     }
 
     /**
-     *
-     * @return
-     */
-    public Side getNormalSide() {
-        return normalSide;
-    }
-	
-	/**
-	 * if at ground does not move up
-	 * @return the neighbour coordinate where the normal points to. cpy safe
-	 */
-	public Coordinate getCoordInNormalDirection(){
-		Coordinate coords = getPosition().toCoord();
-		if (normal.getPosition().getZ() > 0 && normalSide != null) {
-			switch (normalSide) {
-				case LEFT:
-					coords = coords.goToNeighbour(5);
-					break;
-				case TOP:
-					coords.add(0, 0, 1);
-					break;
-				case RIGHT:
-					coords = coords.goToNeighbour(3);
-					break;
-			}
-		}
-		return coords;
-	}
-	
-	/**
-     * The normal object. Position 
-     * @return
-     */
-    public SimpleEntity getNormal() {
-        return normal;
-    }
-    
-    /**
      * Updates the selection using the screen position of the cursor.
+     *
      * @param view
      * @param screenX cursor position from left
      * @param screenY cursor position from top
      */
-    public void update(GameView view, int screenX, int screenY){
-       Intersection intersect = view.screenToGame(screenX, screenY);
+    public void update(GameView view, int screenX, int screenY) {
+        Intersection intersect = view.screenToGame(screenX, screenY);
 
-		if (intersect != null && intersect.getPoint() != null) {
-			setPosition(intersect.getPoint());
-			setNormal(intersect.getNormal());
-		}
+        if (intersect != null && intersect.getPoint() != null) {
+            setPosition(intersect.getPoint());
+            setNormal(intersect.getNormal());
+        }
     }
 
-	/**
-	 * 
-	 * @param show 
-	 */
-	public void showNormal(boolean show) {
-		normal.setHidden(!show);
-	}
+    /**
+     * @param show
+     */
+    public void showNormal(boolean show) {
+        normal.setHidden(!show);
+    }
 
-	@Override
-	public boolean handleMessage(Telegram msg) {
-		return true;
-	}
+    @Override
+    public boolean handleMessage(Telegram msg) {
+        return true;
+    }
 }

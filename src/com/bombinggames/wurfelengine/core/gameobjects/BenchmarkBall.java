@@ -34,51 +34,51 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector3;
 import com.bombinggames.wurfelengine.core.Controller;
 import com.bombinggames.wurfelengine.core.map.Chunk;
+
 import static com.bombinggames.wurfelengine.core.map.rendering.RenderCell.GAME_EDGELENGTH;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class BenchmarkBall extends MovableEntity {
 
-	private static float timer = 0;
-	private static float timeTillBall = 1000;
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
+    private static float timer = 0;
+    private static float timeTillBall = 1000;
 
-	/**
-	 * Creates a Benchmark ball.
-	 */
-	public BenchmarkBall() {
-		super((byte) 21, (byte) 0);
-		setMovement(new Vector3((float) Math.random() - 0.5f, (float) Math.random() - 0.5f, -1));
-		setFloating(false);
-	}
+    /**
+     * Creates a Benchmark ball.
+     */
+    public BenchmarkBall() {
+        super((byte) 21, (byte) 0);
+        setMovement(new Vector3((float) Math.random() - 0.5f, (float) Math.random() - 0.5f, -1));
+        setFloating(false);
+    }
 
-	@Override
-	public void update(float dt) {
-		super.update(dt);
-		timer += dt;
-		if (timer > timeTillBall) {
-			if (Gdx.graphics.getDeltaTime() < 0.013f) {//over 60 FPS
-				new BenchmarkBall().spawn(
-					Controller.getMap().getCenter(Chunk.getGameHeight() - 2 * GAME_EDGELENGTH)
-				);
-			}
-			timer = 0;
-		}
-		timeTillBall -= dt / 5000000f;
+    @Override
+    public void update(float dt) {
+        super.update(dt);
+        timer += dt;
+        if (timer > timeTillBall) {
+            if (Gdx.graphics.getDeltaTime() < 0.013f) {//over 60 FPS
+                new BenchmarkBall().spawn(
+                        Controller.getMap().getCenter(Chunk.getGameHeight() - 2 * GAME_EDGELENGTH)
+                );
+            }
+            timer = 0;
+        }
+        timeTillBall -= dt / 5000000f;
 
-		if (isOnGround()) {
-			jump();
-		}
-	}
+        if (isOnGround()) {
+            jump();
+        }
+    }
 
-	@Override
-	public void jump() {
-		Vector3 tmp = new Vector3();
-		tmp.x = (float) Math.random() - 0.5f;
-		tmp.y = (float) Math.random() - 0.5f;
-		super.jump(-tmp.z, false);
-	}
+    @Override
+    public void jump() {
+        Vector3 tmp = new Vector3();
+        tmp.x = (float) Math.random() - 0.5f;
+        tmp.y = (float) Math.random() - 0.5f;
+        super.jump(-tmp.z, false);
+    }
 }

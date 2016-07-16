@@ -34,6 +34,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.bombinggames.wurfelengine.WE;
+
 import java.util.ArrayList;
 
 /**
@@ -44,48 +45,48 @@ import java.util.ArrayList;
  */
 public abstract class WEScreen implements Screen {
 
-	ArrayList<Actor> buttons = new ArrayList<>(5);
-	private int selection;
+    ArrayList<Actor> buttons = new ArrayList<>(5);
+    private int selection;
 
-	@Override
-	@SuppressWarnings("AssignmentToMethodParameter")
-	public final void render(float delta) {
-		delta *= 1000;//to ms
-		if (delta >= WE.getCVars().getValueF("MaxDelta")) {
-			delta = 1f / 60f;//if <1 FPS assume it was stopped and set delta to 16,66ms ^= 60FPS
-		}
-		renderImpl(delta);
-		WE.updateAndRender(delta);
-	}
+    @Override
+    @SuppressWarnings("AssignmentToMethodParameter")
+    public final void render(float delta) {
+        delta *= 1000;//to ms
+        if (delta >= WE.getCVars().getValueF("MaxDelta")) {
+            delta = 1f / 60f;//if <1 FPS assume it was stopped and set delta to 16,66ms ^= 60FPS
+        }
+        renderImpl(delta);
+        WE.updateAndRender(delta);
+    }
 
-	/**
-	 * Main method which get's called every frame. Should be split up in data
-	 * managment and data displaying.
-	 *
-	 * @param dt time in ms
-	 */
-	public abstract void renderImpl(float dt);
+    /**
+     * Main method which get's called every frame. Should be split up in data
+     * managment and data displaying.
+     *
+     * @param dt time in ms
+     */
+    public abstract void renderImpl(float dt);
 
-	public void addButton(Actor button) {
-		buttons.add(button);
-	}
+    public void addButton(Actor button) {
+        buttons.add(button);
+    }
 
-	;
-	
-	public void select(int i) {
-		selection = i;
-	}
+    ;
 
-	public void enterSelection() {
-		buttons.get(selection).fire(new ChangeListener.ChangeEvent());
-	}
+    public void select(int i) {
+        selection = i;
+    }
 
-	public int getSelection() {
-		return selection;
-	}
+    public void enterSelection() {
+        buttons.get(selection).fire(new ChangeListener.ChangeEvent());
+    }
 
-	public int getButtonAmount() {
-		return buttons.size();
-	}
+    public int getSelection() {
+        return selection;
+    }
+
+    public int getButtonAmount() {
+        return buttons.size();
+    }
 
 }

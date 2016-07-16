@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,66 +22,67 @@ import java.util.StringTokenizer;
 /** @author davebaol */
 public abstract class LongDistribution implements Distribution {
 
-	@Override
-	public int nextInt () {
-		return (int)nextLong();
-	}
+    public static LongDistribution parse(String value) throws DistributionFormatException {
+        StringTokenizer st = new StringTokenizer(value, ", \t\f");
+        if (!st.hasMoreTokens()) throw new DistributionFormatException("Missing ditribution type");
+        String type = st.nextToken();
 
-	@Override
-	public float nextFloat () {
-		return (float)nextLong();
-	}
+        try {
+            LongDistribution dist;
+            if (type.equalsIgnoreCase("constant")) {
+                dist = new ConstantLongDistribution(longToken(st));
+            } else if (type.equalsIgnoreCase("uniform")) {
+                long a1 = longToken(st);
+                if (!st.hasMoreElements())
+                    dist = new UniformLongDistribution(a1);
+                else
+                    dist = new UniformLongDistribution(a1, longToken(st));
+            } else if (type.equalsIgnoreCase("triangular")) {
+                long a1 = longToken(st);
+                if (!st.hasMoreElements())
+                    dist = new TriangularLongDistribution(a1);
+                else {
+                    long a2 = longToken(st);
+                    if (!st.hasMoreElements())
+                        dist = new TriangularLongDistribution(a1, a2);
+                    else
+                        dist = new TriangularLongDistribution(a1, a2, doubleToken(st));
+                }
+            } else {
+                throw new DistributionFormatException("Unknown distribution '" + type + "'");
+            }
 
-	@Override
-	public double nextDouble () {
-		return (double)nextLong();
-	}
+            if (st.hasMoreTokens())
+                throw new DistributionFormatException("Too many arguments in distribution '" + type + "'");
 
-	public static LongDistribution parse (String value) throws DistributionFormatException {
-		StringTokenizer st = new StringTokenizer(value, ", \t\f");
-		if (!st.hasMoreTokens()) throw new DistributionFormatException("Missing ditribution type");
-		String type = st.nextToken();
+            return dist;
+        } catch (NumberFormatException nfe) {
+            throw new DistributionFormatException("Illegal argument in in distribution '" + type + "'", nfe);
+        } catch (NoSuchElementException nsee) {
+            throw new DistributionFormatException("Missing argument in distribution '" + type + "'");
+        }
+    }
 
-		try {
-			LongDistribution dist;
-			if (type.equalsIgnoreCase("constant")) {
-				dist = new ConstantLongDistribution(longToken(st));
-			} else if (type.equalsIgnoreCase("uniform")) {
-				long a1 = longToken(st);
-				if (!st.hasMoreElements())
-					dist = new UniformLongDistribution(a1);
-				else
-					dist = new UniformLongDistribution(a1, longToken(st));
-			} else if (type.equalsIgnoreCase("triangular")) {
-				long a1 = longToken(st);
-				if (!st.hasMoreElements())
-					dist = new TriangularLongDistribution(a1);
-				else {
-					long a2 = longToken(st);
-					if (!st.hasMoreElements())
-						dist = new TriangularLongDistribution(a1, a2);
-					else
-						dist = new TriangularLongDistribution(a1, a2, doubleToken(st));
-				}
-			} else {
-				throw new DistributionFormatException("Unknown distribution '" + type + "'");
-			}
+    private static long longToken(StringTokenizer st) {
+        return Long.parseLong(st.nextToken());
+    }
 
-			if (st.hasMoreTokens()) throw new DistributionFormatException("Too many arguments in distribution '" + type + "'");
+    private static double doubleToken(StringTokenizer st) {
+        return Double.parseDouble(st.nextToken());
+    }
 
-			return dist;
-		} catch (NumberFormatException nfe) {
-			throw new DistributionFormatException("Illegal argument in in distribution '" + type + "'", nfe);
-		} catch (NoSuchElementException nsee) {
-			throw new DistributionFormatException("Missing argument in distribution '" + type + "'");
-		}
-	}
+    @Override
+    public int nextInt() {
+        return (int) nextLong();
+    }
 
-	private static long longToken (StringTokenizer st) {
-		return Long.parseLong(st.nextToken());
-	}
+    @Override
+    public float nextFloat() {
+        return (float) nextLong();
+    }
 
-	private static double doubleToken (StringTokenizer st) {
-		return Double.parseDouble(st.nextToken());
-	}
+    @Override
+    public double nextDouble() {
+        return (double) nextLong();
+    }
 }

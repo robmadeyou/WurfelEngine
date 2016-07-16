@@ -34,6 +34,7 @@ import com.bombinggames.wurfelengine.core.map.Chunk;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderChunk;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderStorage;
+
 import java.util.NoSuchElementException;
 
 /**
@@ -43,117 +44,115 @@ import java.util.NoSuchElementException;
  */
 public class CameraSpaceIterator {
 
-	/**
-	 * Always points to a block. Iterates over a chunk.
-	 */
-	private DataIterator<RenderCell> blockIterator;
-	private final int centerChunkX;
-	private final int centerChunkY;
-	private RenderChunk currentChunk;
+    private final int centerChunkX;
+    private final int centerChunkY;
+    private final int startingZ;
+    private final RenderStorage renderStorage;
+    /**
+     * Always points to a block. Iterates over a chunk.
+     */
+    private DataIterator<RenderCell> blockIterator;
+    private RenderChunk currentChunk;
+    private int topLevel;
+    private int chunkNum = -1;
 
-	private int topLevel;
-	private final int startingZ;
-	private int chunkNum = -1;
-	private final RenderStorage renderStorage;
+    /**
+     * Starts at z = -1.
+     *
+     * @param renderStorage
+     * @param centerCoordX  the center chunk coordinate
+     * @param centerCoordY  the center chunk coordinate
+     * @param startingZ     to loop over ground level pass -1
+     * @param topLevel      the top limit of the z axis, last level is included
+     */
+    public CameraSpaceIterator(RenderStorage renderStorage, int centerCoordX, int centerCoordY, int startingZ, int topLevel) {
+        this.renderStorage = renderStorage;
+        this.topLevel = topLevel;
+        this.startingZ = startingZ;
+        centerChunkX = centerCoordX;
+        centerChunkY = centerCoordY;
+    }
 
-	/**
-	 * Starts at z = -1.
-	 *
-	 * @param renderStorage
-	 * @param centerCoordX the center chunk coordinate
-	 * @param centerCoordY the center chunk coordinate
-	 * @param startingZ to loop over ground level pass -1
-	 * @param topLevel the top limit of the z axis, last level is included
-	 */
-	public CameraSpaceIterator(RenderStorage renderStorage, int centerCoordX, int centerCoordY, int startingZ, int topLevel) {
-		this.renderStorage = renderStorage;
-		this.topLevel = topLevel;
-		this.startingZ = startingZ;
-		centerChunkX = centerCoordX;
-		centerChunkY = centerCoordY;
-	}
+    /**
+     * set the top/last limit of the iteration (including).
+     *
+     * @param zLimit
+     */
+    public void setTopLimitZ(int zLimit) {
+        this.topLevel = zLimit;
+        if (blockIterator != null) {
+            blockIterator.setTopLimitZ(zLimit);
+        }
+    }
 
-	/**
-	 * set the top/last limit of the iteration (including).
-	 *
-	 * @param zLimit
-	 */
-	public void setTopLimitZ(int zLimit) {
-		this.topLevel = zLimit;
-		if (blockIterator != null) {
-			blockIterator.setTopLimitZ(zLimit);
-		}
-	}
+    /**
+     * Loops over the map areas covered by the camera.
+     *
+     * @return
+     */
+    public RenderCell next() throws NoSuchElementException {
+        if (blockIterator == null || !blockIterator.hasNext()) {
+            //reached end of chunk, move to next chunk
+            currentChunk = null;
+            blockIterator = null;
+            while (currentChunk == null && hasNextChunk()) {//if has one move to next
+                currentChunk = getNextChunk(chunkNum);
+                chunkNum++;
+            }
+            //found chunk
+            if (currentChunk != null) {
+                blockIterator = currentChunk.getIterator(startingZ, topLevel);//reset chunkIterator
+            }
+            //could not find a new  block iterator
+            if (blockIterator == null) {
+                return null;
+            }
+        }
 
-	/**
-	 * Loops over the map areas covered by the camera.
-	 *
-	 * @return
-	 */
-	public RenderCell next() throws NoSuchElementException {
-		if (blockIterator == null || !blockIterator.hasNext()) {
-			//reached end of chunk, move to next chunk
-			currentChunk = null;
-			blockIterator = null;
-			while (currentChunk == null && hasNextChunk()) {//if has one move to next
-				currentChunk = getNextChunk(chunkNum);
-				chunkNum++;
-			}
-			//found chunk
-			if (currentChunk != null) {
-				blockIterator = currentChunk.getIterator(startingZ, topLevel);//reset chunkIterator
-			}
-			//could not find a new  block iterator
-			if (blockIterator == null) {
-				return null;
-			}
-		}
+        if (chunkNum < 9) {
+            return blockIterator.next();
+        } else {
+            return null;
+        }
+    }
 
-		if (chunkNum < 9) {
-			return blockIterator.next();
-		} else {
-			return null;
-		}
-	}
+    /**
+     * get the indices position relative to a 3x3 chunk matrix.
+     *
+     * @return copy safe
+     */
+    public int[] getCurrentIndex() {
+        int[] inChunk = blockIterator.getCurrentIndex();
+        return new int[]{
+                (chunkNum % 3) * Chunk.getBlocksX() + inChunk[0],
+                (chunkNum / 3) * Chunk.getBlocksY() + inChunk[1],
+                inChunk[2]
+        };
+    }
 
-	/**
-	 * get the indices position relative to a 3x3 chunk matrix.
-	 *
-	 * @return copy safe
-	 */
-	public int[] getCurrentIndex() {
-		int[] inChunk = blockIterator.getCurrentIndex();
-		return new int[]{
-			(chunkNum % 3) * Chunk.getBlocksX() + inChunk[0],
-			(chunkNum / 3) * Chunk.getBlocksY() + inChunk[1],
-			inChunk[2]
-		};
-	}
+    private boolean hasNextChunk() {
+        return getNextChunk(chunkNum) != null;
+    }
 
-	private boolean hasNextChunk() {
-		return getNextChunk(chunkNum) != null;
-	}
+    /**
+     * @param current starting index: [0-8]
+     * @return
+     */
+    private RenderChunk getNextChunk(int current) {
+        while (current < 8) { //if has one move to next
+            current++;
+            RenderChunk chunk = renderStorage.getChunk(
+                    centerChunkX - 1 + current % 3,
+                    centerChunkY - 1 + current / 3
+            );
+            if (chunk != null) {
+                return chunk;
+            }
+        }
+        return null;
+    }
 
-	/**
-	 * 
-	 * @param current starting index: [0-8]
-	 * @return 
-	 */
-	private RenderChunk getNextChunk(int current) {
-		while (current < 8) { //if has one move to next
-			current++;
-			RenderChunk chunk = renderStorage.getChunk(
-				centerChunkX - 1 + current % 3,
-				centerChunkY - 1 + current / 3
-			);
-			if (chunk != null) {
-				return chunk;
-			}
-		}
-		return null;
-	}
-
-	public boolean hasNext() {
-		return chunkNum < 9 && ((blockIterator != null && blockIterator.hasNext()) || hasNextChunk());
-	}
+    public boolean hasNext() {
+        return chunkNum < 9 && ((blockIterator != null && blockIterator.hasNext()) || hasNextChunk());
+    }
 }

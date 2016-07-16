@@ -33,13 +33,14 @@ package com.bombinggames.wurfelengine;
 
 /**
  * An object which can execute code.
+ *
  * @author Benedikt Vogler
  */
 @FunctionalInterface
 public interface LaunchCommand {
-	
-	/**
-	 * Method to execute the launch command
-	 */
-	void perform();
+
+    /**
+     * Method to execute the launch command
+     */
+    void perform();
 }

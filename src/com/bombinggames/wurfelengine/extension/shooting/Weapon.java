@@ -36,162 +36,155 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.bombinggames.wurfelengine.WE;
 import com.bombinggames.wurfelengine.core.Events;
-import com.bombinggames.wurfelengine.core.gameobjects.AbstractEntity;
-import com.bombinggames.wurfelengine.core.gameobjects.AbstractGameObject;
-import com.bombinggames.wurfelengine.core.gameobjects.Particle;
-import com.bombinggames.wurfelengine.core.gameobjects.ParticleType;
-import com.bombinggames.wurfelengine.core.gameobjects.PointLightSource;
+import com.bombinggames.wurfelengine.core.gameobjects.*;
 import com.bombinggames.wurfelengine.core.map.Point;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
 import com.bombinggames.wurfelengine.extension.AimBand;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class Weapon extends AbstractEntity implements Telegraph {
-	private static final long serialVersionUID = 1L;
-    
-    private final byte weaponid;
+    private static final long serialVersionUID = 1L;
 
-    private AbstractGameObject parent;//the parent holding the weapon
-    
-    //sound
-    private String fireSound;
-    private String reload;
-    
-    //stats
-	/**
-	 * time in ms before new shot
-	 */
+    private final byte weaponid;
+    /**
+     * time in ms before new shot
+     */
     private final float delayBetweenShots;
     private final int shots;
     private final int relodingTime;
-	/**
-	 * distance in m
-	 */
-    private float distance;
+
+    //stats
     private final int bps;//bullets per shot
     private final float spread;
     private final byte damage;
     private final byte bulletSprite;
     private final byte impactSprite;
-    
+    private AbstractGameObject parent;//the parent holding the weapon
+    //sound
+    private String fireSound;
+    private String reload;
+    /**
+     * distance in m
+     */
+    private float distance;
     private int shotsLoaded;
     private int reloading;
-    /** The current time between shots. If reaches zero another bullet is spawned*/
+    /**
+     * The current time between shots. If reaches zero another bullet is spawned
+     */
     private float bulletDelay;
     private int explode;
     private transient Laserdot laserdot;
 
-	private Vector3 aimDir = new Vector3(0, 0, 0);
-	private byte ignoreId;
-	/**
-	 * true if just fired and weapon is still moving from the shot
-	 */
-	private boolean firing;
-	private boolean fireSoundBust;
-	private boolean bustSoundReady;
-	private Point fixedPos = null;
-	private transient AimBand particleBand;
-	private transient PointLightSource lightSource;
+    private Vector3 aimDir = new Vector3(0, 0, 0);
+    private byte ignoreId;
+    /**
+     * true if just fired and weapon is still moving from the shot
+     */
+    private boolean firing;
+    private boolean fireSoundBust;
+    private boolean bustSoundReady;
+    private Point fixedPos = null;
+    private transient AimBand particleBand;
+    private transient PointLightSource lightSource;
 
     /**
-     *
      * @param weaponid
-     * @param parent the object which holds the weapon
+     * @param parent   the object which holds the weapon
      */
-    public Weapon(byte weaponid,  AbstractGameObject parent) {
-		super((byte) 18);
-		this.parent = parent;
-        
-		this.weaponid = weaponid;
-        switch (weaponid){
+    public Weapon(byte weaponid, AbstractGameObject parent) {
+        super((byte) 18);
+        this.parent = parent;
+
+        this.weaponid = weaponid;
+        switch (weaponid) {
             case 0:
                 setName("Katana");
                 delayBetweenShots = 900;
-                relodingTime =0;
+                relodingTime = 0;
                 shots = 1;
                 distance = 0;
                 bps = 10;
                 spread = 0.5f;
                 damage = (byte) 5;
                 bulletSprite = -1;
-                impactSprite=15;
-                
+                impactSprite = 15;
+
                 //fire = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/melee.wav");
                 //reload = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/wiz.wav"); 
-            break;
-                
+                break;
+
             case 1:
                 setName("Pistol");
                 delayBetweenShots = 400;
-                relodingTime =1000;
+                relodingTime = 1000;
                 shots = 7;
                 distance = 10;
                 bps = 1;
                 spread = 0.1f;
                 damage = (byte) 5;
                 bulletSprite = 0;
-                impactSprite=19;
-                
-                
+                impactSprite = 19;
+
+
                 //fire = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/shot.wav");
                 //reload = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/reload.wav"); 
-            break;
-                
+                break;
+
             case 2:
                 setName("Fist");
                 delayBetweenShots = 500;
-                relodingTime =0;
+                relodingTime = 0;
                 shots = 1;
                 distance = 0;
                 bps = 10;
                 spread = 0.4f;
                 bulletSprite = -1;
                 damage = (byte) 100;
-                impactSprite=15;
-                
+                impactSprite = 15;
+
                 //fire = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/punch.wav");
                 //reload = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/melee.wav"); 
-            break;
-                
+                break;
+
             case 3:
                 setName("Shotgun");
                 delayBetweenShots = 600;
-                relodingTime =1300;
+                relodingTime = 1300;
                 shots = 2;
                 distance = 5;
                 bps = 20;
                 spread = 0.2f;
                 damage = (byte) 400;
                 bulletSprite = 0;
-                impactSprite=19;
-                
+                impactSprite = 19;
+
                 //fire = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/shotgun.wav");
                 //reload = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/reload.wav"); 
-            break;    
+                break;
 
             case 4:
                 setName("Machine Gun");
                 delayBetweenShots = 75;
-                relodingTime =1300;
+                relodingTime = 1300;
                 shots = 14;
                 distance = 40;
                 bps = 1;
                 spread = 0.005f;
                 damage = (byte) 50;
                 bulletSprite = 0;
-                impactSprite=19;
-                
+                impactSprite = 19;
+
                 //fire = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/bust.wav");
                 //reload = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/reload.wav"); 
-            break;
-                                 
+                break;
+
             case 5:
-				setName("Poop");
+                setName("Poop");
                 delayBetweenShots = 900;
-                relodingTime =500;
+                relodingTime = 500;
                 shots = 1;
                 distance = 3;
                 bps = 1;
@@ -199,16 +192,16 @@ public class Weapon extends AbstractEntity implements Telegraph {
                 damage = (byte) 400;
                 bulletSprite = 3;
                 explode = 1;
-                impactSprite=19;
-                
+                impactSprite = 19;
+
                 //fire = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/poop.wav");
                 //reload = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/reload.wav"); 
-            break;
-                
+                break;
+
             case 6:
-				setName("Rocket Launcher");
+                setName("Rocket Launcher");
                 delayBetweenShots = 0;
-                relodingTime =1500;
+                relodingTime = 1500;
                 shots = 1;
                 distance = 5;
                 bps = 1;
@@ -216,68 +209,66 @@ public class Weapon extends AbstractEntity implements Telegraph {
                 bulletSprite = 2;
                 explode = 2;
                 spread = 0.1f;
-                impactSprite=19;
-                
+                impactSprite = 19;
+
                 //fire = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/thump.wav");
                 //reload = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/reload.wav"); 
-            break;
-                
+                break;
+
             case 7:
-				setName("FireLauncher");
+                setName("FireLauncher");
                 delayBetweenShots = 40;
-                relodingTime =1700;
+                relodingTime = 1700;
                 shots = 50;
                 distance = 3;
                 bps = 5;
                 spread = 0.4f;
                 damage = (byte) 200;
                 bulletSprite = 1;
-                impactSprite=18;
-                
+                impactSprite = 18;
+
                 //fire = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/fire.wav");
                 //reload = WEMain.getAsset("com/bombinggames/WeaponOfChoice/Sounds/reload.wav"); 
-            break; 
-                default:
-					setName("Pistol");
-                    delayBetweenShots = 400;
-                    relodingTime =1000;
-                    shots = 7;
-                    distance = 10;
-                    bps = 1;
-                    spread = 0.1f;
-                    damage = (byte) 800;
-                    bulletSprite = 0;
-                    impactSprite=19;
+                break;
+            default:
+                setName("Pistol");
+                delayBetweenShots = 400;
+                relodingTime = 1000;
+                shots = 7;
+                distance = 10;
+                bps = 1;
+                spread = 0.1f;
+                damage = (byte) 800;
+                bulletSprite = 0;
+                impactSprite = 19;
         }
         shotsLoaded = shots; //fully loaded
     }
 
-	/**
-	 * The point where the weapon returns after shooting.
-	 * @param fixedPos 
-	 */
-	public void setFixedPos(Point fixedPos) {
-		this.fixedPos = fixedPos;
-	}
-
-	
-	/**
-	 * 
-	 * @param maxDistance 
-	 */
-	public void setMaxDistance(float maxDistance){
-		this.distance = maxDistance;
-	}
-	/**
-	 *
-	 * @return can be null
-	 */
-	public Point getFixedPos() {
-		return fixedPos;
-	}
-	
     /**
+     * @param maxDistance
+     */
+    public void setMaxDistance(float maxDistance) {
+        this.distance = maxDistance;
+    }
+
+    /**
+     * @return can be null
+     */
+    public Point getFixedPos() {
+        return fixedPos;
+    }
+
+    /**
+     * The point where the weapon returns after shooting.
      *
+     * @param fixedPos
+     */
+    public void setFixedPos(Point fixedPos) {
+        this.fixedPos = fixedPos;
+    }
+
+    /**
      * @return the weapon's id
      */
     public int getWeaponId() {
@@ -286,157 +277,155 @@ public class Weapon extends AbstractEntity implements Telegraph {
 
     /**
      * Manages the weapon
+     *
      * @param dt t in ms
      */
-	@Override
-    public void update(float dt){
-		super.update(dt);
+    @Override
+    public void update(float dt) {
+        super.update(dt);
         if (bulletDelay > 0) {
-			bulletDelay -= dt;
-		}
-		
-		if (bulletDelay <= 0){
-			firing = false;
-		}
-		
-		if (particleBand != null){
-			particleBand.update();
-		}
-		
-		//move back
-		if (hasPosition() && fixedPos != null) {
-			if (lightSource==null && fixedPos != null){
-				lightSource= (PointLightSource) new PointLightSource(
-					Color.WHITE.cpy(),
-					3,
-					30f,
-					WE.getGameplay().getView()
-				).spawn(fixedPos.cpy());
-				lightSource.setSaveToDisk(false);
-			}
-			if (firing){
-				lightSource.enable();
-				float t;
-				if (bulletDelay > delayBetweenShots/2){
-					t = (bulletDelay-(delayBetweenShots/2f))/(delayBetweenShots/2f);
-				} else {
-					t = bulletDelay/(delayBetweenShots/2f);
-				}
-				this.getPosition().lerp(fixedPos.cpy().add(aimDir.cpy().scl(-RenderCell.GAME_EDGELENGTH2)),
-					t
-				);
-			} else {
-				lightSource.disable();
-				this.setPosition(fixedPos.cpy());
-			}
-		}
-		
-		
-       if (reloading >= 0) {
-			reloading -= dt;
-			if (reloading <= 0) {//finished reloading
-				shotsLoaded = shots;
-			}
-		} else { //if not shooting or loading
-			if (bulletDelay <= 0 && shotsLoaded <= 0) {//autoreload
-				reload();
-			}
-		}
-	   
-		
-		if (laserdot == null){
-			laserdot = (Laserdot) new Laserdot().spawn(getPosition().cpy());
-		}
-		laserdot.ignoreBlock(ignoreId);
-		laserdot.update(aimDir, getPosition());
-	}
-	
-	/**
-	 * 
-	 * @param dir 
-	 */
-	public void setAimDir(Vector3 dir){
-		this.aimDir = dir.nor();
-		laserdot.update(aimDir, getPosition());
-	}
-    
-    /**
-     *shoots the weapon. like holding the trigger down
-     */
-    public void shoot(){
-       if (shotsLoaded > 0 && bulletDelay <= 0 && reloading <= 0 && hasPosition()) {
-			if (fireSound != null) {
-				if (bustSoundReady) {
-					WE.SOUND.play(fireSound, getPosition());
-				}
-				if (fireSoundBust) {
-					bustSoundReady = false;
-				}
-			}
-			
-			bulletDelay += delayBetweenShots;
-			shotsLoaded--;
-			firing = true;
+            bulletDelay -= dt;
+        }
 
-			//muzzle flash
-			Particle flash = new Particle();
-			flash.setTTL(400);
-			flash.setColor(Color.YELLOW.cpy());
-			flash.setType(ParticleType.FIRE);
-			flash.spawn(getPosition().toPoint());
-			flash.setMovement(aimDir.cpy().scl(4f));
-		
+        if (bulletDelay <= 0) {
+            firing = false;
+        }
+
+        if (particleBand != null) {
+            particleBand.update();
+        }
+
+        //move back
+        if (hasPosition() && fixedPos != null) {
+            if (lightSource == null && fixedPos != null) {
+                lightSource = (PointLightSource) new PointLightSource(
+                        Color.WHITE.cpy(),
+                        3,
+                        30f,
+                        WE.getGameplay().getView()
+                ).spawn(fixedPos.cpy());
+                lightSource.setSaveToDisk(false);
+            }
+            if (firing) {
+                lightSource.enable();
+                float t;
+                if (bulletDelay > delayBetweenShots / 2) {
+                    t = (bulletDelay - (delayBetweenShots / 2f)) / (delayBetweenShots / 2f);
+                } else {
+                    t = bulletDelay / (delayBetweenShots / 2f);
+                }
+                this.getPosition().lerp(fixedPos.cpy().add(aimDir.cpy().scl(-RenderCell.GAME_EDGELENGTH2)),
+                        t
+                );
+            } else {
+                lightSource.disable();
+                this.setPosition(fixedPos.cpy());
+            }
+        }
+
+
+        if (reloading >= 0) {
+            reloading -= dt;
+            if (reloading <= 0) {//finished reloading
+                shotsLoaded = shots;
+            }
+        } else { //if not shooting or loading
+            if (bulletDelay <= 0 && shotsLoaded <= 0) {//autoreload
+                reload();
+            }
+        }
+
+
+        if (laserdot == null) {
+            laserdot = (Laserdot) new Laserdot().spawn(getPosition().cpy());
+        }
+        laserdot.ignoreBlock(ignoreId);
+        laserdot.update(aimDir, getPosition());
+    }
+
+    /**
+     * @param dir
+     */
+    public void setAimDir(Vector3 dir) {
+        this.aimDir = dir.nor();
+        laserdot.update(aimDir, getPosition());
+    }
+
+    /**
+     * shoots the weapon. like holding the trigger down
+     */
+    public void shoot() {
+        if (shotsLoaded > 0 && bulletDelay <= 0 && reloading <= 0 && hasPosition()) {
+            if (fireSound != null) {
+                if (bustSoundReady) {
+                    WE.SOUND.play(fireSound, getPosition());
+                }
+                if (fireSoundBust) {
+                    bustSoundReady = false;
+                }
+            }
+
+            bulletDelay += delayBetweenShots;
+            shotsLoaded--;
+            firing = true;
+
+            //muzzle flash
+            Particle flash = new Particle();
+            flash.setTTL(400);
+            flash.setColor(Color.YELLOW.cpy());
+            flash.setType(ParticleType.FIRE);
+            flash.spawn(getPosition().toPoint());
+            flash.setMovement(aimDir.cpy().scl(4f));
+
             //shot bullets
             for (int i = 0; i < bps; i++) {
 
                 //pos.setHeight(pos.getHeight()+AbstractGameObject.GAME_EDGELENGTH);
-				Bullet bullet = new Bullet();
-				//bullet.setGun(this);
+                Bullet bullet = new Bullet();
+                //bullet.setGun(this);
 
-                if (bulletSprite < 0){//if melee hide it
+                if (bulletSprite < 0) {//if melee hide it
                     bullet.setSpriteValue((byte) 0);
                     bullet.setHidden(true);
-                } else{
+                } else {
                     bullet.setSpriteValue(bulletSprite);
                 }
 
                 Vector3 aiming = aimDir.cpy();
-                aiming.x += Math.random() * (spread*2) -spread;
-                aiming.y += Math.random() * (spread*2) -spread;
-				bullet.setMovement(aiming.scl(40f));
-				bullet.setScaling(0.2f);
-                bullet.setMaxDistance(distance*RenderCell.GAME_EDGELENGTH);
+                aiming.x += Math.random() * (spread * 2) - spread;
+                aiming.y += Math.random() * (spread * 2) - spread;
+                bullet.setMovement(aiming.scl(40f));
+                bullet.setScaling(0.2f);
+                bullet.setMaxDistance(distance * RenderCell.GAME_EDGELENGTH);
                 bullet.setDamage(damage);
                 bullet.setExplosive(explode);
                 bullet.setImpactSprite(impactSprite);
-				bullet.ignoreBlock(ignoreId);
-				//bullet.ignoreCoord(getPosition().toCoord());
-                bullet.spawn(getPosition().toPoint()); 
+                bullet.ignoreBlock(ignoreId);
+                //bullet.ignoreCoord(getPosition().toCoord());
+                bullet.spawn(getPosition().toPoint());
             }
         }
     }
-	
-	/**
-	 * 
-	 * @param id 
-	 */
-	public void ignoreBlock(byte id){
-		this.ignoreId = id;
-	}
-    
+
     /**
-     *reloads the weapon
+     * @param id
      */
-    public void reload(){
-		bustSoundReady = true;
-        reloading = relodingTime;
-        if (reload != null) {
-			WE.SOUND.play("reload", getPosition());
-		}
+    public void ignoreBlock(byte id) {
+        this.ignoreId = id;
     }
 
     /**
-     *
+     * reloads the weapon
+     */
+    public void reload() {
+        bustSoundReady = true;
+        reloading = relodingTime;
+        if (reload != null) {
+            WE.SOUND.play("reload", getPosition());
+        }
+    }
+
+    /**
      * @return
      */
     public int getShotsLoaded() {
@@ -444,7 +433,6 @@ public class Weapon extends AbstractEntity implements Telegraph {
     }
 
     /**
-     *
      * @return
      */
     public int getShots() {
@@ -452,7 +440,6 @@ public class Weapon extends AbstractEntity implements Telegraph {
     }
 
     /**
-     *
      * @return
      */
     public int getReloadingTime() {
@@ -460,23 +447,21 @@ public class Weapon extends AbstractEntity implements Telegraph {
     }
 
     /**
-     *
      * @param fire
-	 * @param bustSound true if one sound per bust
+     * @param bustSound true if one sound per bust
      */
     public void setFireSound(String fire, boolean bustSound) {
         this.fireSound = fire;
-		this.fireSoundBust = bustSound;
+        this.fireSoundBust = bustSound;
     }
 
     /**
-     *
      * @param reload
      */
     public void setReload(String reload) {
         this.reload = reload;
     }
-    
+
 //    /**
 //     *Get the distance to impact point.
 //     * @return
@@ -488,44 +473,44 @@ public class Weapon extends AbstractEntity implements Telegraph {
 
     /**
      * returns the position of the laserdot, the point where the aiming impacts
+     *
      * @return a copy
      */
     public Point getImpactPoint() {
         return laserdot.getPosition().cpy();
     }
 
-	@Override
-	public void dispose() {
-		super.dispose();
-		if (laserdot != null)
-			laserdot.dispose();
-	}
-	
-		
-	@Override
-	public boolean handleMessage(Telegram msg) {
-		 if (msg.message == Events.deselectInEditor.getId()){
-			if (particleBand != null) {
-				particleBand.dispose();
-				particleBand = null;
-			}
-		} else if (msg.message == Events.selectInEditor.getId()){
-			if (particleBand == null) {
-				particleBand = new AimBand(this, laserdot);
-			} else {
-				particleBand.setTarget(laserdot);
-			}
-		}
-		return true;
-	}
+    @Override
+    public void dispose() {
+        super.dispose();
+        if (laserdot != null)
+            laserdot.dispose();
+    }
 
-	/**
-	 *
-	 * @param hidden
-	 */
-	public void setLaserHidden(boolean hidden) {
-		if (laserdot!=null)
-			laserdot.setHidden(hidden);
-	}
-	
+
+    @Override
+    public boolean handleMessage(Telegram msg) {
+        if (msg.message == Events.deselectInEditor.getId()) {
+            if (particleBand != null) {
+                particleBand.dispose();
+                particleBand = null;
+            }
+        } else if (msg.message == Events.selectInEditor.getId()) {
+            if (particleBand == null) {
+                particleBand = new AimBand(this, laserdot);
+            } else {
+                particleBand.setTarget(laserdot);
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param hidden
+     */
+    public void setLaserHidden(boolean hidden) {
+        if (laserdot != null)
+            laserdot.setHidden(hidden);
+    }
+
 }

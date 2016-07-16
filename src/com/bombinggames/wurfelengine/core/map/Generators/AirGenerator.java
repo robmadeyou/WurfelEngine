@@ -35,6 +35,7 @@ import com.bombinggames.wurfelengine.core.map.Generator;
 
 /**
  * A simple generator who returns only air.
+ *
  * @author Benedikt Vogler
  * @see com.bombinggames.wurfelengine.core.map.Generators.FullMapGenerator
  */
@@ -45,8 +46,8 @@ public class AirGenerator implements Generator {
         return 0;
     }
 
-	@Override
-	public void spawnEntities(int x, int y, int z) {
-	}
+    @Override
+    public void spawnEntities(int x, int y, int z) {
+    }
 
 }

@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,85 +32,85 @@ import com.badlogic.gdx.ai.utils.NonBlockingSemaphoreRepository;
  * <p>
  * This decorator fails when it cannot acquire the semaphore. This allows a select task higher up the tree to find a different
  * action that doesn't involve the contested resource.
- * 
+ *
  * @param <E> type of the blackboard object that tasks use to read or modify game state
- * 
+ *
  * @author davebaol */
 public class SemaphoreGuard<E> extends Decorator<E> {
 
-	@TaskAttribute(required=true)
-	public String name;
+    @TaskAttribute(required = true)
+    public String name;
 
-	protected NonBlockingSemaphore semaphore;
-	protected boolean semaphoreAcquired;
+    protected NonBlockingSemaphore semaphore;
+    protected boolean semaphoreAcquired;
 
-	public SemaphoreGuard () {
-	}
+    public SemaphoreGuard() {
+    }
 
-	public SemaphoreGuard (Task<E> task) {
-		super(task);
-	}
+    public SemaphoreGuard(Task<E> task) {
+        super(task);
+    }
 
-	@Override
-	public void start () {
-		if (semaphore == null) {
-			semaphore = NonBlockingSemaphoreRepository.getSemaphore(name);
-		}
-		semaphoreAcquired = semaphore.acquire();
-		// System.out.println(object+" Enter START: semaphoreAcquired="+semaphoreAcquired);
-		if (semaphoreAcquired) super.start();
-	}
+    @Override
+    public void start() {
+        if (semaphore == null) {
+            semaphore = NonBlockingSemaphoreRepository.getSemaphore(name);
+        }
+        semaphoreAcquired = semaphore.acquire();
+        // System.out.println(object+" Enter START: semaphoreAcquired="+semaphoreAcquired);
+        if (semaphoreAcquired) super.start();
+    }
 
-	@Override
-	public void run () {
-		if (semaphoreAcquired) {
-			super.run();
-		} else {
-			// System.out.println("FAILING");
-			fail();
-		}
-	}
+    @Override
+    public void run() {
+        if (semaphoreAcquired) {
+            super.run();
+        } else {
+            // System.out.println("FAILING");
+            fail();
+        }
+    }
 
-	@Override
-	public void end () {
-		// System.out.println(object+" Enter END: semaphoreAcquired="+semaphoreAcquired);
-		if (semaphoreAcquired) { // This should never happen
-			super.end();
-			semaphore.release();
-			semaphoreAcquired = false;
-		}
-	}
+    @Override
+    public void end() {
+        // System.out.println(object+" Enter END: semaphoreAcquired="+semaphoreAcquired);
+        if (semaphoreAcquired) { // This should never happen
+            super.end();
+            semaphore.release();
+            semaphoreAcquired = false;
+        }
+    }
 
-	@Override
-	public void childFail (Task<E> runningTask) {
-		super.childFail(runningTask);
-		semaphore.release();
-		semaphoreAcquired = false;
-	}
+    @Override
+    public void childFail(Task<E> runningTask) {
+        super.childFail(runningTask);
+        semaphore.release();
+        semaphoreAcquired = false;
+    }
 
-	@Override
-	public void childSuccess (Task<E> runningTask) {
-		super.childSuccess(runningTask);
-		semaphore.release();
-		semaphoreAcquired = false;
-	}
+    @Override
+    public void childSuccess(Task<E> runningTask) {
+        super.childSuccess(runningTask);
+        semaphore.release();
+        semaphoreAcquired = false;
+    }
 
-	@Override
-	public void reset () {
-		super.reset();
-		semaphore = null;
-		semaphoreAcquired = false;
-	}
+    @Override
+    public void reset() {
+        super.reset();
+        semaphore = null;
+        semaphoreAcquired = false;
+    }
 
-	@Override
-	protected Task<E> copyTo (Task<E> task) {
-		super.copyTo(task);
+    @Override
+    protected Task<E> copyTo(Task<E> task) {
+        super.copyTo(task);
 
-		SemaphoreGuard<E> semaphoreGuard = (SemaphoreGuard<E>)task;
-		semaphoreGuard.name = name;
-		semaphoreGuard.semaphore = null;
-		semaphoreGuard.semaphoreAcquired = false;
+        SemaphoreGuard<E> semaphoreGuard = (SemaphoreGuard<E>) task;
+        semaphoreGuard.name = name;
+        semaphoreGuard.semaphore = null;
+        semaphoreGuard.semaphoreAcquired = false;
 
-		return task;
-	}
+        return task;
+    }
 }

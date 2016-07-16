@@ -33,39 +33,37 @@ package com.bombinggames.wurfelengine.core.map;
 import com.badlogic.gdx.ai.pfa.Connection;
 
 /**
- *
  * @author Benedikt Vogler
  */
-public class CoordConnection implements Connection<PfNode>	{
+public class CoordConnection implements Connection<PfNode> {
 
-	private final PfNode from;
-	private final PfNode to;
+    private final PfNode from;
+    private final PfNode to;
 
-	/**
-	 *
-	 * @param from
-	 * @param to
-	 */
-	public CoordConnection(PfNode from, PfNode to) {
-		this.from = from;
-		this.to = to;
-	}
-	
+    /**
+     * @param from
+     * @param to
+     */
+    public CoordConnection(PfNode from, PfNode to) {
+        this.from = from;
+        this.to = to;
+    }
 
-	@Override
-	public float getCost() {
-		return from.distanceTo(to);
-	}
 
-	@Override
-	public PfNode getFromNode() {
-		return from;
-		
-	}
+    @Override
+    public float getCost() {
+        return from.distanceTo(to);
+    }
 
-	@Override
-	public PfNode getToNode() {
-		return to;
-	}
-	
+    @Override
+    public PfNode getFromNode() {
+        return from;
+
+    }
+
+    @Override
+    public PfNode getToNode() {
+        return to;
+    }
+
 }

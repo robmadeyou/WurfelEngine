@@ -6,29 +6,28 @@
 package com.bombinggames.wurfelengine.core;
 
 /**
- *
  * @author Micahel McMahon
  */
-public class FrameCapture  {
-    
-    
+public class FrameCapture {
+
+
     private int[][] pixelData;
 
 
     private int width;
     private int heightl;
-    
+
     /**
      * Creates a new instance of a frame capture;
-     * @param width the width of the resulting capture
-     * @param height the height of the resulting capture 
+     *
+     * @param width  the width of the resulting capture
+     * @param height the height of the resulting capture
      */
-    public FrameCapture(int width, int height)
-    {
+    public FrameCapture(int width, int height) {
         this.heightl = height;
         this.width = width;
     }
-    
+
     public int getWidth() {
         return width;
     }
@@ -44,21 +43,18 @@ public class FrameCapture  {
     public void setHeightl(int heightl) {
         this.heightl = heightl;
     }
-    
-    public void capture()
-    {
-        
+
+    public void capture() {
+
     }
-    
-    private void clear()
-    {
-        
+
+    private void clear() {
+
     }
-    
-    public void saveCaptureToDisk(String fileName, String path)
-    {
-        
+
+    public void saveCaptureToDisk(String fileName, String path) {
+
     }
-    
-    
+
+
 }

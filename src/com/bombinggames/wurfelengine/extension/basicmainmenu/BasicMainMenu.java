@@ -42,89 +42,86 @@ import com.bombinggames.wurfelengine.core.GameView;
  */
 public class BasicMainMenu extends AbstractMainMenu {
 
-	private static MenuView view;
-	private static MenuController controller;
-	private boolean warning = true;
-	private final BasicMenuItem[] menuItems;
+    private static MenuView view;
+    private static MenuController controller;
+    private final BasicMenuItem[] menuItems;
+    private boolean warning = true;
 
-	/**
-	 * Use this constructor to pass your controller and views in order of the
-	 * main menu
-	 *
-	 * @param menuItems
-	 *
-	 */
-	public BasicMainMenu(BasicMenuItem[] menuItems) {
-		this.menuItems = menuItems;
-	}
+    /**
+     * Use this constructor to pass your controller and views in order of the
+     * main menu
+     *
+     * @param menuItems
+     */
+    public BasicMainMenu(BasicMenuItem[] menuItems) {
+        this.menuItems = menuItems;
+    }
 
-	public BasicMainMenu() {
-		this.menuItems = new BasicMenuItem[]{
-			new BasicMenuItem(0, "Test Engine", Controller.class, GameView.class),
-			new BasicMenuItem(1, "Exit")
-		};
+    public BasicMainMenu() {
+        this.menuItems = new BasicMenuItem[]{
+                new BasicMenuItem(0, "Test Engine", Controller.class, GameView.class),
+                new BasicMenuItem(1, "Exit")
+        };
 
-	}
+    }
 
-	@Override
-	public void init() {
-		controller = new MenuController(menuItems);
-		view = new MenuView(controller);
-	}
+    /**
+     * @return
+     */
+    public static MenuController getController() {
+        return controller;
+    }
 
-	@Override
-	public void renderImpl(float dt) {
-		controller.update(dt);
-		view.update(dt);
-		view.render(warning);
-	}
+    /**
+     * @return
+     */
+    public static MenuView getView() {
+        return view;
+    }
 
-	@Override
-	public void resize(int width, int height) {
-	}
+    @Override
+    public void init() {
+        controller = new MenuController(menuItems);
+        view = new MenuView(controller);
+    }
 
-	@Override
-	public void show() {
-		controller.show();
-		view.show();
-	}
+    @Override
+    public void renderImpl(float dt) {
+        controller.update(dt);
+        view.update(dt);
+        view.render(warning);
+    }
 
-	@Override
-	public void hide() {
-	}
+    @Override
+    public void resize(int width, int height) {
+    }
 
-	@Override
-	public void pause() {
-	}
+    @Override
+    public void show() {
+        controller.show();
+        view.show();
+    }
 
-	@Override
-	public void resume() {
-	}
+    @Override
+    public void hide() {
+    }
 
-	@Override
-	public void dispose() {
-	}
+    @Override
+    public void pause() {
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public static MenuController getController() {
-		return controller;
-	}
+    @Override
+    public void resume() {
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public static MenuView getView() {
-		return view;
-	}
+    @Override
+    public void dispose() {
+    }
 
-	/**
-	 * If you want to hide the warning message call this method.
-	 */
-	public void supressWarning() {
-		warning = false;
-	}
+    /**
+     * If you want to hide the warning message call this method.
+     */
+    public void supressWarning() {
+        warning = false;
+    }
 }

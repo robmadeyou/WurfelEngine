@@ -38,110 +38,102 @@ import com.bombinggames.wurfelengine.core.gameobjects.AbstractGameObject;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class EntityDrawable extends TextureRegionDrawable {
-	private AbstractEntity instance = null;
-	private float scaling = 1;
+    private AbstractEntity instance = null;
+    private float scaling = 1;
 
-	/**
-	 *
-	 * @param type
-	 * @throws java.lang.InstantiationException
-	 * @throws java.lang.IllegalAccessException
-	 */
-	public EntityDrawable(Class<? extends AbstractEntity> type) throws InstantiationException, IllegalAccessException {
-		instance = type.newInstance();
-		if (instance.getSpriteId() > 0) {
-			//if bigger then default sprite size
-			float spiteHeight = AbstractGameObject.getSprite('e', instance.getSpriteId(), instance.getSpriteValue()).packedHeight;
-			float regularHeight = RenderCell.VIEW_HEIGHT+RenderCell.VIEW_DEPTH;
-			if (spiteHeight > regularHeight) {
-				scaling = (regularHeight / spiteHeight);
-			}
-		}
-		instance.setScaling(scaling*0.5f);
-	}
-
-	@Override
-    public void draw(Batch batch, float x, float y, float width, float height) {
-		if (instance != null) {
-			batch.end();
-			
-			//then use gameplay batch
-			boolean wasDefault = false;
-			if (WE.getGameplay().getView().isUsingDefaultShader()) {
-				WE.getGameplay().getView().setShader(WE.getGameplay().getView().getShader());
-				wasDefault = true;
-			}
-			WE.getGameplay().getView().getSpriteBatch().begin();
-			instance.render(WE.getGameplay().getView(), (int) ((int) x+RenderCell.VIEW_WIDTH2*instance.getScaling()), (int) y);
-			WE.getGameplay().getView().getSpriteBatch().end();
-			if (wasDefault) {
-				WE.getGameplay().getView().useDefaultShader();
-			}
-			batch.begin();
-		}
-    }
-	
-	@Override
-	public void draw(Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float rotation) {
-		instance.setScaling(scaling*scaleY);
-		draw(batch, x, y, width, height);
-	}
-	
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public float getLeftWidth() {
-		return RenderCell.VIEW_WIDTH2*(instance.getScaling());
-	}
-	
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public float getRightWidth() {
-		return RenderCell.VIEW_WIDTH2*(instance.getScaling());
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public float getTopHeight() {
-		return (RenderCell.VIEW_HEIGHT2+RenderCell.VIEW_DEPTH2)*(instance.getScaling());
-	}
-
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public float getBottomHeight() {
-		return (RenderCell.VIEW_HEIGHT2+RenderCell.VIEW_DEPTH2)*(instance.getScaling());
-	}
-	
     /**
-     *
+     * @param type
+     * @throws java.lang.InstantiationException
+     * @throws java.lang.IllegalAccessException
+     */
+    public EntityDrawable(Class<? extends AbstractEntity> type) throws InstantiationException, IllegalAccessException {
+        instance = type.newInstance();
+        if (instance.getSpriteId() > 0) {
+            //if bigger then default sprite size
+            float spiteHeight = AbstractGameObject.getSprite('e', instance.getSpriteId(), instance.getSpriteValue()).packedHeight;
+            float regularHeight = RenderCell.VIEW_HEIGHT + RenderCell.VIEW_DEPTH;
+            if (spiteHeight > regularHeight) {
+                scaling = (regularHeight / spiteHeight);
+            }
+        }
+        instance.setScaling(scaling * 0.5f);
+    }
+
+    @Override
+    public void draw(Batch batch, float x, float y, float width, float height) {
+        if (instance != null) {
+            batch.end();
+
+            //then use gameplay batch
+            boolean wasDefault = false;
+            if (WE.getGameplay().getView().isUsingDefaultShader()) {
+                WE.getGameplay().getView().setShader(WE.getGameplay().getView().getShader());
+                wasDefault = true;
+            }
+            WE.getGameplay().getView().getSpriteBatch().begin();
+            instance.render(WE.getGameplay().getView(), (int) ((int) x + RenderCell.VIEW_WIDTH2 * instance.getScaling()), (int) y);
+            WE.getGameplay().getView().getSpriteBatch().end();
+            if (wasDefault) {
+                WE.getGameplay().getView().useDefaultShader();
+            }
+            batch.begin();
+        }
+    }
+
+    @Override
+    public void draw(Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float rotation) {
+        instance.setScaling(scaling * scaleY);
+        draw(batch, x, y, width, height);
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public float getLeftWidth() {
+        return RenderCell.VIEW_WIDTH2 * (instance.getScaling());
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public float getRightWidth() {
+        return RenderCell.VIEW_WIDTH2 * (instance.getScaling());
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public float getTopHeight() {
+        return (RenderCell.VIEW_HEIGHT2 + RenderCell.VIEW_DEPTH2) * (instance.getScaling());
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public float getBottomHeight() {
+        return (RenderCell.VIEW_HEIGHT2 + RenderCell.VIEW_DEPTH2) * (instance.getScaling());
+    }
+
+    /**
      * @return
      */
     @Override
     public float getMinHeight() {
-        return (RenderCell.VIEW_HEIGHT+RenderCell.VIEW_DEPTH)*(instance.getScaling());
+        return (RenderCell.VIEW_HEIGHT + RenderCell.VIEW_DEPTH) * (instance.getScaling());
     }
 
     /**
-     *
      * @return
      */
     @Override
     public float getMinWidth() {
-		return RenderCell.VIEW_WIDTH*(instance.getScaling());
+        return RenderCell.VIEW_WIDTH * (instance.getScaling());
     }
 }

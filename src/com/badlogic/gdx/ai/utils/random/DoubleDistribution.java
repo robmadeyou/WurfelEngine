@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,64 +22,65 @@ import java.util.StringTokenizer;
 /** @author davebaol */
 public abstract class DoubleDistribution implements Distribution {
 
-	@Override
-	public int nextInt () {
-		return (int)nextDouble();
-	}
+    public static DoubleDistribution parse(String value) throws DistributionFormatException {
+        StringTokenizer st = new StringTokenizer(value, ", \t\f");
+        if (!st.hasMoreTokens()) throw new DistributionFormatException("Missing ditribution type");
+        String type = st.nextToken();
 
-	@Override
-	public long nextLong () {
-		return (long)nextDouble();
-	}
+        try {
+            DoubleDistribution dist;
+            if (type.equalsIgnoreCase("constant")) {
+                dist = new ConstantDoubleDistribution(doubleToken(st));
+            } else if (type.equalsIgnoreCase("uniform")) {
+                double a1 = doubleToken(st);
+                if (!st.hasMoreElements())
+                    dist = new UniformDoubleDistribution(a1);
+                else
+                    dist = new UniformDoubleDistribution(a1, doubleToken(st));
+            } else if (type.equalsIgnoreCase("triangular")) {
+                double a1 = doubleToken(st);
+                if (!st.hasMoreElements())
+                    dist = new TriangularDoubleDistribution(a1);
+                else {
+                    double a2 = doubleToken(st);
+                    if (!st.hasMoreElements())
+                        dist = new TriangularDoubleDistribution(a1, a2);
+                    else
+                        dist = new TriangularDoubleDistribution(a1, a2, doubleToken(st));
+                }
+            } else if (type.equalsIgnoreCase("gaussian")) {
+                dist = new GaussianDoubleDistribution(doubleToken(st), doubleToken(st));
+            } else {
+                throw new DistributionFormatException("Unknown distribution '" + type + "'");
+            }
 
-	@Override
-	public float nextFloat () {
-		return (float)nextDouble();
-	}
+            if (st.hasMoreTokens())
+                throw new DistributionFormatException("Too many arguments in distribution '" + type + "'");
 
-	public static DoubleDistribution parse (String value) throws DistributionFormatException {
-		StringTokenizer st = new StringTokenizer(value, ", \t\f");
-		if (!st.hasMoreTokens()) throw new DistributionFormatException("Missing ditribution type");
-		String type = st.nextToken();
+            return dist;
+        } catch (NumberFormatException nfe) {
+            throw new DistributionFormatException("Illegal argument in in distribution '" + type + "'", nfe);
+        } catch (NoSuchElementException nsee) {
+            throw new DistributionFormatException("Missing argument in distribution '" + type + "'");
+        }
+    }
 
-		try {
-			DoubleDistribution dist;
-			if (type.equalsIgnoreCase("constant")) {
-				dist = new ConstantDoubleDistribution(doubleToken(st));
-			} else if (type.equalsIgnoreCase("uniform")) {
-				double a1 = doubleToken(st);
-				if (!st.hasMoreElements())
-					dist = new UniformDoubleDistribution(a1);
-				else
-					dist = new UniformDoubleDistribution(a1, doubleToken(st));
-			} else if (type.equalsIgnoreCase("triangular")) {
-				double a1 = doubleToken(st);
-				if (!st.hasMoreElements())
-					dist = new TriangularDoubleDistribution(a1);
-				else {
-					double a2 = doubleToken(st);
-					if (!st.hasMoreElements())
-						dist = new TriangularDoubleDistribution(a1, a2);
-					else
-						dist = new TriangularDoubleDistribution(a1, a2, doubleToken(st));
-				}
-			} else if (type.equalsIgnoreCase("gaussian")) {
-				dist = new GaussianDoubleDistribution(doubleToken(st), doubleToken(st));
-			} else {
-				throw new DistributionFormatException("Unknown distribution '" + type + "'");
-			}
+    private static double doubleToken(StringTokenizer st) {
+        return Double.parseDouble(st.nextToken());
+    }
 
-			if (st.hasMoreTokens()) throw new DistributionFormatException("Too many arguments in distribution '" + type + "'");
+    @Override
+    public int nextInt() {
+        return (int) nextDouble();
+    }
 
-			return dist;
-		} catch (NumberFormatException nfe) {
-			throw new DistributionFormatException("Illegal argument in in distribution '" + type + "'", nfe);
-		} catch (NoSuchElementException nsee) {
-			throw new DistributionFormatException("Missing argument in distribution '" + type + "'");
-		}
-	}
+    @Override
+    public long nextLong() {
+        return (long) nextDouble();
+    }
 
-	private static double doubleToken (StringTokenizer st) {
-		return Double.parseDouble(st.nextToken());
-	}
+    @Override
+    public float nextFloat() {
+        return (float) nextDouble();
+    }
 }

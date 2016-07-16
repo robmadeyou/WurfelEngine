@@ -29,6 +29,5 @@
 
 /**
  * This package provides a basic main menu to start a game instance.
- *
  */
 package com.bombinggames.wurfelengine.extension.basicmainmenu;

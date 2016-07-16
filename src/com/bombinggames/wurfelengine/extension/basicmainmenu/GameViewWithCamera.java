@@ -37,21 +37,22 @@ import com.bombinggames.wurfelengine.core.Controller;
 import com.bombinggames.wurfelengine.core.GameView;
 
 /**
- *A simple Controller which adds a camera.
+ * A simple Controller which adds a camera.
+ *
  * @author Benedikt Vogler
  */
 public class GameViewWithCamera extends GameView {
 
-	@Override
-	public void init(Controller controller, GameView oldView) {
-		super.init(controller, oldView);
+    @Override
+    public void init(Controller controller, GameView oldView) {
+        super.init(controller, oldView);
 
-		addCamera(new Camera(
-				this,
-				0,
-				0,
-				Gdx.graphics.getWidth(),
-				Gdx.graphics.getHeight()
-		));
-	}
+        addCamera(new Camera(
+                this,
+                0,
+                0,
+                Gdx.graphics.getWidth(),
+                Gdx.graphics.getHeight()
+        ));
+    }
 }

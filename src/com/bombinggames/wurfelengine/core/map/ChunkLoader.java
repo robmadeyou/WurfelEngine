@@ -33,45 +33,45 @@ package com.bombinggames.wurfelengine.core.map;
 import java.io.File;
 
 /**
- *
  * @author Benedikt Vogler
  */
-public class ChunkLoader implements Runnable{
-	private Chunk chunk;
-	private final Generator generator;
-	private final File path;
-	private final int coordY;
-	private final int coordX;
-	private final Map map;
+public class ChunkLoader implements Runnable {
+    private final Generator generator;
+    private final File path;
+    private final int coordY;
+    private final int coordX;
+    private final Map map;
+    private Chunk chunk;
 
-	public ChunkLoader(final Map map, final File path, final int coordX, final int coordY, final Generator generator) {
-		this.map = map;
-		this.coordX = coordX;
-		this.coordY = coordY;
-		this.path = path;
-		this.generator = generator;
-	}
-	
-	
-	@Override
-	public void run() {
-		chunk = new Chunk(map, path, coordX, coordY, generator);
-	}
+    public ChunkLoader(final Map map, final File path, final int coordX, final int coordY, final Generator generator) {
+        this.map = map;
+        this.coordX = coordX;
+        this.coordY = coordY;
+        this.path = path;
+        this.generator = generator;
+    }
 
-	/**
-	 * has a chunk if it has finished loading
-	 * @return 
-	 */
-	public Chunk getChunk() {
-		return chunk;
-	}
-	
-	public int getCoordX() {
-		return coordX;
-	}
 
-	public int getCoordY() {
-		return coordY;
-	}
-	
+    @Override
+    public void run() {
+        chunk = new Chunk(map, path, coordX, coordY, generator);
+    }
+
+    /**
+     * has a chunk if it has finished loading
+     *
+     * @return
+     */
+    public Chunk getChunk() {
+        return chunk;
+    }
+
+    public int getCoordX() {
+        return coordX;
+    }
+
+    public int getCoordY() {
+        return coordY;
+    }
+
 }

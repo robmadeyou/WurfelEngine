@@ -14,60 +14,59 @@ package com.bombinggames.wurfelengine.core.map;
  */
 public abstract class AbstractBlockLogicExtension {
 
-	private static final long serialVersionUID = 2L;
-	/**
-	 * pointer to the according coordinate
-	 */
-	private final Coordinate coord;
-	/**
-	 * Is only used for validity check.
-	 */
-	private final byte id;
+    private static final long serialVersionUID = 2L;
+    /**
+     * pointer to the according coordinate
+     */
+    private final Coordinate coord;
+    /**
+     * Is only used for validity check.
+     */
+    private final byte id;
 
-	/**
-	 * Called when spawned. Should not access the map because during map
-	 * creating this method is called and the map still empty. Also entities can not be spawned here.
-	 *
-	 * @param blockId the block at the position
-	 * @param coord the position where the logic block is placed
-	 */
-	public AbstractBlockLogicExtension(byte blockId, Coordinate coord) {
-		this.id = blockId;
-		if (coord == null) {
-			throw new NullPointerException();
-		}
-		this.coord = coord;
-	}
+    /**
+     * Called when spawned. Should not access the map because during map
+     * creating this method is called and the map still empty. Also entities can not be spawned here.
+     *
+     * @param blockId the block at the position
+     * @param coord   the position where the logic block is placed
+     */
+    public AbstractBlockLogicExtension(byte blockId, Coordinate coord) {
+        this.id = blockId;
+        if (coord == null) {
+            throw new NullPointerException();
+        }
+        this.coord = coord;
+    }
 
-	/**
-	 * This method must be named "getPosition" so that this method can implement
-	 * other interfaces using this API signature
-	 *
-	 * @return not copy safe. never null
-	 */
-	public Coordinate getPosition() {
-		return coord;
-	}
+    /**
+     * This method must be named "getPosition" so that this method can implement
+     * other interfaces using this API signature
+     *
+     * @return not copy safe. never null
+     */
+    public Coordinate getPosition() {
+        return coord;
+    }
 
-	/**
-	 * A logicblock is still valid if the pointer shows to a block with the same
-	 * id as during creation.
-	 *
-	 * @return false if should be deleted
-	 */
-	public boolean isValid() {
-		return coord.getBlockId() == id;
-	}
+    /**
+     * A logicblock is still valid if the pointer shows to a block with the same
+     * id as during creation.
+     *
+     * @return false if should be deleted
+     */
+    public boolean isValid() {
+        return coord.getBlockId() == id;
+    }
 
-	/**
-	 *
-	 * @param dt
-	 */
-	public abstract void update(float dt);
+    /**
+     * @param dt
+     */
+    public abstract void update(float dt);
 
-	/**
-	 * called when removed
-	 */
-	public abstract void dispose();
+    /**
+     * called when removed
+     */
+    public abstract void dispose();
 
 }

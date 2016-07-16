@@ -42,124 +42,116 @@ import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
  */
 public class BlockDrawable extends TextureRegionDrawable {
 
-	private final RenderCell block;
+    private final RenderCell block;
 
-	/**
-	 *
-	 * @param id
-	 */
-	public BlockDrawable(byte id) {
-		this(id, (byte) 0, 1);
-		block.setPosition(null);
-	}
+    /**
+     * @param id
+     */
+    public BlockDrawable(byte id) {
+        this(id, (byte) 0, 1);
+        block.setPosition(null);
+    }
 
-	/**
-	 *
-	 * @param id block id
-	 * @param value block value
-	 * @param size relative size
-	 */
-	public BlockDrawable(byte id, byte value, float size) {
-		if (id >= RenderCell.OBJECTTYPESNUM) {
-			this.block = RenderCell.getRenderCell((byte) 0, (byte) 0);//invalid id.
-		} else {
-			this.block = RenderCell.getRenderCell(id, value);
-		}
-		block.setPosition(null);
-		block.setScaling(size);
-	}
-	
-	void setValue(byte value) {
-		this.block.setSpriteValue(value);
-	}
+    /**
+     * @param id    block id
+     * @param value block value
+     * @param size  relative size
+     */
+    public BlockDrawable(byte id, byte value, float size) {
+        if (id >= RenderCell.OBJECTTYPESNUM) {
+            this.block = RenderCell.getRenderCell((byte) 0, (byte) 0);//invalid id.
+        } else {
+            this.block = RenderCell.getRenderCell(id, value);
+        }
+        block.setPosition(null);
+        block.setScaling(size);
+    }
 
-	@Override
-	public void draw(Batch batch, float x, float y, float width, float height) {
-		if (block != null && block.getSpriteId() != 0) {
-			batch.end();//end current batch
-			//then use gameplay batch
-			boolean wasDefault = false;
-			if (WE.getGameplay().getView().isUsingDefaultShader()) {
-				WE.getGameplay().getView().setShader(WE.getGameplay().getView().getShader());
-				wasDefault = true;
-			}
-			//batch.setColor(new Color(1, 1, 1, 1));
-			batch.begin();
+    void setValue(byte value) {
+        this.block.setSpriteValue(value);
+    }
 
-			//block.setColor(new Color(1, 1, 1, 1));
-			block.resetLight();
-			block.render(WE.getGameplay().getView(),
-				(int) (x + RenderCell.VIEW_WIDTH2 * block.getScaling()),//should be with -getLeftWidth() but then deos not align
-				(int) y,
-				null,
-				true
-			);
+    @Override
+    public void draw(Batch batch, float x, float y, float width, float height) {
+        if (block != null && block.getSpriteId() != 0) {
+            batch.end();//end current batch
+            //then use gameplay batch
+            boolean wasDefault = false;
+            if (WE.getGameplay().getView().isUsingDefaultShader()) {
+                WE.getGameplay().getView().setShader(WE.getGameplay().getView().getShader());
+                wasDefault = true;
+            }
+            //batch.setColor(new Color(1, 1, 1, 1));
+            batch.begin();
 
-			batch.end();
-			if (wasDefault) {
-				WE.getGameplay().getView().useDefaultShader();
-			}
-			batch.begin();
-		}
-	}
+            //block.setColor(new Color(1, 1, 1, 1));
+            block.resetLight();
+            block.render(WE.getGameplay().getView(),
+                    (int) (x + RenderCell.VIEW_WIDTH2 * block.getScaling()),//should be with -getLeftWidth() but then deos not align
+                    (int) y,
+                    null,
+                    true
+            );
 
-	@Override
-	public void draw(Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float rotation) {
-		block.setScaling(scaleY);
-		draw(batch, x, y, width, height);
-	}
+            batch.end();
+            if (wasDefault) {
+                WE.getGameplay().getView().useDefaultShader();
+            }
+            batch.begin();
+        }
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public float getLeftWidth() {
-		return RenderCell.VIEW_WIDTH2 * block.getScaling();
-	}
+    @Override
+    public void draw(Batch batch, float x, float y, float originX, float originY, float width, float height, float scaleX, float scaleY, float rotation) {
+        block.setScaling(scaleY);
+        draw(batch, x, y, width, height);
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public float getRightWidth() {
-		return RenderCell.VIEW_WIDTH2 * block.getScaling();
-	}
+    /**
+     * @return
+     */
+    @Override
+    public float getLeftWidth() {
+        return RenderCell.VIEW_WIDTH2 * block.getScaling();
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public float getTopHeight() {
-		return 0;
-	}
+    /**
+     * @return
+     */
+    @Override
+    public float getRightWidth() {
+        return RenderCell.VIEW_WIDTH2 * block.getScaling();
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public float getBottomHeight() {
-		return 0;
-	}
+    /**
+     * @return
+     */
+    @Override
+    public float getTopHeight() {
+        return 0;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public float getMinHeight() {
-		return (RenderCell.VIEW_HEIGHT + RenderCell.VIEW_DEPTH) * block.getScaling();
-	}
+    /**
+     * @return
+     */
+    @Override
+    public float getBottomHeight() {
+        return 0;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public float getMinWidth() {
-		return RenderCell.VIEW_WIDTH * block.getScaling();
-	}
+    /**
+     * @return
+     */
+    @Override
+    public float getMinHeight() {
+        return (RenderCell.VIEW_HEIGHT + RenderCell.VIEW_DEPTH) * block.getScaling();
+    }
+
+    /**
+     * @return
+     */
+    @Override
+    public float getMinWidth() {
+        return RenderCell.VIEW_WIDTH * block.getScaling();
+    }
 }

@@ -35,76 +35,74 @@ import com.bombinggames.wurfelengine.core.GameView;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class EntityShadow extends AbstractEntity {
 
-	private static final long serialVersionUID = 1L;
-	/**
-	 * the parent class. The object where this is the shadow
-	 */
-	private final AbstractEntity character;
+    private static final long serialVersionUID = 1L;
+    /**
+     * the parent class. The object where this is the shadow
+     */
+    private final AbstractEntity character;
 
-	/**
-	 *
-	 * @param character
-	 */
-	protected EntityShadow(AbstractEntity character) {
-		super((byte) 32);
-		this.disableShadow();
-		this.setName("Shadow");
-		this.character = character;
-	}
+    /**
+     * @param character
+     */
+    protected EntityShadow(AbstractEntity character) {
+        super((byte) 32);
+        this.disableShadow();
+        this.setName("Shadow");
+        this.character = character;
+    }
 
-	@Override
-	public void update(float dt) {
-		setSaveToDisk(false);
-		if (character == null || !character.hasPosition() || !hasPosition() || character.isHidden()) {
-			dispose();
-		} else {
-			//find height of shadow surface
-			getPoint().set(character.getPosition());//start at character
-			while (getPoint().getZ() > 0
-				&& (RenderCell.isTransparent(getPoint().getBlock()))
-			) {
-				getPoint().add(0, 0, -RenderCell.GAME_EDGELENGTH);
-			}
-			if (character.getPosition().getZ()<RenderCell.GAME_EDGELENGTH) {
-				getPoint().setZ(0);
-			} else {
-				getPoint().setZ((getPoint().getZGrid()+1)*RenderCell.GAME_EDGELENGTH);
-			}
-		}
-	}
+    @Override
+    public void update(float dt) {
+        setSaveToDisk(false);
+        if (character == null || !character.hasPosition() || !hasPosition() || character.isHidden()) {
+            dispose();
+        } else {
+            //find height of shadow surface
+            getPoint().set(character.getPosition());//start at character
+            while (getPoint().getZ() > 0
+                    && (RenderCell.isTransparent(getPoint().getBlock()))
+                    ) {
+                getPoint().add(0, 0, -RenderCell.GAME_EDGELENGTH);
+            }
+            if (character.getPosition().getZ() < RenderCell.GAME_EDGELENGTH) {
+                getPoint().setZ(0);
+            } else {
+                getPoint().setZ((getPoint().getZGrid() + 1) * RenderCell.GAME_EDGELENGTH);
+            }
+        }
+    }
 
-	@Override
-	public void render(GameView view, Camera camera) {
-		if (character == null || !character.hasPosition() || !hasPosition() || character.isHidden()) {
-			dispose();
-		} else {
-			setScaling(1);
-			setColor(new Color(
-					.5f,
-					.5f,
-					.5f,
-					1 - (character.getPosition().getZ() - getPosition().getZ()) / 2 / RenderCell.GAME_EDGELENGTH+0.1f
-				)
-			);
-			super.render(view, camera);
-			//always visible smaller shadow
-			if (getColor().a < 0.9f) {//render only if small shadow would be visible
-				setColor(
-					new Color(.5f, .5f, .5f, 0.2f)
-				);
-				setScaling(0.5f);
-				super.render(view, camera);
-			}
-		}
-	}
+    @Override
+    public void render(GameView view, Camera camera) {
+        if (character == null || !character.hasPosition() || !hasPosition() || character.isHidden()) {
+            dispose();
+        } else {
+            setScaling(1);
+            setColor(new Color(
+                            .5f,
+                            .5f,
+                            .5f,
+                            1 - (character.getPosition().getZ() - getPosition().getZ()) / 2 / RenderCell.GAME_EDGELENGTH + 0.1f
+                    )
+            );
+            super.render(view, camera);
+            //always visible smaller shadow
+            if (getColor().a < 0.9f) {//render only if small shadow would be visible
+                setColor(
+                        new Color(.5f, .5f, .5f, 0.2f)
+                );
+                setScaling(0.5f);
+                super.render(view, camera);
+            }
+        }
+    }
 
-	@Override
-	public boolean handleMessage(Telegram msg) {
-		return true;
-	}
+    @Override
+    public boolean handleMessage(Telegram msg) {
+        return true;
+    }
 }

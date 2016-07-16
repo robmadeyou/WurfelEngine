@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,27 +21,27 @@ import com.badlogic.gdx.ai.btree.Task;
 
 /** An {@code UntilSuccess} decorator will repeat the wrapped task until that task succeeds. Using {@code UntilSuccess} with
  * {@code AlwaysFail} without any ancestor call {@link #running()} will cause {@link StackOverflowError}.
- * 
+ *
  * @param <E> type of the blackboard object that tasks use to read or modify game state
- * 
+ *
  * @author implicit-invocation */
 public class UntilSuccess<E> extends Decorator<E> {
 
-	public UntilSuccess () {
-	}
+    public UntilSuccess() {
+    }
 
-	public UntilSuccess (Task<E> task) {
-		super(task);
-	}
+    public UntilSuccess(Task<E> task) {
+        super(task);
+    }
 
-	@Override
-	public void childSuccess (Task<E> runningTask) {
-		control.childSuccess(this);
-	}
+    @Override
+    public void childSuccess(Task<E> runningTask) {
+        control.childSuccess(this);
+    }
 
-	@Override
-	public void childFail (Task<E> runningTask) {
-		start();
-		run();
-	}
+    @Override
+    public void childFail(Task<E> runningTask) {
+        start();
+        run();
+    }
 }

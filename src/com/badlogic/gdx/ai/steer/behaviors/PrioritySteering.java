@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -55,102 +55,102 @@ import com.badlogic.gdx.utils.Array;
  * groups won't be considered.
  * <p>
  * Usually {@code PrioritySteering} gives you a good compromise between speed and accuracy.
- * 
+ *
  * @param <T> Type of vector, either 2D or 3D, implementing the {@link Vector} interface
- * 
+ *
  * @author davebaol */
 public class PrioritySteering<T extends Vector<T>> extends SteeringBehavior<T> {
 
-	/** The threshold of the steering acceleration magnitude below which a steering behavior is considered to have given no output. */
-	protected float epsilon;
+    /** The threshold of the steering acceleration magnitude below which a steering behavior is considered to have given no output. */
+    protected float epsilon;
 
-	/** The list of steering behaviors in priority order. The first item in the list is tried first, the subsequent entries are only
-	 * considered if the first one does not return a result. */
-	protected Array<SteeringBehavior<T>> behaviors = new Array<SteeringBehavior<T>>();
+    /** The list of steering behaviors in priority order. The first item in the list is tried first, the subsequent entries are only
+     * considered if the first one does not return a result. */
+    protected Array<SteeringBehavior<T>> behaviors = new Array<SteeringBehavior<T>>();
 
-	/** Creates a {@code PrioritySteering} behavior for the specified owner. The threshold is set to 0.001.
-	 * @param owner the owner of this behavior */
-	public PrioritySteering (Steerable<T> owner) {
-		this(owner, 0.001f);
-	}
+    /** Creates a {@code PrioritySteering} behavior for the specified owner. The threshold is set to 0.001.
+     * @param owner the owner of this behavior */
+    public PrioritySteering(Steerable<T> owner) {
+        this(owner, 0.001f);
+    }
 
-	/** Creates a {@code PrioritySteering} behavior for the specified owner and threshold.
-	 * @param owner the owner of this behavior
-	 * @param epsilon the threshold of the steering acceleration magnitude below which a steering behavior is considered to have
-	 *           given no output */
-	public PrioritySteering (Steerable<T> owner, float epsilon) {
-		super(owner);
-		this.epsilon = epsilon;
-	}
+    /** Creates a {@code PrioritySteering} behavior for the specified owner and threshold.
+     * @param owner the owner of this behavior
+     * @param epsilon the threshold of the steering acceleration magnitude below which a steering behavior is considered to have
+     *           given no output */
+    public PrioritySteering(Steerable<T> owner, float epsilon) {
+        super(owner);
+        this.epsilon = epsilon;
+    }
 
-	/** Adds the specified behavior to the priority list.
-	 * @param behavior the behavior to add
-	 * @return this behavior for chaining. */
-	public PrioritySteering<T> add (SteeringBehavior<T> behavior) {
-		behaviors.add(behavior);
-		return this;
-	}
+    /** Adds the specified behavior to the priority list.
+     * @param behavior the behavior to add
+     * @return this behavior for chaining. */
+    public PrioritySteering<T> add(SteeringBehavior<T> behavior) {
+        behaviors.add(behavior);
+        return this;
+    }
 
-	@Override
-	protected SteeringAcceleration<T> calculateRealSteering (SteeringAcceleration<T> steering) {
-		// We'll need epsilon squared later.
-		float epsilonSquared = epsilon * epsilon;
+    @Override
+    protected SteeringAcceleration<T> calculateRealSteering(SteeringAcceleration<T> steering) {
+        // We'll need epsilon squared later.
+        float epsilonSquared = epsilon * epsilon;
 
-		// Go through the behaviors until one has a large enough acceleration
-		int n = behaviors.size;
-		for (int i = 0; i < n; i++) {
-			SteeringBehavior<T> behavior = behaviors.get(i);
+        // Go through the behaviors until one has a large enough acceleration
+        int n = behaviors.size;
+        for (int i = 0; i < n; i++) {
+            SteeringBehavior<T> behavior = behaviors.get(i);
 
-			// Calculate the behavior's steering
-			behavior.calculateSteering(steering);
+            // Calculate the behavior's steering
+            behavior.calculateSteering(steering);
 
-			// If we're above the threshold return the current steering
-			if (steering.calculateSquareMagnitude() > epsilonSquared) return steering;
-		}
+            // If we're above the threshold return the current steering
+            if (steering.calculateSquareMagnitude() > epsilonSquared) return steering;
+        }
 
-		// If we get here, it means that no behavior had a large enough acceleration,
-		// so return the small acceleration from the final behavior or zero if there are
-		// no behaviors in the list.
-		return n > 0 ? steering : steering.setZero();
-	}
+        // If we get here, it means that no behavior had a large enough acceleration,
+        // so return the small acceleration from the final behavior or zero if there are
+        // no behaviors in the list.
+        return n > 0 ? steering : steering.setZero();
+    }
 
-	/** Returns the threshold of the steering acceleration magnitude below which a steering behavior is considered to have given no
-	 * output. */
-	public float getEpsilon () {
-		return epsilon;
-	}
+    /** Returns the threshold of the steering acceleration magnitude below which a steering behavior is considered to have given no
+     * output. */
+    public float getEpsilon() {
+        return epsilon;
+    }
 
-	/** Sets the threshold of the steering acceleration magnitude below which a steering behavior is considered to have given no
-	 * output.
-	 * @param epsilon the epsilon to set
-	 * @return this behavior for chaining. */
-	public PrioritySteering<T> setEpsilon (float epsilon) {
-		this.epsilon = epsilon;
-		return this;
-	}
+    /** Sets the threshold of the steering acceleration magnitude below which a steering behavior is considered to have given no
+     * output.
+     * @param epsilon the epsilon to set
+     * @return this behavior for chaining. */
+    public PrioritySteering<T> setEpsilon(float epsilon) {
+        this.epsilon = epsilon;
+        return this;
+    }
 
-	//
-	// Setters overridden in order to fix the correct return type for chaining
-	//
+    //
+    // Setters overridden in order to fix the correct return type for chaining
+    //
 
-	@Override
-	public PrioritySteering<T> setOwner (Steerable<T> owner) {
-		this.owner = owner;
-		return this;
-	}
+    @Override
+    public PrioritySteering<T> setOwner(Steerable<T> owner) {
+        this.owner = owner;
+        return this;
+    }
 
-	@Override
-	public PrioritySteering<T> setEnabled (boolean enabled) {
-		this.enabled = enabled;
-		return this;
-	}
+    @Override
+    public PrioritySteering<T> setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
 
-	/** Sets the limiter of this steering behavior. However, {@code PrioritySteering} needs no limiter at all as it simply returns
-	 * the first non zero steering acceleration.
-	 * @return this behavior for chaining. */
-	@Override
-	public PrioritySteering<T> setLimiter (Limiter limiter) {
-		this.limiter = limiter;
-		return this;
-	}
+    /** Sets the limiter of this steering behavior. However, {@code PrioritySteering} needs no limiter at all as it simply returns
+     * the first non zero steering acceleration.
+     * @return this behavior for chaining. */
+    @Override
+    public PrioritySteering<T> setLimiter(Limiter limiter) {
+        this.limiter = limiter;
+        return this;
+    }
 }

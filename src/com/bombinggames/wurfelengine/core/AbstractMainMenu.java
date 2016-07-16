@@ -32,6 +32,7 @@ package com.bombinggames.wurfelengine.core;
 
 /**
  * The game state of the Main Menu.
+ *
  * @author Benedikt
  */
 public abstract class AbstractMainMenu extends WEScreen {

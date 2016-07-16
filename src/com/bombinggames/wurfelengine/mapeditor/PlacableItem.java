@@ -12,33 +12,32 @@ import com.bombinggames.wurfelengine.core.gameobjects.AbstractGameObject;
  * @author Benedikt Vogler
  */
 public class PlacableItem extends Stack {
-	
-	private final Image bgIcon;
-	private final Image fgImg;
 
-	/**
-	 *
-	 * @param drawable
-	 * @param result result of a click on it
-	 */
-	public PlacableItem(TextureRegionDrawable drawable, ClickListener result) {
-		//background
-		bgIcon = new Image(AbstractGameObject.getSprite('i', (byte) 10, (byte) 0));
-		bgIcon.setPosition(50, 0);
-		addActor(bgIcon);
-		bgIcon.addListener(result);
+    private final Image bgIcon;
+    private final Image fgImg;
 
-		//foreground
-		fgImg = new Image(drawable);
-		addActor(fgImg);
-		fgImg.addListener(result);
-	}
-	
-	@Override
-	public void setScale(float scaleXY) {
-		//super.setScale(scaleXY);
-		if (fgImg != null) {
-			fgImg.setScale(scaleXY);
-		}
-	}
+    /**
+     * @param drawable
+     * @param result   result of a click on it
+     */
+    public PlacableItem(TextureRegionDrawable drawable, ClickListener result) {
+        //background
+        bgIcon = new Image(AbstractGameObject.getSprite('i', (byte) 10, (byte) 0));
+        bgIcon.setPosition(50, 0);
+        addActor(bgIcon);
+        bgIcon.addListener(result);
+
+        //foreground
+        fgImg = new Image(drawable);
+        addActor(fgImg);
+        fgImg.addListener(result);
+    }
+
+    @Override
+    public void setScale(float scaleXY) {
+        //super.setScale(scaleXY);
+        if (fgImg != null) {
+            fgImg.setScale(scaleXY);
+        }
+    }
 }

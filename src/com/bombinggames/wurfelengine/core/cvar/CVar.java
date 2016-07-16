@@ -31,78 +31,76 @@
 package com.bombinggames.wurfelengine.core.cvar;
 
 /**
- *CVars start with a small letter and are CamelCase.
+ * CVars start with a small letter and are CamelCase.
+ *
  * @author Benedikt Vogler
  * @since v1.4.2
  */
 public abstract class CVar {
-	
-	/**
-	 *
-	 */
-	protected AbstractCVarSystem parent;
 
-	/**
-	 *
-	 */
-	protected CVarFlags flags;
+    /**
+     *
+     */
+    protected AbstractCVarSystem parent;
 
-	/**
-	 *
-	 */
-	protected String name;
-	
-	/**
-	 *
-	 * @return
-	 */
-	public abstract Object getValue();
+    /**
+     *
+     */
+    protected CVarFlags flags;
 
-	/**
-	 *
-	 * @param value
-	 */
-	public abstract void setValue(Object value);
+    /**
+     *
+     */
+    protected String name;
 
-	/**
-	 *
-	 * @return
-	 */
-	public abstract Object getDefaultValue();
+    /**
+     * @return
+     */
+    public abstract Object getValue();
 
-	/**
-	 *
-	 * @param value
-	 */
-	protected abstract void setDefaultValue(Object value);
-	
-	/**
-	 *
-	 * @return
-	 */
-	public String getName(){
-		return name;
-	}
-	
-	/**
-	 * The values as string representation.
-	 * @return 
-	 */
-	@Override
-	public abstract String toString();
-	
-	/**
-	 * Registering should only be done by the game or the engine in init phase. Also saves as defaultValue.
-	 * if already registered updates the default and current value.
-	 * @param name name of the cvar
-	 * @param flag
-	 * @param parent
-	 * @since v1.4.2
-	 */
-	protected void register(String name, CVarFlags flag, AbstractCVarSystem parent){
-		this.name = name;
-		this.flags = flag;
-		this.parent = parent;
-	}
-		
+    /**
+     * @param value
+     */
+    public abstract void setValue(Object value);
+
+    /**
+     * @return
+     */
+    public abstract Object getDefaultValue();
+
+    /**
+     * @param value
+     */
+    protected abstract void setDefaultValue(Object value);
+
+    /**
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * The values as string representation.
+     *
+     * @return
+     */
+    @Override
+    public abstract String toString();
+
+    /**
+     * Registering should only be done by the game or the engine in init phase. Also saves as defaultValue.
+     * if already registered updates the default and current value.
+     *
+     * @param name   name of the cvar
+     * @param flag
+     * @param parent
+     * @since v1.4.2
+     */
+    protected void register(String name, CVarFlags flag, AbstractCVarSystem parent) {
+        this.name = name;
+        this.flags = flag;
+        this.parent = parent;
+    }
+
 }

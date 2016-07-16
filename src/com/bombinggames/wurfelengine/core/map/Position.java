@@ -34,198 +34,209 @@ import com.bombinggames.wurfelengine.core.Camera;
 import com.bombinggames.wurfelengine.core.GameView;
 import com.bombinggames.wurfelengine.core.gameobjects.AbstractEntity;
 import com.bombinggames.wurfelengine.core.gameobjects.AbstractGameObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- *A
+ * A
+ *
  * @author Benedikt Vogler
  */
 public interface Position extends Serializable {
 
     /**
-     *square root of two
+     * square root of two
      */
     public static final float SQRT2 = 1.4142135623730950488016887242096980785696718753769480f;
 
     /**
-     *half of square root of two
+     * half of square root of two
      */
     public static final float SQRT12 = 0.7071067811865475244008443621048490392848359376884740f;
-	
-	
-	/**
+
+
+    /**
      * Calculates it and creates new instance if not already in correct format then return a copy of itself.
+     *
      * @return the point representation. Copy safe.
      */
     public abstract Point toPoint();
-    
-	/**
-	 * May not be copy safe.
-	 *
-	 * @return may not be copy safe
-	 */
-	public Point getPoint();
 
-	/**
-	 * May not be copy safe.
-	 *
-	 * @return may not be copy safe
-	 */
-	public Coordinate getCoord();
+    /**
+     * May not be copy safe.
+     *
+     * @return may not be copy safe
+     */
+    public Point getPoint();
 
-	/**
-	 * Calculates it and creates new instance if not already in correct format
-	 * then returns copy of itself.
-	 *
-	 * @return the coordinate representation. Copy safe
-	 */
-	public abstract Coordinate toCoord();
+    /**
+     * May not be copy safe.
+     *
+     * @return may not be copy safe
+     */
+    public Coordinate getCoord();
 
-	/**
-	 * Calculate position in view space.
-	 *
-	 * @return Returns the center of the projected (screen) x-position where the
-	 * object is rendered without regarding the camera. It also adds the cell
-	 * offset.
-	 */
-	public abstract int getViewSpcX();
+    /**
+     * Calculates it and creates new instance if not already in correct format
+     * then returns copy of itself.
+     *
+     * @return the coordinate representation. Copy safe
+     */
+    public abstract Coordinate toCoord();
 
-	/**
-	 * Calculate position in view space.
-	 *
-	 * @return Returns the center of the projected (view space) y-position where
-	 * the object is rendered without regarding the camera.
-	 */
-	public abstract int getViewSpcY();
-    
-	/**
-	 * maybe I mean screen space
-	 * @param View
-	 * @param camera
-	 * @return 
-	 */
-	public abstract int getProjectionSpaceX(GameView View, Camera camera);
-	
-	/**
-	 * maybe I mean screen space
-	 * @param View
-	 * @param camera
-	 * @return 
-	 */
-	public abstract int getProjectionSpaceY(GameView View, Camera camera);
-	
+    /**
+     * Calculate position in view space.
+     *
+     * @return Returns the center of the projected (screen) x-position where the
+     * object is rendered without regarding the camera. It also adds the cell
+     * offset.
+     */
+    public abstract int getViewSpcX();
+
+    /**
+     * Calculate position in view space.
+     *
+     * @return Returns the center of the projected (view space) y-position where
+     * the object is rendered without regarding the camera.
+     */
+    public abstract int getViewSpcY();
+
+    /**
+     * maybe I mean screen space
+     *
+     * @param View
+     * @param camera
+     * @return
+     */
+    public abstract int getProjectionSpaceX(GameView View, Camera camera);
+
+    /**
+     * maybe I mean screen space
+     *
+     * @param View
+     * @param camera
+     * @return
+     */
+    public abstract int getProjectionSpaceY(GameView View, Camera camera);
+
     /**
      * Get the block at the position.  Clamps positions over the map at topmost layer.
+     *
      * @return If the coordiante is not in memory will crash.
      */
     public abstract byte getBlockId();
-    
+
     /**
-     *
      * @return a copy of the object.
      */
-    public abstract Position cpy(); 
-    
+    public abstract Position cpy();
+
     /**
      * Checks if the position is on the chunks currently in memory. Horizontal checks only. So the position can be udner or over the map.
-     * @return 
+     *
+     * @return
      */
     public abstract boolean isInMemoryAreaHorizontal();
-	
-	/**
+
+    /**
      * Checks if the position is on the chunks currently in memory. Checks all axis'.
+     *
      * @return <i>true</i> if inside a chunk. <i>false</i> if currently not loaded.
      */
     public abstract boolean isInMemoryArea();
-	
-	/**
-	 *
-	 * @param object
-	 * @return the distance from this point to the other object
-	 */
-	public abstract float distanceTo(AbstractGameObject object);
-	
-	/**
-	 * Faster but result is squared.
-	 * @param object
-	 * @return the distance from this point to the other object squared
-	 * @see #distanceTo(AbstractGameObject) 
-	 */
-	public abstract float distanceToSquared(AbstractGameObject object);
 
-	/**
-	 *
-	 * @param pos
-	 * @return the distance from this pos to the other pos in game coordinates
-	 */
-	public abstract float distanceTo(Position pos);
-	
-	/**
-	 * Faster but result is squared.
-	 * @param pos
-	 * @return the distance from this point to the other object squared
-	 * @see #distanceTo(Position) 
-	 */
-	public abstract float distanceToSquared(Position pos);
+    /**
+     * @param object
+     * @return the distance from this point to the other object
+     */
+    public abstract float distanceTo(AbstractGameObject object);
 
-	/**
-	 *  checks only x and y.
-	 * @param object
-	 * @return the distance from this point to the other point only regarding horizontal components.
-	 */
-	public abstract float distanceToHorizontal(AbstractGameObject object);
+    /**
+     * Faster but result is squared.
+     *
+     * @param object
+     * @return the distance from this point to the other object squared
+     * @see #distanceTo(AbstractGameObject)
+     */
+    public abstract float distanceToSquared(AbstractGameObject object);
 
-	/**
-	 * checks only x and y.
-	 * @param pos
-	 * @return the distance from this pos to the other pos only regarding horizontal components.
-	 */
-	public abstract float distanceToHorizontal(Position pos);
-	
-	/**
-	 * Get entities in radius.
-	 *
-	 * @param <type> returns only object if type which is the filter
-	 * @param radius in game dimension pixels
-	 * @param type the type you want to filter
-	 * @return every entitie in radius
-	 */
-	public <type> ArrayList<type> getEntitiesNearby(float radius, final Class<? extends AbstractEntity> type);
-	
-	/**
-	 * get entities in horizontal radius (like a pipe)
-	 * @param <type>
-	 * @param radius in game dimension pixels
-	 * @param type whitelist
-	 * @return every entitie in radius
-	 */
-	public <type> ArrayList<type> getEntitiesNearbyHorizontal(float radius, final Class<type> type);
-	
-	/**
-	 * get entities in radius (horizontal only)
-	 *
-	 * @param radius in game dimension pixels
-	 * @return every entitie in radius
-	 */
-	public ArrayList<AbstractEntity> getEntitiesNearbyHorizontal(float radius);
-	
-	
-	/**
-	 * 
-	 * @return 
-	 */
-	public Chunk getChunk();
+    /**
+     * @param pos
+     * @return the distance from this pos to the other pos in game coordinates
+     */
+    public abstract float distanceTo(Position pos);
 
-	/**
-	 * The chunk coordinate.
-	 * @return
-	 */
-	public abstract int getChunkX();
+    /**
+     * Faster but result is squared.
+     *
+     * @param pos
+     * @return the distance from this point to the other object squared
+     * @see #distanceTo(Position)
+     */
+    public abstract float distanceToSquared(Position pos);
 
-	/**
-	 * The chunk coordinate.
-	 * @return
-	 */
-	public abstract int getChunkY();
+    /**
+     * checks only x and y.
+     *
+     * @param object
+     * @return the distance from this point to the other point only regarding horizontal components.
+     */
+    public abstract float distanceToHorizontal(AbstractGameObject object);
+
+    /**
+     * checks only x and y.
+     *
+     * @param pos
+     * @return the distance from this pos to the other pos only regarding horizontal components.
+     */
+    public abstract float distanceToHorizontal(Position pos);
+
+    /**
+     * Get entities in radius.
+     *
+     * @param <type> returns only object if type which is the filter
+     * @param radius in game dimension pixels
+     * @param type   the type you want to filter
+     * @return every entitie in radius
+     */
+    public <type> ArrayList<type> getEntitiesNearby(float radius, final Class<? extends AbstractEntity> type);
+
+    /**
+     * get entities in horizontal radius (like a pipe)
+     *
+     * @param <type>
+     * @param radius in game dimension pixels
+     * @param type   whitelist
+     * @return every entitie in radius
+     */
+    public <type> ArrayList<type> getEntitiesNearbyHorizontal(float radius, final Class<type> type);
+
+    /**
+     * get entities in radius (horizontal only)
+     *
+     * @param radius in game dimension pixels
+     * @return every entitie in radius
+     */
+    public ArrayList<AbstractEntity> getEntitiesNearbyHorizontal(float radius);
+
+
+    /**
+     * @return
+     */
+    public Chunk getChunk();
+
+    /**
+     * The chunk coordinate.
+     *
+     * @return
+     */
+    public abstract int getChunkX();
+
+    /**
+     * The chunk coordinate.
+     *
+     * @return
+     */
+    public abstract int getChunkY();
 }

@@ -34,9 +34,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ai.msg.MessageManager;
 import com.badlogic.gdx.graphics.glutils.HdpiUtils;
 import com.bombinggames.wurfelengine.WE;
-import static com.bombinggames.wurfelengine.core.Controller.getMap;
 import com.bombinggames.wurfelengine.core.loading.LoadingScreen;
 import com.bombinggames.wurfelengine.mapeditor.EditorView;
+
+import static com.bombinggames.wurfelengine.core.Controller.getMap;
 
 /**
  * The GameplayScreen State. This is state where the Wurfel Engine magic
@@ -46,150 +47,149 @@ import com.bombinggames.wurfelengine.mapeditor.EditorView;
  */
 public class GameplayScreen extends WEScreen {
 
-	/**
-	 * Contains the Message System
-	 */
+    /**
+     * Contains the Message System
+     */
 
-	private GameView view = null;
-	private Controller controller = null;
-	private EditorView editorView;
-	private LoadingScreen loadingScreen;
-	private long frameNum;
+    private GameView view = null;
+    private Controller controller = null;
+    private EditorView editorView;
+    private LoadingScreen loadingScreen;
+    private long frameNum;
 
-	/**
-	 * Create the gameplay state. This shows the loading screen.
-	 *
-	 * @param controller The controller of this screen.
-	 * @param view The user view of this screen.
-	 * @param loadingScreen
-	 */
-	public GameplayScreen(final Controller controller, final GameView view, LoadingScreen loadingScreen) {
-		Gdx.app.log("GameplayScreen", "Initializing");
+    /**
+     * Create the gameplay state. This shows the loading screen.
+     *
+     * @param controller    The controller of this screen.
+     * @param view          The user view of this screen.
+     * @param loadingScreen
+     */
+    public GameplayScreen(final Controller controller, final GameView view, LoadingScreen loadingScreen) {
+        Gdx.app.log("GameplayScreen", "Initializing");
 
-		Gdx.input.setInputProcessor(null);
-		this.loadingScreen = loadingScreen;
-		WE.setScreen(loadingScreen);
+        Gdx.input.setInputProcessor(null);
+        this.loadingScreen = loadingScreen;
+        WE.setScreen(loadingScreen);
 
-		this.controller = controller;
-		this.view = view;
-	}
+        this.controller = controller;
+        this.view = view;
+    }
 
-	/**
-	 * Get the current active view.
-	 *
-	 * @return
-	 */
-	public GameView getView() {
-		return view;
-	}
+    /**
+     * Get the current active view.
+     *
+     * @return
+     */
+    public GameView getView() {
+        return view;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public Controller getController() {
-		return controller;
-	}
+    /**
+     * Set the currently used active view.
+     *
+     * @param view
+     */
+    public void setView(final GameView view) {
+        this.view = view;
+    }
 
-	/**
-	 * Set the currently used active view.
-	 *
-	 * @param view
-	 */
-	public void setView(final GameView view) {
-		this.view = view;
-	}
+    /**
+     * @return
+     */
+    public Controller getController() {
+        return controller;
+    }
 
-	/**
-	 *
-	 * @param controller
-	 */
-	public void setController(final Controller controller) {
-		this.controller = controller;
-	}
+    /**
+     * @param controller
+     */
+    public void setController(final Controller controller) {
+        this.controller = controller;
+    }
 
-	@Override
-	public void renderImpl(final float delta) {
-		frameNum++;
-		
-		//aply game world speed
-		float dt = delta * WE.getCVars().getValueF("timespeed");
-		//update data
-		MessageManager.getInstance().update(delta);
-		view.preUpdate(dt);
-		controller.update(dt);
-		Controller.staticUpdate(dt);
-		view.update(dt);
-		getMap().postUpdate(dt);//hack to prevent 1-frame lag by too late write access via view update
-		//render data
-		view.render();
-		WE.getEngineView().getStage().draw();
-	}
+    @Override
+    public void renderImpl(final float delta) {
+        frameNum++;
 
-	@Override
-	public void resize(final int width, final int height) {
-		Gdx.graphics.setTitle("Wurfelengine V" + WE.VERSION + " " + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight());
-		view.resize(width, height);
-		HdpiUtils.glViewport(0, 0, width, height);
-		//WE.getEngineView().getStage().setViewport(width, height);
-	}
+        //aply game world speed
+        float dt = delta * WE.getCVars().getValueF("timespeed");
+        //update data
+        MessageManager.getInstance().update(delta);
+        view.preUpdate(dt);
+        controller.update(dt);
+        Controller.staticUpdate(dt);
+        view.update(dt);
+        getMap().postUpdate(dt);//hack to prevent 1-frame lag by too late write access via view update
+        //render data
+        view.render();
+        WE.getEngineView().getStage().draw();
+    }
 
-	@Override
-	public void show() {
-		WE.getEngineView().resetInputProcessors();
-		GameView.classInit();
-		this.controller.init();
-		this.view.init(controller, null);
-		controller.enter();
-		view.enter();
+    @Override
+    public void resize(final int width, final int height) {
+        Gdx.graphics.setTitle("Wurfelengine V" + WE.VERSION + " " + Gdx.graphics.getWidth() + "x" + Gdx.graphics.getHeight());
+        view.resize(width, height);
+        HdpiUtils.glViewport(0, 0, width, height);
+        //WE.getEngineView().getStage().setViewport(width, height);
+    }
 
-		if (loadingScreen != null) {
-			loadingScreen.dispose();
-		}
-		loadingScreen = null;
-	}
+    @Override
+    public void show() {
+        WE.getEngineView().resetInputProcessors();
+        GameView.classInit();
+        this.controller.init();
+        this.view.init(controller, null);
+        controller.enter();
+        view.enter();
 
-	@Override
-	public void hide() {
-	}
+        if (loadingScreen != null) {
+            loadingScreen.dispose();
+        }
+        loadingScreen = null;
+    }
 
-	@Override
-	public void pause() {
-	}
+    @Override
+    public void hide() {
+    }
 
-	@Override
-	public void resume() {
-	}
+    @Override
+    public void pause() {
+    }
 
-	
-	/**
-	 * the number of the current frame
-	 * @return 
-	 */
-	public long getFrameNum(){
-		return frameNum;
-	}
-	
-	
-	@Override
-	public void dispose() {
-		controller.dispose();
-		view.dispose();
-		WE.SOUND.stopEverySound();
-		WE.SOUND.disposeMusic();
-		Controller.staticDispose();
-	}
+    @Override
+    public void resume() {
+    }
 
-	/**
-	 * lazy init
-	 *
-	 * @return
-	 */
-	public EditorView getEditorView() {
-		if (editorView == null) {
-			editorView = new EditorView();
-		}
-		return editorView;
-	}
+
+    /**
+     * the number of the current frame
+     *
+     * @return
+     */
+    public long getFrameNum() {
+        return frameNum;
+    }
+
+
+    @Override
+    public void dispose() {
+        controller.dispose();
+        view.dispose();
+        WE.SOUND.stopEverySound();
+        WE.SOUND.disposeMusic();
+        Controller.staticDispose();
+    }
+
+    /**
+     * lazy init
+     *
+     * @return
+     */
+    public EditorView getEditorView() {
+        if (editorView == null) {
+            editorView = new EditorView();
+        }
+        return editorView;
+    }
 
 }

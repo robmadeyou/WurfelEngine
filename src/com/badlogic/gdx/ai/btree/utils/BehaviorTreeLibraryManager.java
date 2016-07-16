@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,61 +25,61 @@ import com.badlogic.gdx.utils.SerializationException;
 /** The {@code BehaviorTreeLibraryManager} is a singleton in charge of the creation of behavior trees using the underlying library.
  * If no library is explicitly set (see the method {@link #setLibrary(BehaviorTreeLibrary)}), a default library using the
  * {@link InternalFileHandleResolver} is used.
- * 
+ *
  * @author davebaol */
 public class BehaviorTreeLibraryManager {
 
-	private static BehaviorTreeLibraryManager instance = new BehaviorTreeLibraryManager();
+    private static BehaviorTreeLibraryManager instance = new BehaviorTreeLibraryManager();
 
-	protected BehaviorTreeLibrary library;
+    protected BehaviorTreeLibrary library;
 
-	private BehaviorTreeLibraryManager () {
-		setLibrary(new BehaviorTreeLibrary());
-	}
+    private BehaviorTreeLibraryManager() {
+        setLibrary(new BehaviorTreeLibrary());
+    }
 
-	/** Returns the singleton instance of the {@code BehaviorTreeLibraryManager}. */
-	public static BehaviorTreeLibraryManager getInstance () {
-		return instance;
-	}
+    /** Returns the singleton instance of the {@code BehaviorTreeLibraryManager}. */
+    public static BehaviorTreeLibraryManager getInstance() {
+        return instance;
+    }
 
-	/** Gets the the behavior tree library
-	 * @return the behavior tree library */
-	public BehaviorTreeLibrary getLibrary () {
-		return library;
-	}
+    /** Gets the the behavior tree library
+     * @return the behavior tree library */
+    public BehaviorTreeLibrary getLibrary() {
+        return library;
+    }
 
-	/** Sets the the behavior tree library
-	 * @param library the behavior tree library to set */
-	public void setLibrary (BehaviorTreeLibrary library) {
-		this.library = library;
-	}
+    /** Sets the the behavior tree library
+     * @param library the behavior tree library to set */
+    public void setLibrary(BehaviorTreeLibrary library) {
+        this.library = library;
+    }
 
-	/** Creates the root task of {@link BehaviorTree} for the specified reference.
-	 * @param treeReference the tree identifier, typically a path
-	 * @return the root task of the tree cloned from the archetype.
-	 * @throws SerializationException if the reference cannot be successfully parsed.
-	 * @throws TaskCloneException if the archetype cannot be successfully parsed. */
-	public <T> Task<T> createRootTask (String treeReference) {
-		return library.createRootTask(treeReference);
-	}
+    /** Creates the root task of {@link BehaviorTree} for the specified reference.
+     * @param treeReference the tree identifier, typically a path
+     * @return the root task of the tree cloned from the archetype.
+     * @throws SerializationException if the reference cannot be successfully parsed.
+     * @throws TaskCloneException if the archetype cannot be successfully parsed. */
+    public <T> Task<T> createRootTask(String treeReference) {
+        return library.createRootTask(treeReference);
+    }
 
-	/** Creates the {@link BehaviorTree} for the specified reference.
-	 * @param treeReference the tree identifier, typically a path
-	 * @return the tree cloned from the archetype.
-	 * @throws SerializationException if the reference cannot be successfully parsed.
-	 * @throws TaskCloneException if the archetype cannot be successfully parsed. */
-	public <T> BehaviorTree<T> createBehaviorTree (String treeReference) {
-		return library.createBehaviorTree(treeReference);
-	}
+    /** Creates the {@link BehaviorTree} for the specified reference.
+     * @param treeReference the tree identifier, typically a path
+     * @return the tree cloned from the archetype.
+     * @throws SerializationException if the reference cannot be successfully parsed.
+     * @throws TaskCloneException if the archetype cannot be successfully parsed. */
+    public <T> BehaviorTree<T> createBehaviorTree(String treeReference) {
+        return library.createBehaviorTree(treeReference);
+    }
 
-	/** Creates the {@link BehaviorTree} for the specified reference and blackboard object.
-	 * @param treeReference the tree identifier, typically a path
-	 * @param blackboard the blackboard object (it can be {@code null}).
-	 * @return the tree cloned from the archetype.
-	 * @throws SerializationException if the reference cannot be successfully parsed.
-	 * @throws TaskCloneException if the archetype cannot be successfully parsed. */
-	public <T> BehaviorTree<T> createBehaviorTree (String treeReference, T blackboard) {
-		return library.createBehaviorTree(treeReference, blackboard);
-	}
+    /** Creates the {@link BehaviorTree} for the specified reference and blackboard object.
+     * @param treeReference the tree identifier, typically a path
+     * @param blackboard the blackboard object (it can be {@code null}).
+     * @return the tree cloned from the archetype.
+     * @throws SerializationException if the reference cannot be successfully parsed.
+     * @throws TaskCloneException if the archetype cannot be successfully parsed. */
+    public <T> BehaviorTree<T> createBehaviorTree(String treeReference, T blackboard) {
+        return library.createBehaviorTree(treeReference, blackboard);
+    }
 
 }

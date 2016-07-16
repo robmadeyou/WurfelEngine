@@ -36,214 +36,214 @@ import com.bombinggames.wurfelengine.core.map.Chunk;
 import com.bombinggames.wurfelengine.core.map.Iterators.DataIterator;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class RenderChunk {
 
-	private static final Pool<RenderCell[][][]> DATAPOOL;
-	private final RenderCell data[][][];
-	private Chunk chunk;
-	private boolean cameraAccess;
+    private static final Pool<RenderCell[][][]> DATAPOOL;
 
-	static {
-		DATAPOOL = new Pool<RenderCell[][][]>(3) {
-			@Override
-			protected RenderCell[][][] newObject() {
-				return new RenderCell[Chunk.getBlocksX()][Chunk.getBlocksY()][Chunk.getBlocksZ()];
-			}
-		};
-	}
-	
-	public static void clearPool(){
-		DATAPOOL.clear();
-	}
+    static {
+        DATAPOOL = new Pool<RenderCell[][][]>(3) {
+            @Override
+            protected RenderCell[][][] newObject() {
+                return new RenderCell[Chunk.getBlocksX()][Chunk.getBlocksY()][Chunk.getBlocksZ()];
+            }
+        };
+    }
 
-	/**
-	 * With init
-	 *
-	 * @param rS
-	 * @param chunk linked chunk
-	 */
-	public RenderChunk(RenderStorage rS, Chunk chunk) {
-		data = DATAPOOL.obtain();
-		init(rS, chunk);
-	}
+    private final RenderCell data[][][];
+    private Chunk chunk;
+    private boolean cameraAccess;
 
-	/**
-	 * update the content
-	 *
-	 * @param rS
-	 * @param chunk
-	 */
-	public void init(RenderStorage rS, Chunk chunk) {
-		this.chunk = chunk;
-		initData(rS);
-	}
+    /**
+     * With init
+     *
+     * @param rS
+     * @param chunk linked chunk
+     */
+    public RenderChunk(RenderStorage rS, Chunk chunk) {
+        data = DATAPOOL.obtain();
+        init(rS, chunk);
+    }
 
-	/**
-	 * fills every cell with the accoring data
-	 *
-	 * @param rS
-	 */
-	public void initData(RenderStorage rS) {
-		int tlX = chunk.getTopLeftCoordinateX();
-		int tlY = chunk.getTopLeftCoordinateY();
+    public static void clearPool() {
+        DATAPOOL.clear();
+    }
 
-		//fill every data cell
-		int blocksZ = Chunk.getBlocksZ();
-		int blocksX = Chunk.getBlocksX();
-		int blocksY = Chunk.getBlocksY();
-		for (int xInd = 0; xInd < blocksX; xInd++) {
-			for (int yInd = 0; yInd < blocksY; yInd++) {
-				for (int z = 0; z < blocksZ; z++) {
-					//update only if cell changed
-					int block = chunk.getCellByIndex(xInd, yInd, z);
-					if (data[xInd][yInd][z] == null || (block & 255) != data[xInd][yInd][z].getId()) {
-						data[xInd][yInd][z] = RenderCell.getRenderCell((byte) (block & 255), (byte) ((block >> 8) & 255));
-					}
-					data[xInd][yInd][z].getPosition().set(
-						tlX + xInd,
-						tlY + yInd,
-						z
-					);
-					data[xInd][yInd][z].setUnclipped();
-					resetShadingFor(xInd, yInd, z);
-				}
-			}
-		}
-	}
+    /**
+     * update the content
+     *
+     * @param rS
+     * @param chunk
+     */
+    public void init(RenderStorage rS, Chunk chunk) {
+        this.chunk = chunk;
+        initData(rS);
+    }
 
-	/**
-	 *
-	 * @param x coordinate
-	 * @param y coordinate
-	 * @param z coordinate
-	 * @return
-	 */
-	RenderCell getCell(int x, int y, int z) {
-		if (z >= Chunk.getBlocksZ()) {
-			return null;
-		}
-		return data[x - chunk.getTopLeftCoordinateX()][y - chunk.getTopLeftCoordinateY()][z];
-	}
+    /**
+     * fills every cell with the accoring data
+     *
+     * @param rS
+     */
+    public void initData(RenderStorage rS) {
+        int tlX = chunk.getTopLeftCoordinateX();
+        int tlY = chunk.getTopLeftCoordinateY();
 
-	RenderCell[][][] getData() {
-		return data;
-	}
+        //fill every data cell
+        int blocksZ = Chunk.getBlocksZ();
+        int blocksX = Chunk.getBlocksX();
+        int blocksY = Chunk.getBlocksY();
+        for (int xInd = 0; xInd < blocksX; xInd++) {
+            for (int yInd = 0; yInd < blocksY; yInd++) {
+                for (int z = 0; z < blocksZ; z++) {
+                    //update only if cell changed
+                    int block = chunk.getCellByIndex(xInd, yInd, z);
+                    if (data[xInd][yInd][z] == null || (block & 255) != data[xInd][yInd][z].getId()) {
+                        data[xInd][yInd][z] = RenderCell.getRenderCell((byte) (block & 255), (byte) ((block >> 8) & 255));
+                    }
+                    data[xInd][yInd][z].getPosition().set(
+                            tlX + xInd,
+                            tlY + yInd,
+                            z
+                    );
+                    data[xInd][yInd][z].setUnclipped();
+                    resetShadingFor(xInd, yInd, z);
+                }
+            }
+        }
+    }
 
-	/**
-	 *
-	 */
-	protected void resetClipping() {
-		int blocksZ = Chunk.getBlocksZ();
-		int blocksX = Chunk.getBlocksX();
-		int blocksY = Chunk.getBlocksY();
-		for (int x = 0; x < blocksX; x++) {
-			for (int y = 0; y < blocksY; y++) {
-				for (int z = 0; z < blocksZ; z++) {
-					if (data[x][y][z] != null) {
-						data[x][y][z].setUnclipped();
-					}
-				}
-			}
-		}
-	}
+    /**
+     * @param x coordinate
+     * @param y coordinate
+     * @param z coordinate
+     * @return
+     */
+    RenderCell getCell(int x, int y, int z) {
+        if (z >= Chunk.getBlocksZ()) {
+            return null;
+        }
+        return data[x - chunk.getTopLeftCoordinateX()][y - chunk.getTopLeftCoordinateY()][z];
+    }
 
-	/**
-	 * Resets the shading for one block. Calculates drop shadow from blocks
-	 * above.
-	 *
-	 * @param idexX index pos
-	 * @param idexY index pos
-	 * @param idexZ index pos
-	 */
-	public void resetShadingFor(int idexX, int idexY, int idexZ) {
-		int blocksZ = Chunk.getBlocksZ();
-		if (idexZ < Chunk.getBlocksZ() && idexZ >= 0) {
-			RenderCell block = data[idexX][idexY][idexZ];
-			if (block != null) {
-				data[idexX][idexY][idexZ].setLightlevel(1);
+    RenderCell[][][] getData() {
+        return data;
+    }
 
-				if (idexZ < blocksZ - 2
-					&& (data[idexX][idexY][idexZ + 1] == null
-					|| data[idexX][idexY][idexZ + 1].isTransparent())) {
-					//two block above is a block casting shadows
-					if (data[idexX][idexY][idexZ + 2] != null
-						&& !data[idexX][idexY][idexZ + 2].isTransparent()) {
-						data[idexX][idexY][idexZ].setLightlevel(0.8f, Side.TOP, 0);//todo every vertex
-						data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 1);//todo every vertex
-						data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 2);//todo every vertex
-						data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 3);//todo every vertex
-					} else if (idexZ < blocksZ - 3
-						&& (data[idexX][idexY][idexZ + 2] == null
-						|| data[idexX][idexY][idexZ + 2].isTransparent())
-						&& data[idexX][idexY][idexZ + 3] != null
-						&& !data[idexX][idexY][idexZ + 3].isTransparent()) {
-						data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 0);//todo every vertex
-						data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 1);//todo every vertex
-						data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 2);//todo every vertex
-						data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 3);//todo every vertex
-					}
-				}
-			}
-		}
-	}
+    /**
+     *
+     */
+    protected void resetClipping() {
+        int blocksZ = Chunk.getBlocksZ();
+        int blocksX = Chunk.getBlocksX();
+        int blocksY = Chunk.getBlocksY();
+        for (int x = 0; x < blocksX; x++) {
+            for (int y = 0; y < blocksY; y++) {
+                for (int z = 0; z < blocksZ; z++) {
+                    if (data[x][y][z] != null) {
+                        data[x][y][z].setUnclipped();
+                    }
+                }
+            }
+        }
+    }
 
-	public int getTopLeftCoordinateX() {
-		return chunk.getTopLeftCoordinateX();
-	}
+    /**
+     * Resets the shading for one block. Calculates drop shadow from blocks
+     * above.
+     *
+     * @param idexX index pos
+     * @param idexY index pos
+     * @param idexZ index pos
+     */
+    public void resetShadingFor(int idexX, int idexY, int idexZ) {
+        int blocksZ = Chunk.getBlocksZ();
+        if (idexZ < Chunk.getBlocksZ() && idexZ >= 0) {
+            RenderCell block = data[idexX][idexY][idexZ];
+            if (block != null) {
+                data[idexX][idexY][idexZ].setLightlevel(1);
 
-	public int getTopLeftCoordinateY() {
-		return chunk.getTopLeftCoordinateY();
-	}
+                if (idexZ < blocksZ - 2
+                        && (data[idexX][idexY][idexZ + 1] == null
+                        || data[idexX][idexY][idexZ + 1].isTransparent())) {
+                    //two block above is a block casting shadows
+                    if (data[idexX][idexY][idexZ + 2] != null
+                            && !data[idexX][idexY][idexZ + 2].isTransparent()) {
+                        data[idexX][idexY][idexZ].setLightlevel(0.8f, Side.TOP, 0);//todo every vertex
+                        data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 1);//todo every vertex
+                        data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 2);//todo every vertex
+                        data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 3);//todo every vertex
+                    } else if (idexZ < blocksZ - 3
+                            && (data[idexX][idexY][idexZ + 2] == null
+                            || data[idexX][idexY][idexZ + 2].isTransparent())
+                            && data[idexX][idexY][idexZ + 3] != null
+                            && !data[idexX][idexY][idexZ + 3].isTransparent()) {
+                        data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 0);//todo every vertex
+                        data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 1);//todo every vertex
+                        data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 2);//todo every vertex
+                        data[idexX][idexY][idexZ].setLightlevel(0.9f, Side.TOP, 3);//todo every vertex
+                    }
+                }
+            }
+        }
+    }
 
-	/**
-	 * Returns an iterator which iterates over the data in this chunk.
-	 *
-	 * @param startingZ
-	 * @param limitZ the last layer (including).
-	 * @return
-	 */
-	public DataIterator<RenderCell> getIterator(final int startingZ, final int limitZ) {
-		return new DataIterator<>(
-			data,
-			startingZ,
-			limitZ
-		);
-	}
+    public int getTopLeftCoordinateX() {
+        return chunk.getTopLeftCoordinateX();
+    }
 
-	public int getChunkX() {
-		return chunk.getChunkX();
-	}
+    public int getTopLeftCoordinateY() {
+        return chunk.getTopLeftCoordinateY();
+    }
 
-	public int getChunkY() {
-		return chunk.getChunkY();
-	}
+    /**
+     * Returns an iterator which iterates over the data in this chunk.
+     *
+     * @param startingZ
+     * @param limitZ    the last layer (including).
+     * @return
+     */
+    public DataIterator<RenderCell> getIterator(final int startingZ, final int limitZ) {
+        return new DataIterator<>(
+                data,
+                startingZ,
+                limitZ
+        );
+    }
 
-	protected RenderCell getCellByIndex(int x, int y, int z) {
-		return data[x][y][z];
-	}
+    public int getChunkX() {
+        return chunk.getChunkX();
+    }
 
-	/**
-	 * If not used can be removed.
-	 * @return true if a camera rendered this chunk this frame. 
-	 */
-	protected boolean cameraAccess() {
-		return cameraAccess;
-	}
+    public int getChunkY() {
+        return chunk.getChunkY();
+    }
 
-	/**
-	 * Camera used this chunk this frame?
-	 *
-	 * @param b
-	 */
-	protected void setCameraAccess(boolean b) {
-		cameraAccess = b;
-	}
+    protected RenderCell getCellByIndex(int x, int y, int z) {
+        return data[x][y][z];
+    }
 
-	protected void dispose() {
-		DATAPOOL.free(data);
-	}
+    /**
+     * If not used can be removed.
+     *
+     * @return true if a camera rendered this chunk this frame.
+     */
+    protected boolean cameraAccess() {
+        return cameraAccess;
+    }
+
+    /**
+     * Camera used this chunk this frame?
+     *
+     * @param b
+     */
+    protected void setCameraAccess(boolean b) {
+        cameraAccess = b;
+    }
+
+    protected void dispose() {
+        DATAPOOL.free(data);
+    }
 
 }

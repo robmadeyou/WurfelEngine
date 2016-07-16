@@ -18,7 +18,6 @@ public class LoadingBar extends Actor {
     private float stateTime;
 
     /**
-     *
      * @param animation
      */
     public LoadingBar(Animation animation) {

@@ -35,31 +35,32 @@ import com.bombinggames.wurfelengine.core.map.Position;
 
 /**
  * An object which saves a playing sound.
+ *
  * @author Benedikt Vogler
  */
 class SoundInstance {
-	private final SoundEngine engine;
-	private final Position pos;
-	protected final Sound sound;
-	protected final long id;
+    protected final Sound sound;
+    protected final long id;
+    private final SoundEngine engine;
+    private final Position pos;
 
-	protected SoundInstance(SoundEngine engine, Sound sound, long id, Position pos) {
-		this.id = id;
-		this.sound = sound;
-		this.pos = pos;
-		this.engine = engine;
-	}
+    protected SoundInstance(SoundEngine engine, Sound sound, long id, Position pos) {
+        this.id = id;
+        this.sound = sound;
+        this.pos = pos;
+        this.engine = engine;
+    }
 
-	protected void update(){
-		float pan =0;
-		if (engine.getView().getCameras().size() > 0) {
-			pan = pos.getViewSpcX() - engine.getView().getCameras().get(0).getViewSpaceX();
-			pan /= 500;//arbitrary chosen
-			if (pan > 1) pan = 1;
-			if (pan < -1) pan = -1;
-		}
-		sound.setPan(id, pan, engine.getVolume(pos));
-	}
+    protected void update() {
+        float pan = 0;
+        if (engine.getView().getCameras().size() > 0) {
+            pan = pos.getViewSpcX() - engine.getView().getCameras().get(0).getViewSpaceX();
+            pan /= 500;//arbitrary chosen
+            if (pan > 1) pan = 1;
+            if (pan < -1) pan = -1;
+        }
+        sound.setPan(id, pan, engine.getVolume(pos));
+    }
 
-	
+
 }

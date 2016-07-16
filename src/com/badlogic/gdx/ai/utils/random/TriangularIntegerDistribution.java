@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -21,44 +21,44 @@ import com.badlogic.gdx.math.MathUtils;
 /** @author davebaol */
 public final class TriangularIntegerDistribution extends IntegerDistribution {
 
-	private final int low;
-	private final int high;
-	private final float mode;
+    private final int low;
+    private final int high;
+    private final float mode;
 
-	public TriangularIntegerDistribution (int high) {
-		this(-high, high);
-	}
+    public TriangularIntegerDistribution(int high) {
+        this(-high, high);
+    }
 
-	public TriangularIntegerDistribution (int low, int high) {
-		this(low, high, (high - low) * .5f);
-	}
+    public TriangularIntegerDistribution(int low, int high) {
+        this(low, high, (high - low) * .5f);
+    }
 
-	public TriangularIntegerDistribution (int low, int high, float mode) {
-		this.low = low;
-		this.high = high;
-		this.mode = mode;
-	}
+    public TriangularIntegerDistribution(int low, int high, float mode) {
+        this.low = low;
+        this.high = high;
+        this.mode = mode;
+    }
 
-	@Override
-	public int nextInt () {
-		float r;
-		if (-low == high && mode == 0)
-			r = MathUtils.randomTriangular(high); // It's faster
-		else
-			r = MathUtils.randomTriangular(low, high, mode);
-		return Math.round(r);
-	}
+    @Override
+    public int nextInt() {
+        float r;
+        if (-low == high && mode == 0)
+            r = MathUtils.randomTriangular(high); // It's faster
+        else
+            r = MathUtils.randomTriangular(low, high, mode);
+        return Math.round(r);
+    }
 
-	public int getLow () {
-		return low;
-	}
+    public int getLow() {
+        return low;
+    }
 
-	public int getHigh () {
-		return high;
-	}
+    public int getHigh() {
+        return high;
+    }
 
-	public float getMode () {
-		return mode;
-	}
+    public float getMode() {
+        return mode;
+    }
 
 }

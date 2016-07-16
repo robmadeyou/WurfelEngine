@@ -35,7 +35,8 @@ import com.bombinggames.wurfelengine.core.map.Chunk;
 import com.bombinggames.wurfelengine.core.map.Generator;
 
 /**
- *Fenerates islands
+ * Fenerates islands
+ *
  * @author Benedikt Vogler
  */
 public class IslandGenerator implements Generator {
@@ -47,37 +48,36 @@ public class IslandGenerator implements Generator {
      */
     public IslandGenerator() {
         //mountain
-        mountainX = (int) (Math.random()*Chunk.getBlocksX()-1);
-        mountainY = (int) (Math.random()*Chunk.getBlocksY()-1);
+        mountainX = (int) (Math.random() * Chunk.getBlocksX() - 1);
+        mountainY = (int) (Math.random() * Chunk.getBlocksY() - 1);
     }
-    
-    
+
 
     @Override
-    public int generate(int x, int y, int z) {  
-        if (z==0) return (byte)8;
-        
-        int height = Chunk.getBlocksZ()-1- Math.abs(mountainY-y)- Math.abs(mountainX-x);
-        if (height>0 && z<height){//part of mountain?
-            if (height-1 == z && z>2)
-                return (byte)1;//grass on top
-            
+    public int generate(int x, int y, int z) {
+        if (z == 0) return (byte) 8;
+
+        int height = Chunk.getBlocksZ() - 1 - Math.abs(mountainY - y) - Math.abs(mountainX - x);
+        if (height > 0 && z < height) {//part of mountain?
+            if (height - 1 == z && z > 2)
+                return (byte) 1;//grass on top
+
             if (z > 2)
-                return (byte)2;
+                return (byte) 2;
             else
-                return (byte)8;//sand
+                return (byte) 8;//sand
         }
 
         //water
-        if (z==1 || z==2) return (byte)9;
-               
+        if (z == 1 || z == 2) return (byte) 9;
+
         return 0;
-        
+
         //if (Math.random() < 0.15f && height < getBlocksZ()-1 && height > 2) data[x][y][height+1] = new Cell(34);
         //if (Math.random() < 0.15f && height < getBlocksZ()-1 && height > 2) data[x][y][height+1] = new Cell(35);
     }
 
-	@Override
-	public void spawnEntities(int x, int y, int z) {
-	}
+    @Override
+    public void spawnEntities(int x, int y, int z) {
+    }
 }

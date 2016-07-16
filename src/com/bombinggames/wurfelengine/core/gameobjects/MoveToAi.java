@@ -35,98 +35,98 @@ import com.badlogic.gdx.ai.msg.Telegraph;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.bombinggames.wurfelengine.core.map.Point;
+
 import java.io.Serializable;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class MoveToAi implements Telegraph, Serializable {
 
-	private static final long serialVersionUID = 1L;
-	
-	private final MovableEntity body;
-	/**
-	 * where does it move to?
-	 */
-	private final Point movementGoal;
-	private int runningagainstwallCounter = 0;
-	/**
-	 * used for detecting that is runnning against a wall
-	 */
-	private transient Point lastPos;
+    private static final long serialVersionUID = 1L;
 
-	public MoveToAi(MovableEntity body, Point goal) {
-		this.body = body;
-		this.movementGoal = goal;
-	}
+    private final MovableEntity body;
+    /**
+     * where does it move to?
+     */
+    private final Point movementGoal;
+    private int runningagainstwallCounter = 0;
+    /**
+     * used for detecting that is runnning against a wall
+     */
+    private transient Point lastPos;
 
-	public void update(float dt) {
-		if (movementGoal != null) {
-			if (!atGoal()) {
-				//movement logic
-				Vector3 d = movementGoal.cpy().sub(body.getPosition());
-				float movementSpeed;
-				if (body.isFloating()) {
-					movementSpeed = body.getSpeed();
-				} else {
-					d.z = 0;
-					movementSpeed = body.getSpeedHor();
-				}
+    public MoveToAi(MovableEntity body, Point goal) {
+        this.body = body;
+        this.movementGoal = goal;
+    }
 
-				if (movementSpeed < 2) {
-					movementSpeed = 2;
-				}
-				d.nor().scl(movementSpeed);//direction only
-				//if walking keep momentum
-				if (!body.isFloating()) {
-					d.z = body.getMovement().z;
-				}
+    public void update(float dt) {
+        if (movementGoal != null) {
+            if (!atGoal()) {
+                //movement logic
+                Vector3 d = movementGoal.cpy().sub(body.getPosition());
+                float movementSpeed;
+                if (body.isFloating()) {
+                    movementSpeed = body.getSpeed();
+                } else {
+                    d.z = 0;
+                    movementSpeed = body.getSpeedHor();
+                }
 
-				body.setMovement(d);// update the movement vector
-			} else {
-				body.setSpeedHorizontal(0);// update the movement vector
-			}
-			
-			//Movement AI: if standing on same position as in last update
-			if (!body.isFloating()) {
-				if (body.getPosition().equals(lastPos) && body.getSpeed() > 0) {//not standing still
-					runningagainstwallCounter += dt;
-				} else {
-					runningagainstwallCounter = 0;
-					lastPos = body.getPosition().cpy();
-				}
+                if (movementSpeed < 2) {
+                    movementSpeed = 2;
+                }
+                d.nor().scl(movementSpeed);//direction only
+                //if walking keep momentum
+                if (!body.isFloating()) {
+                    d.z = body.getMovement().z;
+                }
 
-				//jump after some time
-				if (runningagainstwallCounter > 500) {
-					body.jump();
-					runningagainstwallCounter = 0;
-				}
-			}
-		}
-	}
-	
-	public boolean atGoal() {
-		if (movementGoal == null) {
-			return true;
-		}
-		if (body.getPosition() == null) {
-			return false;
-		}
-		if (body.isFloating()) {
-			return body.getPosition().dst2(movementGoal) < 20; //sqrt(20)~=4,4
-		} else {
-			return new Vector2(body.getPosition().x, body.getPosition().y).dst2(new Vector2(movementGoal.x, movementGoal.y)) < 20; //sqrt(20)~=4,4
-		}
-			
-	}
+                body.setMovement(d);// update the movement vector
+            } else {
+                body.setSpeedHorizontal(0);// update the movement vector
+            }
 
-	@Override
-	public boolean handleMessage(Telegram msg) {
-		return false;
-	}
+            //Movement AI: if standing on same position as in last update
+            if (!body.isFloating()) {
+                if (body.getPosition().equals(lastPos) && body.getSpeed() > 0) {//not standing still
+                    runningagainstwallCounter += dt;
+                } else {
+                    runningagainstwallCounter = 0;
+                    lastPos = body.getPosition().cpy();
+                }
 
-	public Point getGoal() {
-		return movementGoal;
-	}
+                //jump after some time
+                if (runningagainstwallCounter > 500) {
+                    body.jump();
+                    runningagainstwallCounter = 0;
+                }
+            }
+        }
+    }
+
+    public boolean atGoal() {
+        if (movementGoal == null) {
+            return true;
+        }
+        if (body.getPosition() == null) {
+            return false;
+        }
+        if (body.isFloating()) {
+            return body.getPosition().dst2(movementGoal) < 20; //sqrt(20)~=4,4
+        } else {
+            return new Vector2(body.getPosition().x, body.getPosition().y).dst2(new Vector2(movementGoal.x, movementGoal.y)) < 20; //sqrt(20)~=4,4
+        }
+
+    }
+
+    @Override
+    public boolean handleMessage(Telegram msg) {
+        return false;
+    }
+
+    public Point getGoal() {
+        return movementGoal;
+    }
 }

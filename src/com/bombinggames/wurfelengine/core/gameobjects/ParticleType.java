@@ -32,66 +32,64 @@
 package com.bombinggames.wurfelengine.core.gameobjects;
 
 /**
- *Defines behaviour features like fading and glowing.
+ * Defines behaviour features like fading and glowing.
+ *
  * @author Benedikt Vogler
  */
 public enum ParticleType {
 
-	/**
-	 *fades to black bevor fading and vanishing
-	 */
-	FIRE(true, true, true),
+    /**
+     * fades to black bevor fading and vanishing
+     */
+    FIRE(true, true, true),
 
-	/**
-	 *fades and vanishes
-	 */
-	SMOKE(true, false, true),
+    /**
+     * fades and vanishes
+     */
+    SMOKE(true, false, true),
 
-	/**
-	 *
-	 */
-	REGULAR(false, false, false);
-	//		private static Collectible.CollectibleType fromValue(String value) {
-	//			if (value != null) {
-	//				for (Collectible.CollectibleType type : values()) {
-	//					if (type.name().equals(value)) {
-	//						return type;
-	//					}
-	//				}
-	//			} return null;
-	//		}
-	private final boolean fade;
-	private final boolean fadeToBlack;
-	private final boolean grow;
+    /**
+     *
+     */
+    REGULAR(false, false, false);
+    //		private static Collectible.CollectibleType fromValue(String value) {
+    //			if (value != null) {
+    //				for (Collectible.CollectibleType type : values()) {
+    //					if (type.name().equals(value)) {
+    //						return type;
+    //					}
+    //				}
+    //			} return null;
+    //		}
+    private final boolean fade;
+    private final boolean fadeToBlack;
+    private final boolean grow;
 
-	private ParticleType(boolean fade, boolean fadeToBlack, boolean grow) {
-		this.fade = fade;
-		this.fadeToBlack = fadeToBlack;
-		this.grow = grow;
-	}
+    private ParticleType(boolean fade, boolean fadeToBlack, boolean grow) {
+        this.fade = fade;
+        this.fadeToBlack = fadeToBlack;
+        this.grow = grow;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public boolean fade() {
-		return fade;
-	}
+    /**
+     * @return
+     */
+    public boolean fade() {
+        return fade;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public boolean fadeToBlack() {
-		return fadeToBlack;
-	}
+    /**
+     * @return
+     */
+    public boolean fadeToBlack() {
+        return fadeToBlack;
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public boolean isGrowing() {
-		return grow;
-	}
-	
+    /**
+     * @return
+     */
+    public boolean isGrowing() {
+        return grow;
+    }
+
 }

@@ -33,20 +33,18 @@ package com.bombinggames.wurfelengine.core.lightengine;
 import com.badlogic.gdx.graphics.Color;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class Moon extends GlobalLightSource {
-	
-	public Moon(float azimuth, float height, Color tone, Color ambient, float brghtFac, int amplitudeHeight) {
-		super(azimuth, height, tone, ambient, brghtFac, amplitudeHeight);
-	}
 
-	@Override
-	public float getAzimuthSpeed() {
-		return super.getAzimuthSpeed()*0.85f;
-	}
-	
-	
-	
+    public Moon(float azimuth, float height, Color tone, Color ambient, float brghtFac, int amplitudeHeight) {
+        super(azimuth, height, tone, ambient, brghtFac, amplitudeHeight);
+    }
+
+    @Override
+    public float getAzimuthSpeed() {
+        return super.getAzimuthSpeed() * 0.85f;
+    }
+
+
 }

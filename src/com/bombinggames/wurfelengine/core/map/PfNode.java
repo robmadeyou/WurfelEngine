@@ -35,68 +35,64 @@ import com.badlogic.gdx.ai.pfa.indexed.IndexedNode;
 import com.badlogic.gdx.utils.Array;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class PfNode extends Coordinate implements IndexedNode<PfNode> {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final int index;
+    private final int index;
 
-	/**
-	 *
-	 * @param coord
-	 * @param index
-	 */
-	public PfNode(Coordinate coord, int index) {
-		super(coord);
-		this.index = calculateIndex();
-	}
+    /**
+     * @param coord
+     * @param index
+     */
+    public PfNode(Coordinate coord, int index) {
+        super(coord);
+        this.index = calculateIndex();
+    }
 
-	/**
-	 *
-	 * @param coord
-	 */
-	public PfNode(Coordinate coord) {
-		super(coord);
-		this.index = calculateIndex();
-	}
+    /**
+     * @param coord
+     */
+    public PfNode(Coordinate coord) {
+        super(coord);
+        this.index = calculateIndex();
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public int calculateIndex() {
-		Chunk chunk = getChunk();
-		return getX() - chunk.getTopLeftCoordinateX()+ (getY() - chunk.getTopLeftCoordinateY()) * Chunk.getBlocksX();
-	}
+    /**
+     * @return
+     */
+    public int calculateIndex() {
+        Chunk chunk = getChunk();
+        return getX() - chunk.getTopLeftCoordinateX() + (getY() - chunk.getTopLeftCoordinateY()) * Chunk.getBlocksX();
+    }
 
-	
-	@Override
-	public int getIndex() {
-		return index;
-	}
 
-	@Override
-	public Array<Connection<PfNode>> getConnections() {
-		Array<Connection<PfNode>> a = new Array<>(4);
-		PfNode neigh = new PfNode(cpy().add(-1, 0, 0));
-		if (!neigh.isObstacle())
-			a.add(new CoordConnection(this, neigh));
-		
-		neigh = new PfNode(cpy().add(1, 0, 0));
-		if (!neigh.isObstacle())
-			a.add(new CoordConnection(this, neigh));
-		
-		neigh = new PfNode(cpy().add(0, 2, 0));
-		if (!neigh.isObstacle())
-			a.add(new CoordConnection(this, neigh));
-		
-		neigh = new PfNode(cpy().add(0, -2, 0));
-		if (!neigh.isObstacle())
-			a.add(new CoordConnection(this, neigh));
+    @Override
+    public int getIndex() {
+        return index;
+    }
 
-		return a;
-	}
+    @Override
+    public Array<Connection<PfNode>> getConnections() {
+        Array<Connection<PfNode>> a = new Array<>(4);
+        PfNode neigh = new PfNode(cpy().add(-1, 0, 0));
+        if (!neigh.isObstacle())
+            a.add(new CoordConnection(this, neigh));
+
+        neigh = new PfNode(cpy().add(1, 0, 0));
+        if (!neigh.isObstacle())
+            a.add(new CoordConnection(this, neigh));
+
+        neigh = new PfNode(cpy().add(0, 2, 0));
+        if (!neigh.isObstacle())
+            a.add(new CoordConnection(this, neigh));
+
+        neigh = new PfNode(cpy().add(0, -2, 0));
+        if (!neigh.isObstacle())
+            a.add(new CoordConnection(this, neigh));
+
+        return a;
+    }
 }

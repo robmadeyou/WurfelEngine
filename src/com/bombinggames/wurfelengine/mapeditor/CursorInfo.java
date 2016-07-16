@@ -45,61 +45,60 @@ import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
  */
 public class CursorInfo extends WidgetGroup {
 
-	private final Label label;
-	/**
-	 * parent stage
-	 */
-	private final Stage stage;
-	private final Cursor cursor;
+    private final Label label;
+    /**
+     * parent stage
+     */
+    private final Stage stage;
+    private final Cursor cursor;
 
-	/**
-	 *
-	 * @param stage parent stage
-	 * @param cursor the selection-Entity where the block comes from
-	 */
-	public CursorInfo(Stage stage, Cursor cursor) {
-		this.stage = stage;
-		this.cursor = cursor;
-		label = new Label("nothing selected", WE.getEngineView().getSkin());
-		addActor(label);
+    /**
+     * @param stage  parent stage
+     * @param cursor the selection-Entity where the block comes from
+     */
+    public CursorInfo(Stage stage, Cursor cursor) {
+        this.stage = stage;
+        this.cursor = cursor;
+        label = new Label("nothing selected", WE.getEngineView().getSkin());
+        addActor(label);
 
-		setPosition(stage.getWidth() * 0.8f, stage.getHeight() * 0.02f);
-	}
+        setPosition(stage.getWidth() * 0.8f, stage.getHeight() * 0.02f);
+    }
 
-	public void updateFrom(int block, Coordinate coord) {
-		byte id = (byte) (block & 255);
-		byte value = (byte) ((block >> 8) & 255);
-		label.setText(RenderCell.getName(id, value) + " " + id + " - " + value + "@" + cursor.getPosition().toCoord().toString());
-	}
+    public void updateFrom(int block, Coordinate coord) {
+        byte id = (byte) (block & 255);
+        byte value = (byte) ((block >> 8) & 255);
+        label.setText(RenderCell.getName(id, value) + " " + id + " - " + value + "@" + cursor.getPosition().toCoord().toString());
+    }
 
-	/**
-	 * Relative movement.
-	 *
-	 * @param amount
-	 */
-	void moveToCenter(float amount) {
-		if (getX() < stage.getWidth() / 2) {
-			setX(getX() + amount);
-		} else {
-			setX(getX() - amount);
-		}
-	}
+    /**
+     * Relative movement.
+     *
+     * @param amount
+     */
+    void moveToCenter(float amount) {
+        if (getX() < stage.getWidth() / 2) {
+            setX(getX() + amount);
+        } else {
+            setX(getX() - amount);
+        }
+    }
 
-	/**
-	 * Absolute position.
-	 *
-	 * @param amount
-	 */
-	void moveToBorder(float amount) {
-		if (getX() < stage.getWidth() / 2) {
-			setX(amount);
-		} else {
-			setX(stage.getWidth() - amount);
-		}
-	}
+    /**
+     * Absolute position.
+     *
+     * @param amount
+     */
+    void moveToBorder(float amount) {
+        if (getX() < stage.getWidth() / 2) {
+            setX(amount);
+        } else {
+            setX(stage.getWidth() - amount);
+        }
+    }
 
-	void hide() {
-		setVisible(false);
-	}
+    void hide() {
+        setVisible(false);
+    }
 
 }

@@ -29,6 +29,5 @@
 
 /**
  * This package includes various extensions and tools to the engine.
- *
  */
 package com.bombinggames.wurfelengine.extension;

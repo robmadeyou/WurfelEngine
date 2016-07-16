@@ -34,15 +34,15 @@ import com.bombinggames.wurfelengine.core.map.Generator;
 
 /**
  * Fills the complete map with a block of a specific id.
+ *
  * @author Benedikt Vogler
- * @since 1.2.38
  * @see com.bombinggames.wurfelengine.core.map.Generators.AirGenerator
+ * @since 1.2.38
  */
 public class FullMapGenerator implements Generator {
     private final byte id;
 
     /**
-     *
      * @param id
      */
     public FullMapGenerator(byte id) {
@@ -55,8 +55,8 @@ public class FullMapGenerator implements Generator {
         return id;
     }
 
-	@Override
-	public void spawnEntities(int x, int y, int z) {
-	}
+    @Override
+    public void spawnEntities(int x, int y, int z) {
+    }
 
 }

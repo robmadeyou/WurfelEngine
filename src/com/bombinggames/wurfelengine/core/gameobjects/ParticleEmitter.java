@@ -39,205 +39,201 @@ import com.bombinggames.wurfelengine.WE;
 import com.bombinggames.wurfelengine.core.map.Point;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class ParticleEmitter extends AbstractEntity {
 
-	private static final long serialVersionUID = 2L;
-	private boolean active = false;
-	/**
-	 * counts the time
-	 */
-	private float timer;
-	/**
-	 * the amoutn of time to pass before a new object is spawned. In ms.
-	 */
-	private float timeEachSpawn = 100;
-	//private final Class<? extends MovableEntity> particleClass;
-	private Vector3 startingVector = new Vector3(0, 0, 0);
-	private Vector3 spread = new Vector3(0, 0, 0);
-	private PointLightSource lightsource;
-	private Particle prototype = new Particle((byte) 22);
-	private Pool<Particle> pool;
+    private static final long serialVersionUID = 2L;
+    private boolean active = false;
+    /**
+     * counts the time
+     */
+    private float timer;
+    /**
+     * the amoutn of time to pass before a new object is spawned. In ms.
+     */
+    private float timeEachSpawn = 100;
+    //private final Class<? extends MovableEntity> particleClass;
+    private Vector3 startingVector = new Vector3(0, 0, 0);
+    private Vector3 spread = new Vector3(0, 0, 0);
+    private PointLightSource lightsource;
+    private Particle prototype = new Particle((byte) 22);
+    private Pool<Particle> pool;
 
-	/**
-	 * Initializes with defautl size
-	 */
-	public ParticleEmitter() {
-		this(50);
-	}
-	
-	/**
-	 * active by default
-	 * @param size size of pool
-	 */
-	//public Emitter(Class<MovableEntity> emitterClass) {
-	public ParticleEmitter(int size) {
-		super((byte) 14);
-		//this.particleClass = Dust.class;
-		disableShadow();
-		setIndestructible(true);
-		setName("Particle Emitter");
-		setActive(true);
-		pool = new Pool<Particle>(size) {
-			@Override
-			protected Particle newObject() {
-				Particle particle = new Particle(prototype.getSpriteId(), prototype.getLivingTime());
-				return particle;
-			}
+    /**
+     * Initializes with defautl size
+     */
+    public ParticleEmitter() {
+        this(50);
+    }
 
-			@Override
-			public Particle obtain() {
-				boolean init = false;
-				if (getFree() > 0) {
-					init = true;//will obtain from pool
-				}
-				Particle particle = super.obtain();
-				if (init) {
-					particle.init(2000f);
-				}
-				return particle;
-			}
-		};
-	}
+    /**
+     * active by default
+     *
+     * @param size size of pool
+     */
+    //public Emitter(Class<MovableEntity> emitterClass) {
+    public ParticleEmitter(int size) {
+        super((byte) 14);
+        //this.particleClass = Dust.class;
+        disableShadow();
+        setIndestructible(true);
+        setName("Particle Emitter");
+        setActive(true);
+        pool = new Pool<Particle>(size) {
+            @Override
+            protected Particle newObject() {
+                Particle particle = new Particle(prototype.getSpriteId(), prototype.getLivingTime());
+                return particle;
+            }
 
-	@Override
-	public AbstractEntity spawn(Point point) {
-		super.spawn(point);
-		checkLightSource();
-		return this;
-	}
+            @Override
+            public Particle obtain() {
+                boolean init = false;
+                if (getFree() > 0) {
+                    init = true;//will obtain from pool
+                }
+                Particle particle = super.obtain();
+                if (init) {
+                    particle.init(2000f);
+                }
+                return particle;
+            }
+        };
+    }
 
-	@Override
-	public void update(float dt) {
-		super.update(dt);
+    @Override
+    public AbstractEntity spawn(Point point) {
+        super.spawn(point);
+        checkLightSource();
+        return this;
+    }
 
-		if (active && hasPosition()) {
-			setColor(new Color(1, 0, 0, 1));//only important if visible
-			if (lightsource != null && prototype.getType() == ParticleType.FIRE) {
-				lightsource.setPosition(getPosition());
-				lightsource.update(dt);
-			}
+    @Override
+    public void update(float dt) {
+        super.update(dt);
 
-			timer += dt;
-			while (timer >= timeEachSpawn) {
-				timer -= timeEachSpawn;
-				Particle particle = pool.obtain();
-				particle.setPool(pool);
-				particle.setType(prototype.getType());
-				particle.getColor().set(prototype.getColor());
-				particle.setRotation((float) (Math.random()*360f));
-				particle.addMovement(
-					startingVector.add(
-						(float) (Math.random() - 0.5f) * 2 * spread.x,
-						(float) (Math.random() - 0.5f) * 2 * spread.y,
-						(float) (Math.random() - 0.5f) * 2 * spread.z
-					)
-				);
-				if (particle.hasPosition()) {
-					particle.getPosition().set(getPosition());
-				} else {
-					particle.spawn(getPosition().cpy());
-				}
-			}
-		} else {
-			getColor().set(0.5f, 0.5f, 0.5f, 1);
-		}
-	}
+        if (active && hasPosition()) {
+            setColor(new Color(1, 0, 0, 1));//only important if visible
+            if (lightsource != null && prototype.getType() == ParticleType.FIRE) {
+                lightsource.setPosition(getPosition());
+                lightsource.update(dt);
+            }
 
-	/**
-	 *
-	 */
-	public void toggle() {
-		active = !active;
-	}
+            timer += dt;
+            while (timer >= timeEachSpawn) {
+                timer -= timeEachSpawn;
+                Particle particle = pool.obtain();
+                particle.setPool(pool);
+                particle.setType(prototype.getType());
+                particle.getColor().set(prototype.getColor());
+                particle.setRotation((float) (Math.random() * 360f));
+                particle.addMovement(
+                        startingVector.add(
+                                (float) (Math.random() - 0.5f) * 2 * spread.x,
+                                (float) (Math.random() - 0.5f) * 2 * spread.y,
+                                (float) (Math.random() - 0.5f) * 2 * spread.z
+                        )
+                );
+                if (particle.hasPosition()) {
+                    particle.getPosition().set(getPosition());
+                } else {
+                    particle.spawn(getPosition().cpy());
+                }
+            }
+        } else {
+            getColor().set(0.5f, 0.5f, 0.5f, 1);
+        }
+    }
 
-	/**
-	 * Makes the emitter spawn objects
-	 *
-	 * @param active
-	 */
-	public void setActive(boolean active) {
-		this.active = active;
-		checkLightSource();
-	}
+    /**
+     *
+     */
+    public void toggle() {
+        active = !active;
+    }
 
-	/**
-	 *
-	 * @param prototype
-	 */
-	public void setPrototype(Particle prototype) {
-		this.prototype = prototype;
-		checkLightSource();
-	}
+    /**
+     * Makes the emitter spawn objects
+     *
+     * @param active
+     */
+    public void setActive(boolean active) {
+        this.active = active;
+        checkLightSource();
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public Particle getPrototype() {
-		return prototype;
-	}
+    /**
+     * @return
+     */
+    public Particle getPrototype() {
+        return prototype;
+    }
 
-	/**
-	 *
-	 * @param dir the direction and speed where the particles leave, in m/s
-	 * without unit
-	 */
-	public void setParticleStartMovement(Vector3 dir) {
-		if (dir != null) {
-			this.startingVector = dir;
-		}
-	}
+    /**
+     * @param prototype
+     */
+    public void setPrototype(Particle prototype) {
+        this.prototype = prototype;
+        checkLightSource();
+    }
 
-	/**
-	 * Spread is applied in both directions.
-	 *
-	 * @param spread the range in which random noise gets aplied, in m/s without
-	 * unit
-	 */
-	public void setParticleSpread(Vector3 spread) {
-		this.spread = spread;
-	}
+    /**
+     * @param dir the direction and speed where the particles leave, in m/s
+     *            without unit
+     */
+    public void setParticleStartMovement(Vector3 dir) {
+        if (dir != null) {
+            this.startingVector = dir;
+        }
+    }
 
-	/**
-	 *
-	 * @param timeEachSpawn time in ms
-	 */
-	public void setParticleDelay(float timeEachSpawn) {
-		this.timeEachSpawn = timeEachSpawn;
-	}
+    /**
+     * Spread is applied in both directions.
+     *
+     * @param spread the range in which random noise gets aplied, in m/s without
+     *               unit
+     */
+    public void setParticleSpread(Vector3 spread) {
+        this.spread = spread;
+    }
 
-	/**
-	 * if it can emit light
-	 *
-	 * @param brightness
-	 */
-	public void setBrightness(float brightness) {
-		checkLightSource();
-		if (lightsource != null) {
-			lightsource.setBrightness(brightness);
-		}
-	}
+    /**
+     * @param timeEachSpawn time in ms
+     */
+    public void setParticleDelay(float timeEachSpawn) {
+        this.timeEachSpawn = timeEachSpawn;
+    }
 
-	/**
-	 * checks if the config for the light source is okay
-	 */
-	private void checkLightSource() {
-		if (hasPosition() && prototype.getType() == ParticleType.FIRE) {
-			if (lightsource == null) {
-				lightsource = new PointLightSource(Color.YELLOW, 5, 11, WE.getGameplay().getView());
-				lightsource.setPosition(getPosition().cpy());
-			} else {
-				lightsource.getPosition().set(getPosition());
-			}
-			lightsource.enable();
-		}
-	}
+    /**
+     * if it can emit light
+     *
+     * @param brightness
+     */
+    public void setBrightness(float brightness) {
+        checkLightSource();
+        if (lightsource != null) {
+            lightsource.setBrightness(brightness);
+        }
+    }
 
-	@Override
-	public boolean handleMessage(Telegram msg) {
-		return true;
-	}
+    /**
+     * checks if the config for the light source is okay
+     */
+    private void checkLightSource() {
+        if (hasPosition() && prototype.getType() == ParticleType.FIRE) {
+            if (lightsource == null) {
+                lightsource = new PointLightSource(Color.YELLOW, 5, 11, WE.getGameplay().getView());
+                lightsource.setPosition(getPosition().cpy());
+            } else {
+                lightsource.getPosition().set(getPosition());
+            }
+            lightsource.enable();
+        }
+    }
+
+    @Override
+    public boolean handleMessage(Telegram msg) {
+        return true;
+    }
 }

@@ -36,11 +36,12 @@ import com.bombinggames.wurfelengine.core.map.Point;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public enum Side {
-    /**The id of the left side of a block.*/
+    /**
+     * The id of the left side of a block.
+     */
     LEFT(0),
 
     /**
@@ -52,21 +53,21 @@ public enum Side {
      *
      */
     RIGHT(2),
-	
-	/**
-	 *
-	 */
-	BACKLEFT(3),
-	
-	/**
-	 *
-	 */
-	BACKRIGHT(4),
 
-	/**
-	 *
-	 */
-	BOTTOM(5);
+    /**
+     *
+     */
+    BACKLEFT(3),
+
+    /**
+     *
+     */
+    BACKRIGHT(4),
+
+    /**
+     *
+     */
+    BOTTOM(5);
     private int code;
 
     private Side(int c) {
@@ -74,85 +75,87 @@ public enum Side {
     }
 
     /**
+     * Get the side belonging to a vector
+     *
+     * @param normal
+     * @return
+     */
+    public static Side normalToSide(Vector3 normal) {
+        if (normal.z > 0) {
+            return TOP;
+        } else {
+            if (normal.x < 0) {
+                if (normal.y > 0) {
+                    return LEFT;
+                } else {
+                    return BACKLEFT;
+                }
+            } else {
+                if (normal.y > 0) {
+                    return RIGHT;
+                } else {
+                    return BACKRIGHT;
+                }
+            }
+        }
+    }
+
+    /**
+     * @param point
+     * @return
+     */
+    public static Side calculateNormal(Point point) {
+        Point coordPoint = point.toCoord().toPoint();
+        if (point.getZ() <= coordPoint.getZ()) {
+            return Side.BOTTOM;
+        } else if (point.getZ() >= coordPoint.getZ() + RenderCell.GAME_EDGELENGTH - 2f) {//point is at top with a 2 error margin
+            return Side.TOP;
+        } else {
+            Side normal;
+            if (point.getX() > coordPoint.getX()) {
+                normal = Side.RIGHT;
+            } else {
+                normal = Side.LEFT;
+            }
+            if (point.getY() < coordPoint.getY()) {
+                if (normal == Side.RIGHT) {
+                    normal = Side.BACKRIGHT;
+                } else {
+                    normal = Side.BACKLEFT;
+                }
+            }
+            return normal;
+        }
+    }
+
+    /**
      * The side as integer.
-     * @return 
+     *
+     * @return
      */
     public int getCode() {
         return code;
     }
-    
+
     /**
-     *Get the side belonging to a vector
-     * @param normal
+     * copy safe
+     *
      * @return
      */
-    public static Side normalToSide(Vector3 normal){
-        if (normal.z > 0) {
-            return TOP;
-		} else {
-			if (normal.x < 0) {
-				if (normal.y > 0) {
-					return LEFT;
-				} else {
-					return BACKLEFT;
-				}
-			} else {
-				if (normal.y > 0) {
-					return RIGHT;
-				} else {
-					return BACKRIGHT;
-				}
-			}
-		}
-	}
-
-	/**
-	 * copy safe
-	 * @return 
-	 */
-	public Vector3 toVector() {
-		switch (this) {
-			case TOP:
-				return new Vector3(0, 0, 1);
-			case RIGHT:
-				return new Vector3(1, 1, 0).nor();
-			case LEFT:
-				return new Vector3(-1, 1, 0).nor();
-			case BACKLEFT:
-				return new Vector3(-1, -1, 0).nor();
-			case BACKRIGHT:
-				return new Vector3(1, -1, 0).nor();
-			default:
-				return new Vector3(0, 0, -1);
-		}
-	}
-	
-	/**
-	 * 
-	 * @param point
-	 * @return 
-	 */
-	public static Side calculateNormal(Point point){
-		Point coordPoint = point.toCoord().toPoint();
-		if (point.getZ() <= coordPoint.getZ()) {
-			return Side.BOTTOM;
-		} else if (point.getZ() >= coordPoint.getZ() + RenderCell.GAME_EDGELENGTH - 2f) {//point is at top with a 2 error margin
-			return Side.TOP;
-		} else {
-			Side normal;
-			if (point.getX() > coordPoint.getX()) {
-				normal = Side.RIGHT;
-			} else {
-				normal = Side.LEFT;
-			}
-			if (point.getY() < coordPoint.getY()) {
-				if (normal == Side.RIGHT) {
-					normal = Side.BACKRIGHT;
-				} else {
-					normal = Side.BACKLEFT;
-				}
-			}
-			return normal;
-		}
-	}
+    public Vector3 toVector() {
+        switch (this) {
+            case TOP:
+                return new Vector3(0, 0, 1);
+            case RIGHT:
+                return new Vector3(1, 1, 0).nor();
+            case LEFT:
+                return new Vector3(-1, 1, 0).nor();
+            case BACKLEFT:
+                return new Vector3(-1, -1, 0).nor();
+            case BACKRIGHT:
+                return new Vector3(1, -1, 0).nor();
+            default:
+                return new Vector3(0, 0, -1);
+        }
+    }
 }

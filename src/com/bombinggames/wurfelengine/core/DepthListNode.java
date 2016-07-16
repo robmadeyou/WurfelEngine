@@ -32,114 +32,120 @@ package com.bombinggames.wurfelengine.core;
 
 import com.bombinggames.wurfelengine.core.gameobjects.AbstractEntity;
 import com.bombinggames.wurfelengine.core.gameobjects.AbstractGameObject;
+
 import java.util.Iterator;
 
 /**
- *
  * @author Benedikt Vogler
  */
-public class DepthListNode implements Iterable<AbstractGameObject>{
-	private DepthListNode next = null;
-	private DepthListNode prev = null;
-	final AbstractGameObject content;
+public class DepthListNode implements Iterable<AbstractGameObject> {
+    final AbstractGameObject content;
+    private DepthListNode next = null;
+    private DepthListNode prev = null;
 
-	public DepthListNode(AbstractGameObject content) {
-		this.content = content;
-	}
-	
-	public DepthListNode getNext() {
-		return next;
-	}
+    public DepthListNode(AbstractGameObject content) {
+        this.content = content;
+    }
 
-	public AbstractGameObject getContent() {
-		return content;
-	}
-	
-	public void add(AbstractGameObject content){
-		next = new DepthListNode(content);
-		next.prev = this;
-	}
+    public DepthListNode getNext() {
+        return next;
+    }
 
-	@Override
-	public Iterator<AbstractGameObject> iterator() {
-		return new DepthListIterator(this);
-	}
-	
-	public ReverseDepthListIterator iteratorReverse() {
-		return new ReverseDepthListIterator(this);
-	}
+    public AbstractGameObject getContent() {
+        return content;
+    }
 
-	void addEnd(AbstractEntity content) {
-		DepthListNode last = this;
-		while (last.next != null) {
-			last = last.next;	
-		}
-		last.add(content);
-	}
-	
-	public class DepthListIterator implements Iterator<AbstractGameObject>{
-		DepthListNode current;
+    public void add(AbstractGameObject content) {
+        next = new DepthListNode(content);
+        next.prev = this;
+    }
 
-		public DepthListIterator(DepthListNode start) {
-			this.current = start;
-		}
-		
-		@Override
-		public boolean hasNext() {
-			return current.next != null;
-		}
+    @Override
+    public Iterator<AbstractGameObject> iterator() {
+        return new DepthListIterator(this);
+    }
 
-		@Override
-		public AbstractGameObject next() {
-			current = current.next;
-			return current.getContent();
-		}
+    public ReverseDepthListIterator iteratorReverse() {
+        return new ReverseDepthListIterator(this);
+    }
+
+    void addEnd(AbstractEntity content) {
+        DepthListNode last = this;
+        while (last.next != null) {
+            last = last.next;
+        }
+        last.add(content);
+    }
+
+    public class DepthListIterator implements Iterator<AbstractGameObject> {
+        DepthListNode current;
+
+        public DepthListIterator(DepthListNode start) {
+            this.current = start;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return current.next != null;
+        }
+
+        @Override
+        public AbstractGameObject next() {
+            current = current.next;
+            return current.getContent();
+        }
 
 
-		/**
-		 * to the right
-		 * @param ent 
-		 */
-		void insert(AbstractEntity ent) {
-			DepthListNode tmp = null;
-			if (current.next != null) {
-				tmp = current.next;
-			}
-			current.next = new DepthListNode(ent);
-			current.next.prev = current;
-			current.next.next = tmp;
-		}
-	};
-	
-	public class ReverseDepthListIterator{
-		DepthListNode current;
+        /**
+         * to the right
+         *
+         * @param ent
+         */
+        void insert(AbstractEntity ent) {
+            DepthListNode tmp = null;
+            if (current.next != null) {
+                tmp = current.next;
+            }
+            current.next = new DepthListNode(ent);
+            current.next.prev = current;
+            current.next.next = tmp;
+        }
+    }
 
-		public ReverseDepthListIterator(DepthListNode start) {
-			this.current = start;
-		}
-		
-		public boolean hasPrev() {
-			return current.prev != null;
-		}
+    ;
 
-		public AbstractGameObject prev() {
-			current = current.prev;
-			return current.getContent();
-		}
+    public class ReverseDepthListIterator {
+        DepthListNode current;
 
-		/**
-		 * to the right
-		 * @param ent 
-		 */
-		void insert(AbstractEntity ent) {
-			DepthListNode tmp = null;
-			if (current.next != null) {
-				tmp = current.next;
-			}
-			current.next = new DepthListNode(ent);
-			current.next.prev = current;
-			current.next.next = tmp;
-		}
-	};
-	
+        public ReverseDepthListIterator(DepthListNode start) {
+            this.current = start;
+        }
+
+        public boolean hasPrev() {
+            return current.prev != null;
+        }
+
+        public AbstractGameObject prev() {
+            current = current.prev;
+            return current.getContent();
+        }
+
+        /**
+         * to the right
+         *
+         * @param ent
+         */
+        void insert(AbstractEntity ent) {
+            DepthListNode tmp = null;
+            if (current.next != null) {
+                tmp = current.next;
+            }
+            current.next = new DepthListNode(ent);
+            current.next.prev = current;
+            current.next.next = tmp;
+        }
+    }
+
+    ;
+
 }

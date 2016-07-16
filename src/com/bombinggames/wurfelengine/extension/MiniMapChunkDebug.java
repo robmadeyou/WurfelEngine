@@ -35,53 +35,53 @@ import com.bombinggames.wurfelengine.core.Controller;
 import com.bombinggames.wurfelengine.core.GameView;
 import com.bombinggames.wurfelengine.core.map.Chunk;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderChunk;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class MiniMapChunkDebug {
-	private boolean visible = true;
-	
-	    /**
-	 * distance from left
-	 */
-	private final int posX;
-	/**
-	 * distance from bottom
-	 */
-	private final int posY;
+    /**
+     * distance from left
+     */
+    private final int posX;
+    /**
+     * distance from bottom
+     */
+    private final int posY;
+    private boolean visible = true;
 
-	public MiniMapChunkDebug(int posX, int posY) {
-		this.posX = posX;
-		this.posY = posY;
-	}
-	   
-	
-	/**
+    public MiniMapChunkDebug(int posX, int posY) {
+        this.posX = posX;
+        this.posY = posY;
+    }
+
+
+    /**
      * Renders the Minimap.
-     * @param view the view using this render method 
+     *
+     * @param view the view using this render method
      */
     public void render(final GameView view) {
         if (visible) {
-			ShapeRenderer sh = view.getShapeRenderer();
-			sh.begin(ShapeRenderer.ShapeType.Filled);
-			sh.setColor(0, 1, 0, 1);
-			ArrayList<Chunk> mapdata = Controller.getMap().getLoadedChunks();
-			for (Chunk chunk : mapdata) {
-				if (chunk != null) {
-					sh.rect(posX + chunk.getChunkX() * 10, posY - chunk.getChunkY() * 10, 9, 9);
-				}
-			}
-			sh.setColor(1, 1, 0, 0.1f);
-			LinkedList<RenderChunk> rS = view.getRenderStorage().getData();
-			for (RenderChunk chunk : rS) {
-				sh.rect(posX+chunk.getChunkX()*10, posY-chunk.getChunkY()*10, 9, 9);
-			}
-			sh.end();
-			
+            ShapeRenderer sh = view.getShapeRenderer();
+            sh.begin(ShapeRenderer.ShapeType.Filled);
+            sh.setColor(0, 1, 0, 1);
+            ArrayList<Chunk> mapdata = Controller.getMap().getLoadedChunks();
+            for (Chunk chunk : mapdata) {
+                if (chunk != null) {
+                    sh.rect(posX + chunk.getChunkX() * 10, posY - chunk.getChunkY() * 10, 9, 9);
+                }
+            }
+            sh.setColor(1, 1, 0, 0.1f);
+            LinkedList<RenderChunk> rS = view.getRenderStorage().getData();
+            for (RenderChunk chunk : rS) {
+                sh.rect(posX + chunk.getChunkX() * 10, posY - chunk.getChunkY() * 10, 9, 9);
+            }
+            sh.end();
+
 //				//camera position
 //				view.drawString(
 //					camera.getViewSpaceX() +" | "+ camera.getViewSpaceY(),
@@ -92,5 +92,5 @@ public class MiniMapChunkDebug {
 //			}
         }
     }
-	
+
 }

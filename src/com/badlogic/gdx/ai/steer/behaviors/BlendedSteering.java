@@ -1,12 +1,12 @@
 /*******************************************************************************
  * Copyright 2014 See AUTHORS file.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -41,131 +41,131 @@ import com.badlogic.gdx.utils.Array;
  * favorable. Sure you can make the weights for the wall avoidance huge, but then your agent may behave strangely next time it
  * finds itself alone and next to a wall.</li>
  * </ul>
- * 
+ *
  * @param <T> Type of vector, either 2D or 3D, implementing the {@link Vector} interface
- * 
+ *
  * @author davebaol */
 public class BlendedSteering<T extends Vector<T>> extends SteeringBehavior<T> {
 
-	/** The list of behaviors and their corresponding blending weights. */
-	protected Array<BehaviorAndWeight<T>> list;
+    /** The list of behaviors and their corresponding blending weights. */
+    protected Array<BehaviorAndWeight<T>> list;
 
-	private SteeringAcceleration<T> steering;
+    private SteeringAcceleration<T> steering;
 
-	/** Creates a {@code BlendedSteering} for the specified {@code owner}, {@code maxLinearAcceleration} and
-	 * {@code maxAngularAcceleration}.
-	 * @param owner the owner of this behavior. */
-	public BlendedSteering (Steerable<T> owner) {
-		super(owner);
+    /** Creates a {@code BlendedSteering} for the specified {@code owner}, {@code maxLinearAcceleration} and
+     * {@code maxAngularAcceleration}.
+     * @param owner the owner of this behavior. */
+    public BlendedSteering(Steerable<T> owner) {
+        super(owner);
 
-		this.list = new Array<BehaviorAndWeight<T>>();
-		this.steering = new SteeringAcceleration<T>(newVector(owner));
-	}
+        this.list = new Array<BehaviorAndWeight<T>>();
+        this.steering = new SteeringAcceleration<T>(newVector(owner));
+    }
 
-	/** Adds a steering behavior and its weight to the list.
-	 * @param behavior the steering behavior to add
-	 * @param weight the weight of the behavior
-	 * @return this behavior for chaining. */
-	public BlendedSteering<T> add (SteeringBehavior<T> behavior, float weight) {
-		return add(new BehaviorAndWeight<T>(behavior, weight));
-	}
+    /** Adds a steering behavior and its weight to the list.
+     * @param behavior the steering behavior to add
+     * @param weight the weight of the behavior
+     * @return this behavior for chaining. */
+    public BlendedSteering<T> add(SteeringBehavior<T> behavior, float weight) {
+        return add(new BehaviorAndWeight<T>(behavior, weight));
+    }
 
-	/** Adds a steering behavior and its weight to the list.
-	 * @param item the steering behavior and its weight
-	 * @return this behavior for chaining. */
-	public BlendedSteering<T> add (BehaviorAndWeight<T> item) {
-		item.behavior.setOwner(owner);
-		list.add(item);
-		return this;
-	}
+    /** Adds a steering behavior and its weight to the list.
+     * @param item the steering behavior and its weight
+     * @return this behavior for chaining. */
+    public BlendedSteering<T> add(BehaviorAndWeight<T> item) {
+        item.behavior.setOwner(owner);
+        list.add(item);
+        return this;
+    }
 
-	/** Returns the weighted behavior at the specified index.
-	 * @param index the index of the weighted behavior to return */
-	public BehaviorAndWeight<T> get (int index) {
-		return list.get(index);
-	}
+    /** Returns the weighted behavior at the specified index.
+     * @param index the index of the weighted behavior to return */
+    public BehaviorAndWeight<T> get(int index) {
+        return list.get(index);
+    }
 
-	@Override
-	protected SteeringAcceleration<T> calculateRealSteering (SteeringAcceleration<T> blendedSteering) {
-		// Clear the output to start with
-		blendedSteering.setZero();
+    @Override
+    protected SteeringAcceleration<T> calculateRealSteering(SteeringAcceleration<T> blendedSteering) {
+        // Clear the output to start with
+        blendedSteering.setZero();
 
-		// Go through all the behaviors
-		int len = list.size;
-		for (int i = 0; i < len; i++) {
-			BehaviorAndWeight<T> bw = list.get(i);
+        // Go through all the behaviors
+        int len = list.size;
+        for (int i = 0; i < len; i++) {
+            BehaviorAndWeight<T> bw = list.get(i);
 
-			// Calculate the behavior's steering
-			bw.behavior.calculateSteering(steering);
+            // Calculate the behavior's steering
+            bw.behavior.calculateSteering(steering);
 
-			// Scale and add the steering to the accumulator
-			blendedSteering.mulAdd(steering, bw.weight);
-		}
+            // Scale and add the steering to the accumulator
+            blendedSteering.mulAdd(steering, bw.weight);
+        }
 
-		Limiter actualLimiter = getActualLimiter();
+        Limiter actualLimiter = getActualLimiter();
 
-		// Crop the result
-		blendedSteering.linear.limit(actualLimiter.getMaxLinearAcceleration());
-		if (blendedSteering.angular > actualLimiter.getMaxAngularAcceleration())
-			blendedSteering.angular = actualLimiter.getMaxAngularAcceleration();
+        // Crop the result
+        blendedSteering.linear.limit(actualLimiter.getMaxLinearAcceleration());
+        if (blendedSteering.angular > actualLimiter.getMaxAngularAcceleration())
+            blendedSteering.angular = actualLimiter.getMaxAngularAcceleration();
 
-		return blendedSteering;
-	}
+        return blendedSteering;
+    }
 
-	//
-	// Setters overridden in order to fix the correct return type for chaining
-	//
+    //
+    // Setters overridden in order to fix the correct return type for chaining
+    //
 
-	@Override
-	public BlendedSteering<T> setOwner (Steerable<T> owner) {
-		this.owner = owner;
-		return this;
-	}
+    @Override
+    public BlendedSteering<T> setOwner(Steerable<T> owner) {
+        this.owner = owner;
+        return this;
+    }
 
-	@Override
-	public BlendedSteering<T> setEnabled (boolean enabled) {
-		this.enabled = enabled;
-		return this;
-	}
+    @Override
+    public BlendedSteering<T> setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        return this;
+    }
 
-	/** Sets the limiter of this steering behavior. The given limiter must at least take care of the maximum linear and angular
-	 * accelerations. You can use {@link NullLimiter#NEUTRAL_LIMITER} to avoid all truncations.
-	 * @return this behavior for chaining. */
-	@Override
-	public BlendedSteering<T> setLimiter (Limiter limiter) {
-		this.limiter = limiter;
-		return this;
-	}
+    /** Sets the limiter of this steering behavior. The given limiter must at least take care of the maximum linear and angular
+     * accelerations. You can use {@link NullLimiter#NEUTRAL_LIMITER} to avoid all truncations.
+     * @return this behavior for chaining. */
+    @Override
+    public BlendedSteering<T> setLimiter(Limiter limiter) {
+        this.limiter = limiter;
+        return this;
+    }
 
-	//
-	// Nested classes
-	//
+    //
+    // Nested classes
+    //
 
-	public static class BehaviorAndWeight<T extends Vector<T>> {
+    public static class BehaviorAndWeight<T extends Vector<T>> {
 
-		protected SteeringBehavior<T> behavior;
-		protected float weight;
+        protected SteeringBehavior<T> behavior;
+        protected float weight;
 
-		public BehaviorAndWeight (SteeringBehavior<T> behavior, float weight) {
-			this.behavior = behavior;
-			this.weight = weight;
-		}
+        public BehaviorAndWeight(SteeringBehavior<T> behavior, float weight) {
+            this.behavior = behavior;
+            this.weight = weight;
+        }
 
-		public SteeringBehavior<T> getBehavior () {
-			return behavior;
-		}
+        public SteeringBehavior<T> getBehavior() {
+            return behavior;
+        }
 
-		public void setBehavior (SteeringBehavior<T> behavior) {
-			this.behavior = behavior;
-		}
+        public void setBehavior(SteeringBehavior<T> behavior) {
+            this.behavior = behavior;
+        }
 
-		public float getWeight () {
-			return weight;
-		}
+        public float getWeight() {
+            return weight;
+        }
 
-		public void setWeight (float weight) {
-			this.weight = weight;
-		}
-	}
+        public void setWeight(float weight) {
+            this.weight = weight;
+        }
+    }
 
 }

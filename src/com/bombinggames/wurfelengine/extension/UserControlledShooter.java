@@ -46,123 +46,123 @@ import com.bombinggames.wurfelengine.extension.shooting.Weapon;
  */
 public class UserControlledShooter extends MovableEntity implements Controllable {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private transient Camera camera;
-	private Weapon weapon;
+    private transient Camera camera;
+    private Weapon weapon;
 
-	/**
-	 * Creates a player. The parameters are for the lower half of the player.
-	 *
-	 * @param spritesPerDir
-	 * @param height
-	 */
-	public UserControlledShooter(int spritesPerDir, int height) {
-		super((byte) 30, spritesPerDir);
+    /**
+     * Creates a player. The parameters are for the lower half of the player.
+     *
+     * @param spritesPerDir
+     * @param height
+     */
+    public UserControlledShooter(int spritesPerDir, int height) {
+        super((byte) 30, spritesPerDir);
 
-		setObstacle(true);
-		setFriction((float) WE.getCVars().get("playerfriction").getValue());
-		setDimensionZ(height);
-	}
+        setObstacle(true);
+        setFriction((float) WE.getCVars().get("playerfriction").getValue());
+        setDimensionZ(height);
+    }
 
-	@Override
-	public AbstractEntity spawn(Point point) {
-		super.spawn(point);
-		if (weapon!=null)
-			weapon.spawn(point.cpy());
-		return this;
-	}
-	
-	@Override
-	public void walk(boolean up, boolean down, boolean left, boolean right, float walkingspeed, float dt) {
-		
-		if (up || down || left || right){
+    @Override
+    public AbstractEntity spawn(Point point) {
+        super.spawn(point);
+        if (weapon != null)
+            weapon.spawn(point.cpy());
+        return this;
+    }
 
-			//update the direction vector
-			Vector2 dir = new Vector2(left ? -1 : (right ? 1 : 0f), up ? -1 : (down ? 1 : 0f));
-			dir.nor().scl(walkingspeed);
-			setHorMovement(dir);
-		}
-	}
+    @Override
+    public void walk(boolean up, boolean down, boolean left, boolean right, float walkingspeed, float dt) {
 
-	/**
-	 * Jumps the player with a sound
-	 */
-	@Override
-	public void jump() {
-		if (isOnGround())
-			jump(5, true);
-	}
+        if (up || down || left || right) {
 
-	/**
-	 * Getting aim relative to middle of view by reading mouse position. If no
-	 * camera is configured dircetion of head.
-	 *
-	 * @return
-	 */
-	@Override
-	public Vector3 getAiming() {
-		Vector3 aim;
-		if (camera != null) {
-			aim = new Vector3(
-				Gdx.input.getX() - camera.getWidthInScreenSpc() / 2,
-				2 * (Gdx.input.getY() - camera.getHeightInScreenSpc() / 2),
-				0
-			);
-		} else {
-			aim = new Vector3(getOrientation(), 0);
-		}
-		return aim.nor();
-	}
+            //update the direction vector
+            Vector2 dir = new Vector2(left ? -1 : (right ? 1 : 0f), up ? -1 : (down ? 1 : 0f));
+            dir.nor().scl(walkingspeed);
+            setHorMovement(dir);
+        }
+    }
 
-	@Override
-	public void update(float dt) {
-		super.update(dt);
-		if (weapon != null) {
-			if (hasPosition()) {
-				weapon.getPosition().set(getPosition());
-			}
-			weapon.update(dt);
-		}
-	}
+    /**
+     * Jumps the player with a sound
+     */
+    @Override
+    public void jump() {
+        if (isOnGround())
+            jump(5, true);
+    }
 
-	/**
-	 * Set the camera which is renderin the player to calculate the aiming. If
-	 * camera is null
-	 *
-	 * @param camera
-	 */
-	public void setCamera(Camera camera) {
-		this.camera = camera;
-	}
+    /**
+     * Getting aim relative to middle of view by reading mouse position. If no
+     * camera is configured dircetion of head.
+     *
+     * @return
+     */
+    @Override
+    public Vector3 getAiming() {
+        Vector3 aim;
+        if (camera != null) {
+            aim = new Vector3(
+                    Gdx.input.getX() - camera.getWidthInScreenSpc() / 2,
+                    2 * (Gdx.input.getY() - camera.getHeightInScreenSpc() / 2),
+                    0
+            );
+        } else {
+            aim = new Vector3(getOrientation(), 0);
+        }
+        return aim.nor();
+    }
 
-	/**
-	 * Get the camera used to identify the aiming direction.
-	 * @return
-	 */
-	public Camera getCamera() {
-		return camera;
-	}
+    @Override
+    public void update(float dt) {
+        super.update(dt);
+        if (weapon != null) {
+            if (hasPosition()) {
+                weapon.getPosition().set(getPosition());
+            }
+            weapon.update(dt);
+        }
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	public Weapon getWeapon() {
-		return weapon;
-	}
+    /**
+     * Get the camera used to identify the aiming direction.
+     *
+     * @return
+     */
+    public Camera getCamera() {
+        return camera;
+    }
 
-	/**
-	 * Gives the player a weapon.
-	 *
-	 * @param weapon
-	 */
-	public void equipWeapon(Weapon weapon) {
-		if (this.weapon != null) {
-			this.weapon.removeFromMap();
-		}
-		this.weapon = weapon;
-		weapon.reload();
-	}
+    /**
+     * Set the camera which is renderin the player to calculate the aiming. If
+     * camera is null
+     *
+     * @param camera
+     */
+    public void setCamera(Camera camera) {
+        this.camera = camera;
+    }
+
+    /**
+     * @return
+     */
+    public Weapon getWeapon() {
+        return weapon;
+    }
+
+    /**
+     * Gives the player a weapon.
+     *
+     * @param weapon
+     */
+    public void equipWeapon(Weapon weapon) {
+        if (this.weapon != null) {
+            this.weapon.removeFromMap();
+        }
+        this.weapon = weapon;
+        weapon.reload();
+    }
 
 }

@@ -34,13 +34,13 @@ import com.bombinggames.wurfelengine.core.cvar.CVarSystemMap;
 
 /**
  * An interface to register custom cvars for the map cvar system. They msut be registered before being updated by loading from file.
+ *
  * @author Benedikt Vogler
  */
 public interface CustomMapCVarRegistration {
 
-	/**
-	 *
-	 * @param styem
-	 */
-	public void register(CVarSystemMap styem);
+    /**
+     * @param styem
+     */
+    public void register(CVarSystemMap styem);
 }

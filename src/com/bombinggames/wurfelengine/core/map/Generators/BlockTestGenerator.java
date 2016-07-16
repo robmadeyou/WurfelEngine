@@ -32,23 +32,25 @@
 package com.bombinggames.wurfelengine.core.map.Generators;
 
 import com.bombinggames.wurfelengine.core.map.Generator;
+
 import static com.bombinggames.wurfelengine.core.map.rendering.RenderCell.OBJECTTYPESNUM;
 
 /**
- *A generator which uses every block.
+ * A generator which uses every block.
+ *
  * @author Benedikt Vogler
  */
-public class BlockTestGenerator implements Generator{
+public class BlockTestGenerator implements Generator {
 
     @Override
     public int generate(int x, int y, int z) {
-        if (z==0)
-			return (byte) (Math.abs(y) % OBJECTTYPESNUM);
+        if (z == 0)
+            return (byte) (Math.abs(y) % OBJECTTYPESNUM);
         else
             return 0;
     }
 
-	@Override
-	public void spawnEntities(int x, int y, int z) {
-	}
+    @Override
+    public void spawnEntities(int x, int y, int z) {
+    }
 }

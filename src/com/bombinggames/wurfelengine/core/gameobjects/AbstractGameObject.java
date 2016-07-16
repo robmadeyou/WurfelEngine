@@ -42,10 +42,10 @@ import com.bombinggames.wurfelengine.core.GameView;
 import com.bombinggames.wurfelengine.core.map.Point;
 import com.bombinggames.wurfelengine.core.map.Position;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
-import static com.bombinggames.wurfelengine.core.map.rendering.RenderCell.VIEW_DEPTH2;
-import static com.bombinggames.wurfelengine.core.map.rendering.RenderCell.VIEW_HEIGHT2;
-import static com.bombinggames.wurfelengine.core.map.rendering.RenderCell.VIEW_WIDTH2;
+
 import java.io.Serializable;
+
+import static com.bombinggames.wurfelengine.core.map.rendering.RenderCell.*;
 
 /**
  * An AbstractGameObject is something wich can be found in the game world.
@@ -54,523 +54,524 @@ import java.io.Serializable;
  */
 public abstract class AbstractGameObject implements Serializable, Renderable {
 
-	private transient static final long serialVersionUID = 2L;
+    private transient static final long serialVersionUID = 2L;
 
-	/**
-	 * The sprite texture which contains every object texture
-	 */
-	private transient static TextureAtlas spritesheet;
-	private transient static String spritesheetPath = "com/bombinggames/wurfelengine/core/images/Spritesheet";
-	private transient static Pixmap pixmap;
-	/**
-	 * indexed acces to the spritesheet
-	 */
-	private transient static AtlasRegion[][][] sprites = new AtlasRegion['z'][RenderCell.OBJECTTYPESNUM][RenderCell.VALUESNUM];//{category}{id}{value}
-	private transient static int drawCalls = 0;
-	private static Texture textureDiff;
-	private static Texture textureNormal;
-	private static int currentMarkedFlag;
+    /**
+     * The sprite texture which contains every object texture
+     */
+    private transient static TextureAtlas spritesheet;
+    private transient static String spritesheetPath = "com/bombinggames/wurfelengine/core/images/Spritesheet";
+    private transient static Pixmap pixmap;
+    /**
+     * indexed acces to the spritesheet
+     */
+    private transient static AtlasRegion[][][] sprites = new AtlasRegion['z'][RenderCell.OBJECTTYPESNUM][RenderCell.VALUESNUM];//{category}{id}{value}
+    private transient static int drawCalls = 0;
+    private static Texture textureDiff;
+    private static Texture textureNormal;
+    private static int currentMarkedFlag;
+    //render information
+    private boolean hidden;
+    private float rotation;
+    private float scaling = 1;
+    private byte spriteId;
+    private byte spriteValue = 0;
+    /**
+     * default is RGBA 0x808080FF.
+     */
+    private transient Color tint = new Color(0.5f, 0.5f, 0.5f, 1f);
+    private int marked;
 
-	/**
-	 * disposes static fields
-	 */
-	public static void staticDispose() {
-		spritesheet.dispose();//is this line needed?
-		WE.getAssetManager().unload(spritesheetPath + ".txt");
-		spritesheet = null;
-		//clear index
-		for (AtlasRegion[][] type : sprites) {
-			for (AtlasRegion[] id : type) {
-				for (int i = 0; i < id.length; i++) {
-					id[i] = null;
-				}
-			}
-		}
-		if (pixmap != null) {
-			pixmap.dispose();
-		}
-		pixmap = null;
-	}
+    /**
+     * Creates an object.
+     *
+     * @param id the id of the object which is used for rendering
+     */
+    protected AbstractGameObject(byte id) {
+        this.spriteId = id;
+        if (id == 0) {
+            setHidden(true);
+        }
+        //markPermanent();//create as marked
+    }
 
-	/**
-	 * the diffuse map
-	 *
-	 * @return
-	 */
-	public static Texture getTextureDiffuse() {
-		return textureDiff;
-	}
+    /**
+     * Creates an object.
+     *
+     * @param id    the id of the object which is used for rendering
+     * @param value used for rendering
+     */
+    protected AbstractGameObject(byte id, byte value) {
+        this(id);
+        this.spriteValue = value;
+    }
 
-	/**
-	 * the normal map
-	 *
-	 * @return
-	 */
-	public static Texture getTextureNormal() {
-		return textureNormal;
-	}
+    /**
+     * disposes static fields
+     */
+    public static void staticDispose() {
+        spritesheet.dispose();//is this line needed?
+        WE.getAssetManager().unload(spritesheetPath + ".txt");
+        spritesheet = null;
+        //clear index
+        for (AtlasRegion[][] type : sprites) {
+            for (AtlasRegion[] id : type) {
+                for (int i = 0; i < id.length; i++) {
+                    id[i] = null;
+                }
+            }
+        }
+        if (pixmap != null) {
+            pixmap.dispose();
+        }
+        pixmap = null;
+    }
 
-	/**
-	 *
-	 * @return can be null if pixmap loadin is disabled
-	 */
-	public static Pixmap getPixmap() {
-		return pixmap;
-	}
+    //getter & setter
 
-	/**
-	 * Set your custom spritesheet path. the suffix will be added
-	 *
-	 * @param customPath format like
-	 * "com/bombinggames/wurfelengine/core/images/Spritesheet" without suffix
-	 */
-	public static void setCustomSpritesheet(String customPath) {
-		AbstractGameObject.spritesheetPath = customPath;
-	}
+    /**
+     * the diffuse map
+     *
+     * @return
+     */
+    public static Texture getTextureDiffuse() {
+        return textureDiff;
+    }
 
-	/**
-	 * path of the spritesheet
-	 *
-	 * @return
-	 */
-	public static String getSpritesheetPath() {
-		return spritesheetPath;
-	}
+    /**
+     * the normal map
+     *
+     * @return
+     */
+    public static Texture getTextureNormal() {
+        return textureNormal;
+    }
 
-	/**
-	 * Reset couner for this frame
-	 */
-	public static void resetDrawCalls() {
-		AbstractGameObject.drawCalls = 0;
-	}
+    /**
+     * @return can be null if pixmap loadin is disabled
+     */
+    public static Pixmap getPixmap() {
+        return pixmap;
+    }
 
-	/**
-	 * Maybe not quite correct. A single block has only one drawcall even it
-	 * should consist of three.
-	 *
-	 * @return
-	 */
-	public static int getDrawCalls() {
-		return drawCalls;
-	}
+    /**
+     * Set your custom spritesheet path. the suffix will be added
+     *
+     * @param customPath format like
+     *                   "com/bombinggames/wurfelengine/core/images/Spritesheet" without suffix
+     */
+    public static void setCustomSpritesheet(String customPath) {
+        AbstractGameObject.spritesheetPath = customPath;
+    }
 
-	/**
-	 * Load the spritesheet from memory.
-	 */
-	public static void loadSheet() {
-		//spritesheet = new TextureAtlas(Gdx.files.internal("com/bombinggames/Game/Blockimages/Spritesheet.txt"), true);
-		Gdx.app.log("AGameObject", "getting spritesheet");
-		if (spritesheet == null) {
-			spritesheet = WE.getAsset(spritesheetPath + ".txt");
-		}
-		textureDiff = spritesheet.getTextures().first();
-		if (WE.getCVars().getValueB("LEnormalMapRendering")) {
-			textureNormal = WE.getAsset(spritesheetPath + ".png");
-		}
+    /**
+     * path of the spritesheet
+     *
+     * @return
+     */
+    public static String getSpritesheetPath() {
+        return spritesheetPath;
+    }
 
-		//load again for pixmap, allows access to image color data;
-		if (WE.getCVars().getValueB("loadPixmap")) {
-			if (pixmap == null) {
-				//pixmap = WurfelEngine.getInstance().manager.get("com/bombinggames/Game/Blockimages/Spritesheet.png", Pixmap.class);
-				pixmap = new Pixmap(
-					Gdx.files.internal(spritesheetPath + ".png")
-				);
-			}
-		}
-	}
+    /**
+     * Reset couner for this frame
+     */
+    public static void resetDrawCalls() {
+        AbstractGameObject.drawCalls = 0;
+    }
 
-	/**
-	 * Returns a sprite texture.
-	 *
-	 * @param category the category of the sprite e.g. 'b' for blocks
-	 * @param id the id of the object
-	 * @param value the value of the object
-	 * @return
-	 */
-	public static AtlasRegion getSprite(final char category, final byte id, final byte value) {
-		if (spritesheet == null || id <= 0 || value < 0) {
-			return null;
-		}
-		if (sprites[category][id][value] == null) { //load if not already loaded
-			AtlasRegion sprite = spritesheet.findRegion(category + Integer.toString(id) + "-" + value);
-			if (sprite == null) { //if there is no sprite show the default "sprite not found sprite" for this category
-				Gdx.app.debug("Spritesheet", category + Integer.toString(id) + "-" + value + " not found");
-				sprite = spritesheet.findRegion(category + "0-0");
-				if (sprite == null) {//load generic error sprite if category sprite failed
-					sprite = spritesheet.findRegion("error");
-					if (sprite == null) {
-						throw new NullPointerException("Sprite and category error not found and even the generic error sprite could not be found. Something with the sprites is fucked up.");
-					}
-				}
-			}
-			sprites[category][id][value] = sprite;
-			return sprite;
-		} else {
-			return sprites[category][id][value];
-		}
-	}
+    /**
+     * Maybe not quite correct. A single block has only one drawcall even it
+     * should consist of three.
+     *
+     * @return
+     */
+    public static int getDrawCalls() {
+        return drawCalls;
+    }
 
-	//getter & setter
-	/**
-	 * Returns the spritesheet used for rendering.
-	 *
-	 * @return the spritesheet used by the objects
-	 */
-	public static TextureAtlas getSpritesheet() {
-		return spritesheet;
-	}
+    /**
+     * Load the spritesheet from memory.
+     */
+    public static void loadSheet() {
+        //spritesheet = new TextureAtlas(Gdx.files.internal("com/bombinggames/Game/Blockimages/Spritesheet.txt"), true);
+        Gdx.app.log("AGameObject", "getting spritesheet");
+        if (spritesheet == null) {
+            spritesheet = WE.getAsset(spritesheetPath + ".txt");
+        }
+        textureDiff = spritesheet.getTextures().first();
+        if (WE.getCVars().getValueB("LEnormalMapRendering")) {
+            textureNormal = WE.getAsset(spritesheetPath + ".png");
+        }
 
-	/**
-	 * inverses the dirty flag comparison so everything marked is now unmarked.
-	 * used to mark the visited obejcts with depthsort.
-	 * @param id
-	 */
-	public static void inverseMarkedFlag(int id) {
-		currentMarkedFlag ^= 1 << id;
-	}
+        //load again for pixmap, allows access to image color data;
+        if (WE.getCVars().getValueB("loadPixmap")) {
+            if (pixmap == null) {
+                //pixmap = WurfelEngine.getInstance().manager.get("com/bombinggames/Game/Blockimages/Spritesheet.png", Pixmap.class);
+                pixmap = new Pixmap(
+                        Gdx.files.internal(spritesheetPath + ".png")
+                );
+            }
+        }
+    }
 
-	//render information
-	private boolean hidden;
-	private float rotation;
-	private float scaling = 1;
-	private byte spriteId;
-	private byte spriteValue = 0;
+    /**
+     * Returns a sprite texture.
+     *
+     * @param category the category of the sprite e.g. 'b' for blocks
+     * @param id       the id of the object
+     * @param value    the value of the object
+     * @return
+     */
+    public static AtlasRegion getSprite(final char category, final byte id, final byte value) {
+        if (spritesheet == null || id <= 0 || value < 0) {
+            return null;
+        }
+        if (sprites[category][id][value] == null) { //load if not already loaded
+            AtlasRegion sprite = spritesheet.findRegion(category + Integer.toString(id) + "-" + value);
+            if (sprite == null) { //if there is no sprite show the default "sprite not found sprite" for this category
+                Gdx.app.debug("Spritesheet", category + Integer.toString(id) + "-" + value + " not found");
+                sprite = spritesheet.findRegion(category + "0-0");
+                if (sprite == null) {//load generic error sprite if category sprite failed
+                    sprite = spritesheet.findRegion("error");
+                    if (sprite == null) {
+                        throw new NullPointerException("Sprite and category error not found and even the generic error sprite could not be found. Something with the sprites is fucked up.");
+                    }
+                }
+            }
+            sprites[category][id][value] = sprite;
+            return sprite;
+        } else {
+            return sprites[category][id][value];
+        }
+    }
 
-	/**
-	 * default is RGBA 0x808080FF.
-	 */
-	private transient Color tint = new Color(0.5f, 0.5f, 0.5f, 1f);
-	private int marked;
+    /**
+     * Returns the spritesheet used for rendering.
+     *
+     * @return the spritesheet used by the objects
+     */
+    public static TextureAtlas getSpritesheet() {
+        return spritesheet;
+    }
 
-	/**
-	 * Creates an object.
-	 *
-	 * @param id the id of the object which is used for rendering
-	 */
-	protected AbstractGameObject(byte id) {
-		this.spriteId = id;
-		if (id == 0) {
-			setHidden(true);
-		}
-		//markPermanent();//create as marked
-	}
+    /**
+     * inverses the dirty flag comparison so everything marked is now unmarked.
+     * used to mark the visited obejcts with depthsort.
+     *
+     * @param id
+     */
+    public static void inverseMarkedFlag(int id) {
+        currentMarkedFlag ^= 1 << id;
+    }
 
-	/**
-	 * Creates an object.
-	 *
-	 * @param id the id of the object which is used for rendering
-	 * @param value used for rendering
-	 */
-	protected AbstractGameObject(byte id, byte value) {
-		this(id);
-		this.spriteValue = value;
-	}
-	
-	/**
-	 * Get the category letter for accessing sprites.
-	 *
-	 * @return
-	 */
-	public abstract char getCategory();
+    /**
+     * Get the category letter for accessing sprites.
+     *
+     * @return
+     */
+    public abstract char getCategory();
 
-	/**
-	 * The height of the object for depth sorting.
-	 *
-	 * @return game space
-	 */
-	public abstract int getDimensionZ();
+    /**
+     * The height of the object for depth sorting.
+     *
+     * @return game space
+     */
+    public abstract int getDimensionZ();
 
-	/**
-	 * Set the coordinates without safety check. May use different object
-	 * pointing to the same position.
-	 *
-	 * @param pos the coordinates you want to set
-	 */
-	public abstract void setPosition(Position pos);
+    /**
+     * Set the coordinates without safety check. May use different object
+     * pointing to the same position.
+     *
+     * @param pos the coordinates you want to set
+     */
+    public abstract void setPosition(Position pos);
 
-	/**
-	 * Returns the depth of the object. Nearer objects have a bigger depth.
-	 *
-	 * @return distance from zero level
-	 */
-	public float getDepth() {
-		Point pos = getPoint();
-		return pos.getY() + (pos.getZ() + getDimensionZ()) * RenderCell.ZAXISSHORTENING;//or Point.SQRT12?
-	}
+    /**
+     * Returns the depth of the object. Nearer objects have a bigger depth.
+     *
+     * @return distance from zero level
+     */
+    public float getDepth() {
+        Point pos = getPoint();
+        return pos.getY() + (pos.getZ() + getDimensionZ()) * RenderCell.ZAXISSHORTENING;//or Point.SQRT12?
+    }
 
-	/**
-	 * When calling sprite.draw this hsould also be called for statistics.
-	 */
-	protected void increaseDrawCalls() {
-		drawCalls++;
-	}
+    /**
+     * When calling sprite.draw this hsould also be called for statistics.
+     */
+    protected void increaseDrawCalls() {
+        drawCalls++;
+    }
 
-	@Override
-	public void render(GameView view, Camera camera) {
-		if (!hidden && getPosition()!=null) {
-			Color fogcolor = null;
-			if (WE.getCVars().getValueB("enableFog")) {
-				//can use CVars for dynamic change. using harcored values for performance reasons
-				float factor = (float) (Math.exp(0.025f * (camera.getVisibleFrontBorderHigh() - getPosition().toCoord().getY() - 18.0)) - 1);
-				fogcolor = new Color(
-					0.5f + 0.3f * factor,
-					0.5f + 0.4f * factor,
-					0.5f + 0.1f * factor,
-					0.5f
-				);
-			}
-			render(
-				view,
-				getPosition().getViewSpcX(),
-				getPosition().getViewSpcY(),
-				fogcolor
-			);
-		}
-	}
+    @Override
+    public void render(GameView view, Camera camera) {
+        if (!hidden && getPosition() != null) {
+            Color fogcolor = null;
+            if (WE.getCVars().getValueB("enableFog")) {
+                //can use CVars for dynamic change. using harcored values for performance reasons
+                float factor = (float) (Math.exp(0.025f * (camera.getVisibleFrontBorderHigh() - getPosition().toCoord().getY() - 18.0)) - 1);
+                fogcolor = new Color(
+                        0.5f + 0.3f * factor,
+                        0.5f + 0.4f * factor,
+                        0.5f + 0.1f * factor,
+                        0.5f
+                );
+            }
+            render(
+                    view,
+                    getPosition().getViewSpcX(),
+                    getPosition().getViewSpcY(),
+                    fogcolor
+            );
+        }
+    }
 
-	/**
-	 * Renders at a custom position.
-	 *
-	 * @param view
-	 * @param xPos rendering position, center of sprite in projection (?) space
-	 * @param yPos rendering position, center of sprite in projection (?) space
-	 */
-	public void render(GameView view, int xPos, int yPos) {
-		render(view, xPos, yPos, null);
-	}
+    /**
+     * Renders at a custom position.
+     *
+     * @param view
+     * @param xPos rendering position, center of sprite in projection (?) space
+     * @param yPos rendering position, center of sprite in projection (?) space
+     */
+    public void render(GameView view, int xPos, int yPos) {
+        render(view, xPos, yPos, null);
+    }
 
-	/**
-	 * Renders at a custom position with a custom light.
-	 *
-	 * @param view
-	 * @param xPos rendering position, center of sprite in projection space (?)
-	 * @param yPos rendering position, center of sprite in projection space (?)
-	 * @param color color which gets multiplied with the tint. No change ( =
-	 * multiply with 1) is when passed RGBA 0x80808080.
-	 */
-	public void render(GameView view, int xPos, int yPos, Color color) {
-		if (spriteId > 0 && spriteValue >= 0) {
-			AtlasRegion texture = AbstractGameObject.getSprite(getCategory(), spriteId, spriteValue);
-			Sprite sprite = new Sprite(texture);
-			sprite.setOrigin(
-				texture.originalWidth / 2 - texture.offsetX,
-				VIEW_HEIGHT2 - texture.offsetY
-			);
-			sprite.setRotation(rotation);
-			//sprite.setOrigin(0, 0);
-			sprite.setScale(scaling);
+    /**
+     * Renders at a custom position with a custom light.
+     *
+     * @param view
+     * @param xPos  rendering position, center of sprite in projection space (?)
+     * @param yPos  rendering position, center of sprite in projection space (?)
+     * @param color color which gets multiplied with the tint. No change ( =
+     *              multiply with 1) is when passed RGBA 0x80808080.
+     */
+    public void render(GameView view, int xPos, int yPos, Color color) {
+        if (spriteId > 0 && spriteValue >= 0) {
+            AtlasRegion texture = AbstractGameObject.getSprite(getCategory(), spriteId, spriteValue);
+            Sprite sprite = new Sprite(texture);
+            sprite.setOrigin(
+                    texture.originalWidth / 2 - texture.offsetX,
+                    VIEW_HEIGHT2 - texture.offsetY
+            );
+            sprite.setRotation(rotation);
+            //sprite.setOrigin(0, 0);
+            sprite.setScale(scaling);
 
-			sprite.setPosition(
-				xPos + texture.offsetX - texture.originalWidth / 2,
-				yPos//center
-				- VIEW_HEIGHT2
-				+ texture.offsetY
-			);
+            sprite.setPosition(
+                    xPos + texture.offsetX - texture.originalWidth / 2,
+                    yPos//center
+                            - VIEW_HEIGHT2
+                            + texture.offsetY
+            );
 
-			//hack for transient field tint
-			if (tint == null) {
-				tint = new Color(0.5f, 0.5f, 0.5f, 1f);
-			}
-			if (color != null) {
-				sprite.setColor(
-					tint.cpy().mul(
-						color.r + 0.5f,
-						color.g + 0.5f,
-						color.b + 0.5f,
-						color.a + 0.5f
-					)
-				);
-			} else {
-				sprite.setColor(tint);
-			}
+            //hack for transient field tint
+            if (tint == null) {
+                tint = new Color(0.5f, 0.5f, 0.5f, 1f);
+            }
+            if (color != null) {
+                sprite.setColor(
+                        tint.cpy().mul(
+                                color.r + 0.5f,
+                                color.g + 0.5f,
+                                color.b + 0.5f,
+                                color.a + 0.5f
+                        )
+                );
+            } else {
+                sprite.setColor(tint);
+            }
 
-			if (view.debugRendering()) {
-				ShapeRenderer sh = view.getShapeRenderer();
-				sh.begin(ShapeRenderer.ShapeType.Line);
-				//sprite outline
-				sh.rect(
-					sprite.getX(),
-					sprite.getY(),
-					sprite.getWidth(),
-					sprite.getHeight()
-				);
-				//crossing lines
-				sh.line(
-					xPos - VIEW_WIDTH2,
-					yPos - VIEW_DEPTH2,
-					xPos + VIEW_WIDTH2,
-					yPos + VIEW_DEPTH2
-				);
-				sh.line(
-					xPos - VIEW_WIDTH2,
-					yPos + VIEW_DEPTH2,
-					xPos + VIEW_WIDTH2,
-					yPos - VIEW_DEPTH2
-				);
-				//bounding box
-				sh.line(xPos - VIEW_WIDTH2, yPos, xPos, yPos - VIEW_DEPTH2);
-				sh.line(xPos - VIEW_WIDTH2, yPos, xPos, yPos + VIEW_DEPTH2);
-				sh.line(xPos, yPos - VIEW_DEPTH2, xPos + VIEW_WIDTH2, yPos);
-				sh.line(xPos, yPos + VIEW_DEPTH2, xPos + VIEW_WIDTH2, yPos);
-				sh.end();
-			} else {
-				sprite.draw(view.getSpriteBatch());
-				drawCalls++;
-			}
-		}
-	}
+            if (view.debugRendering()) {
+                ShapeRenderer sh = view.getShapeRenderer();
+                sh.begin(ShapeRenderer.ShapeType.Line);
+                //sprite outline
+                sh.rect(
+                        sprite.getX(),
+                        sprite.getY(),
+                        sprite.getWidth(),
+                        sprite.getHeight()
+                );
+                //crossing lines
+                sh.line(
+                        xPos - VIEW_WIDTH2,
+                        yPos - VIEW_DEPTH2,
+                        xPos + VIEW_WIDTH2,
+                        yPos + VIEW_DEPTH2
+                );
+                sh.line(
+                        xPos - VIEW_WIDTH2,
+                        yPos + VIEW_DEPTH2,
+                        xPos + VIEW_WIDTH2,
+                        yPos - VIEW_DEPTH2
+                );
+                //bounding box
+                sh.line(xPos - VIEW_WIDTH2, yPos, xPos, yPos - VIEW_DEPTH2);
+                sh.line(xPos - VIEW_WIDTH2, yPos, xPos, yPos + VIEW_DEPTH2);
+                sh.line(xPos, yPos - VIEW_DEPTH2, xPos + VIEW_WIDTH2, yPos);
+                sh.line(xPos, yPos + VIEW_DEPTH2, xPos + VIEW_WIDTH2, yPos);
+                sh.end();
+            } else {
+                sprite.draw(view.getSpriteBatch());
+                drawCalls++;
+            }
+        }
+    }
 
-	//getter & setter
-	/**
-	 * the id of the sprite using for rendering.<br>
-	 * By default is the same as the object id but in some cases some
-	 * objects share one sprite so they can have the same.
-	 *
-	 * @return if spritevalue is not custom set uses value.
-	 */
-	public byte getSpriteId() {
-		return spriteId;
-	}
+    //getter & setter
 
+    /**
+     * the id of the sprite using for rendering.<br>
+     * By default is the same as the object id but in some cases some
+     * objects share one sprite so they can have the same.
+     *
+     * @return if spritevalue is not custom set uses value.
+     */
+    public byte getSpriteId() {
+        return spriteId;
+    }
 
-	/**
+    /**
+     * The id of the sprite. Default is the same as the id but in some cases
+     * some objects share their sprites.
+     *
+     * @param id
+     */
+    public void setSpriteId(byte id) {
+        spriteId = id;
+    }
+
+    /**
      * Get the value. It is like a sub-id and can identify the status.
+     *
      * @return in range [0;{@link Block#VALUESNUM}]. Is -1 if about to destroyed.
      */
-	public byte getSpriteValue() {
-		return spriteValue;
-	}
+    public byte getSpriteValue() {
+        return spriteValue;
+    }
 
-	/**
-	 * Returns the name of the object
-	 *
-	 * @return the name of the object
-	 */
-	public abstract String getName();
-
-	/**
-	 * Returns the rotation of the object.
-	 *
-	 * @return in degrees
-	 */
-	public float getRotation() {
-		return rotation;
-	}
-
-	/**
-	 * Returns the scale factor of the object.
-	 *
-	 * @return 1 is no scaling
-	 */
-	public float getScaling() {
-		return scaling;
-	}
-
-	/**
-	 * Returns true, when set as hidden. Hidden objects are not rendered even
-	 * when they are clipped ("clipped" by the meaning of the raytracing).
-	 *
-	 * @return if the object is invisible
-	 */
-	public boolean isHidden() {
-		return hidden;
-	}
-
-	/**
-	 * Hides an object. It won't be rendered.
-	 *
-	 * @param hidden
-	 */
-	public void setHidden(boolean hidden) {
-		this.hidden = hidden;
-	}
-
-	/**
-	 *
-	 * @param rotation set the rotation in degrees.
-	 */
-	public void setRotation(float rotation) {
-		this.rotation = rotation;
-	}
-
-	/**
-	 *
-	 * @param scaling 1 no scaling, &gt; bigger, &lt; 1 smaller
-	 */
-	public void setScaling(float scaling) {
-		this.scaling = scaling;
-	}
-
-	/**
-	 * The id of the sprite. Default is the same as the id but in some cases
-	 * some objects share their sprites.
-	 *
-	 * @param id
-	 */
-	public void setSpriteId(byte id) {
-		spriteId = id;
-	}
-
-	/**
+    /**
      * Set the value.
+     *
      * @param value in range [0;{@link Block#VALUESNUM}]. Is -1 if about to destroyed.
      */
-	public void setSpriteValue(byte value) {
-		if (value < RenderCell.VALUESNUM) {
-			spriteValue = value;
-		}
-	}
+    public void setSpriteValue(byte value) {
+        if (value < RenderCell.VALUESNUM) {
+            spriteValue = value;
+        }
+    }
 
-	/**
-	 * give the object a tint. The default brightness is RGBA 0x808080FF so you
-	 * can make it brighter and darker by modifying R, G and B.
-	 *
-	 * @param color
-	 */
-	public void setColor(Color color) {
-		this.tint = color;
-	}
+    /**
+     * Returns the name of the object
+     *
+     * @return the name of the object
+     */
+    public abstract String getName();
 
-	/**
-	 * get the tint of the object. The default brightness is RGBA 0x808080FF so
-	 * you can make it brighter and darker by modifying R, G and B.
-	 *
-	 * @return not copy safe
-	 */
-	public Color getColor() {
-		return tint;
-	}
+    /**
+     * Returns the rotation of the object.
+     *
+     * @return in degrees
+     */
+    public float getRotation() {
+        return rotation;
+    }
 
-	/**
-	 * Should i.g. not be used for rendering.
-	 *
-	 * @return the sprite used for rendering
-	 */
-	public AtlasRegion getSprite() {
-		return AbstractGameObject.getSprite(getCategory(), spriteId, spriteValue);
-	}
+    /**
+     * @param rotation set the rotation in degrees.
+     */
+    public void setRotation(float rotation) {
+        this.rotation = rotation;
+    }
 
-	/**
-	 * Check if it is marked in this frame. Used for depth sorting.
-	 * @param id camera id
-	 * @return 
-	 */
-	public final boolean isMarkedDS(final int id) {
-		return ((marked>>id)&1) == ((AbstractGameObject.currentMarkedFlag >> id) & 1);
-	}
+    /**
+     * Returns the scale factor of the object.
+     *
+     * @return 1 is no scaling
+     */
+    public float getScaling() {
+        return scaling;
+    }
 
-	/**
-	 * Marks as visited in the depth sorting algorithm.
-	 * @param id camera id
-	 * @see com.bombinggames.wurfelengine.core.Camera#visit(com.bombinggames.wurfelengine.core.gameobjects.AbstractGameObject) 
-	 */
-	public void markPermanentDS(final int id) {
-		marked ^= (-((AbstractGameObject.currentMarkedFlag >> id) & 1) ^ marked) & (1 << id);
-	}
+    /**
+     * @param scaling 1 no scaling, &gt; bigger, &lt; 1 smaller
+     */
+    public void setScaling(float scaling) {
+        this.scaling = scaling;
+    }
 
-	@Override
-	public boolean shouldBeRendered(Camera camera) {
-		return true;
-	}
+    /**
+     * Returns true, when set as hidden. Hidden objects are not rendered even
+     * when they are clipped ("clipped" by the meaning of the raytracing).
+     *
+     * @return if the object is invisible
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Hides an object. It won't be rendered.
+     *
+     * @param hidden
+     */
+    public void setHidden(boolean hidden) {
+        this.hidden = hidden;
+    }
+
+    /**
+     * get the tint of the object. The default brightness is RGBA 0x808080FF so
+     * you can make it brighter and darker by modifying R, G and B.
+     *
+     * @return not copy safe
+     */
+    public Color getColor() {
+        return tint;
+    }
+
+    /**
+     * give the object a tint. The default brightness is RGBA 0x808080FF so you
+     * can make it brighter and darker by modifying R, G and B.
+     *
+     * @param color
+     */
+    public void setColor(Color color) {
+        this.tint = color;
+    }
+
+    /**
+     * Should i.g. not be used for rendering.
+     *
+     * @return the sprite used for rendering
+     */
+    public AtlasRegion getSprite() {
+        return AbstractGameObject.getSprite(getCategory(), spriteId, spriteValue);
+    }
+
+    /**
+     * Check if it is marked in this frame. Used for depth sorting.
+     *
+     * @param id camera id
+     * @return
+     */
+    public final boolean isMarkedDS(final int id) {
+        return ((marked >> id) & 1) == ((AbstractGameObject.currentMarkedFlag >> id) & 1);
+    }
+
+    /**
+     * Marks as visited in the depth sorting algorithm.
+     *
+     * @param id camera id
+     * @see com.bombinggames.wurfelengine.core.Camera#visit(com.bombinggames.wurfelengine.core.gameobjects.AbstractGameObject)
+     */
+    public void markPermanentDS(final int id) {
+        marked ^= (-((AbstractGameObject.currentMarkedFlag >> id) & 1) ^ marked) & (1 << id);
+    }
+
+    @Override
+    public boolean shouldBeRendered(Camera camera) {
+        return true;
+    }
 
 }

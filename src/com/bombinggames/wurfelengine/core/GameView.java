@@ -62,35 +62,17 @@ import java.util.logging.Logger;
  *
  * @author Benedikt
  */
-public class GameView implements GameManager
-{
+public class GameView implements GameManager {
 
     /**
      * saves the amount of active cameras
      */
     private static int cameraIdCounter = 0;
-
-    /**
-     * Shoud be called before the object get initialized.
-     * Initializes class fields.
-     */
-    public static void classInit ()
-    {
-        //set up font
-        //font = WurfelEngine.getInstance().manager.get("com/bombinggames/wurfelengine/EngineCore/arial.fnt"); //load font
-        //font.scale(2);
-
-        //font.scale(-0.5f);
-
-        //load sprites
-        RenderCell.loadSheet ();
-    }
-
     /**
      * the cameras rendering the scene
      */
-    private final ArrayList< Camera > cameras = new ArrayList<> ( 6 );//max 6 cameras
-
+    private final ArrayList<Camera> cameras = new ArrayList<>(6);//max 6 cameras
+    private final SpriteBatch spriteBatch = new SpriteBatch(2000);
     /**
      * true if current rendering is debug only
      */
@@ -111,21 +93,29 @@ public class GameView implements GameManager
      * game related stage. e.g. holds hud and gui
      */
     private Stage stage;
-    private final SpriteBatch spriteBatch = new SpriteBatch ( 2000 );
-
     private LoadMenu loadMenu;
-
-
     private boolean initalized;
-
     /**
      * backup of cvar for keeping the time steady when changed in another view
      */
     private float gameSpeed = 1f;
-
     private boolean useDefaultShader;
-
     private RenderStorage renderstorage;
+
+    /**
+     * Shoud be called before the object get initialized.
+     * Initializes class fields.
+     */
+    public static void classInit() {
+        //set up font
+        //font = WurfelEngine.getInstance().manager.get("com/bombinggames/wurfelengine/EngineCore/arial.fnt"); //load font
+        //font.scale(2);
+
+        //font.scale(-0.5f);
+
+        //load sprites
+        RenderCell.loadSheet();
+    }
 
     /**
      * Loades some files and set up everything. This should be done after
@@ -136,34 +126,31 @@ public class GameView implements GameManager
      * @param oldView    The view used before. Can be null.
      * @see #onEnter()
      */
-    public void init (final Controller controller, final GameView oldView)
-    {
-        Gdx.app.debug ( "GameView", "Initializing" );
-        try
-        {
-            loadShaders ();
-        } catch ( Exception ex )
-        {
-            Logger.getLogger ( GameView.class.getName () ).log ( Level.SEVERE, null, ex );
+    public void init(final Controller controller, final GameView oldView) {
+        Gdx.app.debug("GameView", "Initializing");
+        try {
+            loadShaders();
+        } catch (Exception ex) {
+            Logger.getLogger(GameView.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         this.controller = controller;
 
         //clear old stuff
-        cameras.clear ();
+        cameras.clear();
 
         //set up renderer
-        libGDXcamera = new OrthographicCamera ( Gdx.graphics.getWidth (), Gdx.graphics.getHeight () );
+        libGDXcamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        shRenderer = new ShapeRenderer ();
+        shRenderer = new ShapeRenderer();
 
         //set up stage
-        stage = new Stage ( new StretchViewport ( Gdx.graphics.getWidth (), Gdx.graphics.getHeight () ), spriteBatch );//spawn at fullscreen
+        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), spriteBatch);//spawn at fullscreen
 
-        useDefaultShader ();//set default shader
+        useDefaultShader();//set default shader
 
-        renderstorage = new RenderStorage ();
-        MessageManager.getInstance ().addListener ( renderstorage, Events.mapChanged.getId () );
+        renderstorage = new RenderStorage();
+        MessageManager.getInstance().addListener(renderstorage, Events.mapChanged.getId());
         initalized = true;
     }
 
@@ -173,9 +160,16 @@ public class GameView implements GameManager
      *
      * @return
      */
-    public ShaderProgram getShader ()
-    {
+    public ShaderProgram getShader() {
         return shader;
+    }
+
+    /**
+     * @param shader
+     */
+    public void setShader(ShaderProgram shader) {
+        spriteBatch.setShader(shader);
+        useDefaultShader = false;
     }
 
     /**
@@ -183,16 +177,14 @@ public class GameView implements GameManager
      *
      * @param debug
      */
-    void setDebugRendering (boolean debug)
-    {
+    void setDebugRendering(boolean debug) {
         this.inDebug = debug;
     }
 
     /**
      * @return true if current rendering is debug only
      */
-    public boolean debugRendering ()
-    {
+    public boolean debugRendering() {
         return inDebug;
     }
 
@@ -201,34 +193,30 @@ public class GameView implements GameManager
      *
      * @throws java.lang.Exception
      */
-    public void loadShaders () throws Exception
-    {
-        Gdx.app.debug ( "Shader", "loading" );
+    public void loadShaders() throws Exception {
+        Gdx.app.debug("Shader", "loading");
         //shaders are very fast to load and the asset loader does not support text files out of the box
-        String fragmentShader = Gdx.files.internal ( "com/bombinggames/wurfelengine/core/fragment" + ( WE.getCVars ().getValueB ( "LEnormalMapRendering" ) ? "NM" : "" ) + ".fs" ).readString ();
-        String vertexShader = Gdx.files.internal ( "com/bombinggames/wurfelengine/core/vertex" + ( WE.getCVars ().getValueB ( "LEnormalMapRendering" ) ? "NM" : "" ) + ".vs" ).readString ();
+        String fragmentShader = Gdx.files.internal("com/bombinggames/wurfelengine/core/fragment" + (WE.getCVars().getValueB("LEnormalMapRendering") ? "NM" : "") + ".fs").readString();
+        String vertexShader = Gdx.files.internal("com/bombinggames/wurfelengine/core/vertex" + (WE.getCVars().getValueB("LEnormalMapRendering") ? "NM" : "") + ".vs").readString();
         //Setup shader
         ShaderProgram.pedantic = false;
 
-        ShaderProgram newshader = new ShaderProgram ( vertexShader, fragmentShader );
-        if ( newshader.isCompiled () )
-        {
+        ShaderProgram newshader = new ShaderProgram(vertexShader, fragmentShader);
+        if (newshader.isCompiled()) {
             shader = newshader;
 
             //print any warnings
-            if ( shader.getLog ().length () != 0 )
-            {
-                System.out.println ( shader.getLog () );
+            if (shader.getLog().length() != 0) {
+                System.out.println(shader.getLog());
             }
 
             //setup default uniforms
-            shader.begin ();
+            shader.begin();
             //our normal map
-            shader.setUniformi ( "u_normals", 1 ); //GL_TEXTURE1
-            shader.end ();
-        } else
-        {
-            throw new Exception ( "Could not compile shader: " + newshader.getLog () );
+            shader.setUniformi("u_normals", 1); //GL_TEXTURE1
+            shader.end();
+        } else {
+            throw new Exception("Could not compile shader: " + newshader.getLog());
         }
     }
 
@@ -236,44 +224,38 @@ public class GameView implements GameManager
      * Override to specify what should happen when the mangager becomes active. You can ignore the super call.
      */
     @Override
-    public void onEnter ()
-    {
+    public void onEnter() {
         //no code here so missing super call has code executed in enter()
     }
 
     @Override
-    public final void enter ()
-    {
-        Gdx.app.debug ( "GameView", "Entering" );
-        if ( !isInitalized () )
-        {
-            Gdx.app.error ( this.getClass ().toString (), "Called method enter() before initializing." );
+    public final void enter() {
+        Gdx.app.debug("GameView", "Entering");
+        if (!isInitalized()) {
+            Gdx.app.error(this.getClass().toString(), "Called method enter() before initializing.");
         }
-        WE.getEngineView ().addInputProcessor ( stage );//the input processor must be added every time because they are only
-        controller.hideCursor ();
+        WE.getEngineView().addInputProcessor(stage);//the input processor must be added every time because they are only
+        controller.hideCursor();
 
         //enable cameras
-        for ( Camera camera : cameras )
-        {
-            camera.setActive ( true );
+        for (Camera camera : cameras) {
+            camera.setActive(true);
         }
 
-        if ( WE.SOUND != null )
-        {
-            WE.SOUND.setView ( this );
+        if (WE.SOUND != null) {
+            WE.SOUND.setView(this);
         }
 
-        if ( ( boolean ) WE.getCVars ().get ( "DevMode" ).getValue () )
-        {
-            WE.getEngineView ().setCursor ( 0 );
+        if ((boolean) WE.getCVars().get("DevMode").getValue()) {
+            WE.getEngineView().setCursor(0);
         }
 
-        resize ( Gdx.graphics.getWidth (), Gdx.graphics.getHeight () );
+        resize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         //restore gameSpeed
-        WE.getCVars ().get ( "timespeed" ).setValue ( gameSpeed );
+        WE.getCVars().get("timespeed").setValue(gameSpeed);
 
-        onEnter ();
+        onEnter();
     }
 
     /**
@@ -281,9 +263,8 @@ public class GameView implements GameManager
      *
      * @param dt
      */
-    public void preUpdate (final float dt)
-    {
-        renderstorage.preUpdate ( dt );
+    public void preUpdate(final float dt) {
+        renderstorage.preUpdate(dt);
     }
 
     /**
@@ -291,13 +272,12 @@ public class GameView implements GameManager
      *
      * @param dt time since last update in ms.
      */
-    public void update (final float dt)
-    {
-        gameSpeed = WE.getCVars ().getValueF ( "timespeed" );
+    public void update(final float dt) {
+        gameSpeed = WE.getCVars().getValueF("timespeed");
 
-        AbstractGameObject.resetDrawCalls ();
+        AbstractGameObject.resetDrawCalls();
 
-        stage.act ( dt );
+        stage.act(dt);
 
         //update cameras
         /**
@@ -305,92 +285,80 @@ public class GameView implements GameManager
          */
         //at least one active camera
         boolean cameraactive = false;
-        for ( Camera camera : cameras )
-        {
-            camera.update ( dt );
-            if ( camera.isEnabled () )
+        for (Camera camera : cameras) {
+            camera.update(dt);
+            if (camera.isEnabled())
                 cameraactive = true;
         }
-        if ( cameraactive )
-        {
-            renderstorage.update ( dt );
+        if (cameraactive) {
+            renderstorage.update(dt);
         }
 
         // toggle the dev menu?
-        if ( keyF5isUp && Gdx.input.isKeyPressed ( Keys.F5 ) )
-        {
-            controller.getDevTools ().setVisible ( !controller.getDevTools ().isVisible () );
+        if (keyF5isUp && Gdx.input.isKeyPressed(Keys.F5)) {
+            controller.getDevTools().setVisible(!controller.getDevTools().isVisible());
             keyF5isUp = false;
         }
-        keyF5isUp = !Gdx.input.isKeyPressed ( Keys.F5 );
+        keyF5isUp = !Gdx.input.isKeyPressed(Keys.F5);
     }
 
-    public RenderStorage getRenderStorage ()
-    {
+    public RenderStorage getRenderStorage() {
         return renderstorage;
     }
 
-    public void setRenderStorage (RenderStorage renderstorage)
-    {
-        if ( this.renderstorage != null )
-            MessageManager.getInstance ().removeListener ( this.renderstorage, Events.mapChanged.getId () );
+    public void setRenderStorage(RenderStorage renderstorage) {
+        if (this.renderstorage != null)
+            MessageManager.getInstance().removeListener(this.renderstorage, Events.mapChanged.getId());
         this.renderstorage = renderstorage;
     }
 
     /**
      * Main method which is called every time and renders everything. You must manually render the devtools e.g. in an extended render method.
      */
-    public void render ()
-    {
+    public void render() {
         //Gdx.gl10.glViewport(0, 0,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
         //clear screen if wished
-        if ( ( boolean ) WE.getCVars ().get ( "clearBeforeRendering" ).getValue () )
-        {
-            Gdx.gl20.glClearColor ( 0, 0, 0, 1 );
-            Gdx.gl20.glClear ( GL20.GL_COLOR_BUFFER_BIT );
+        if ((boolean) WE.getCVars().get("clearBeforeRendering").getValue()) {
+            Gdx.gl20.glClearColor(0, 0, 0, 1);
+            Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
         }
 
         //render every camera
-        if ( cameras.isEmpty () )
-        {
-            Gdx.gl20.glClearColor ( 0.5f, 1, 0.5f, 1 );
-            Gdx.gl20.glClear ( GL20.GL_COLOR_BUFFER_BIT );
-            drawString ( "No camera set up", Gdx.graphics.getWidth () / 2, Gdx.graphics.getHeight () / 2, Color.BLACK.cpy () );
-        } else
-        {
-            setShader ( getShader () );
-            for ( Camera camera : cameras )
-            {
-                camera.render ( this, camera );
+        if (cameras.isEmpty()) {
+            Gdx.gl20.glClearColor(0.5f, 1, 0.5f, 1);
+            Gdx.gl20.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            drawString("No camera set up", Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, Color.BLACK.cpy());
+        } else {
+            setShader(getShader());
+            for (Camera camera : cameras) {
+                camera.render(this, camera);
             }
         }
 
         //render HUD and GUI
-        useDefaultShader ();
-        spriteBatch.setProjectionMatrix ( libGDXcamera.combined );
-        shRenderer.setProjectionMatrix ( libGDXcamera.combined );
+        useDefaultShader();
+        spriteBatch.setProjectionMatrix(libGDXcamera.combined);
+        shRenderer.setProjectionMatrix(libGDXcamera.combined);
         //spriteBatch.setTransformMatrix(new Matrix4());//reset transformation
-        shRenderer.setTransformMatrix ( new Matrix4 () );//reset transformation
+        shRenderer.setTransformMatrix(new Matrix4());//reset transformation
 
-        Gdx.gl20.glLineWidth ( 1 );
+        Gdx.gl20.glLineWidth(1);
 
         //set viewport of hud to cover whole window
-        HdpiUtils.glViewport ( 0, 0, Gdx.graphics.getWidth (), Gdx.graphics.getHeight () );
+        HdpiUtils.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
-        if ( controller.getDevTools () != null )
-        {
-            controller.getDevTools ().render ( this );
+        if (controller.getDevTools() != null) {
+            controller.getDevTools().render(this);
         }
 
         //render light engine based on first camera
-        if ( Controller.getLightEngine () != null && !getCameras ().isEmpty () )
-        {
-            Controller.getLightEngine ().render ( this, getCameras ().get ( 0 ).getCenter () );
+        if (Controller.getLightEngine() != null && !getCameras().isEmpty()) {
+            Controller.getLightEngine().render(this, getCameras().get(0).getCenter());
         }
 
         //render buttons
-        stage.draw ();
+        stage.draw();
     }
 
     /**
@@ -398,10 +366,9 @@ public class GameView implements GameManager
      *
      * @return the scale factor
      */
-    public float getEqualizationScale ()
-    {
-        if ( initalized )
-            return libGDXcamera.viewportWidth / ( int ) WE.getCVars ().get ( "renderResolutionWidth" ).getValue ();
+    public float getEqualizationScale() {
+        if (initalized)
+            return libGDXcamera.viewportWidth / (int) WE.getCVars().get("renderResolutionWidth").getValue();
         else
             return 1;
     }
@@ -413,9 +380,8 @@ public class GameView implements GameManager
      * @param camera  the camera where the position is on
      * @return view coordinate
      */
-    public float screenXtoView (final int screenX, final Camera camera)
-    {
-        return screenX / camera.getScreenSpaceScaling () - camera.getScreenPosX () + camera.getViewSpaceX () - camera.getWidthInProjSpc () / 2;//use left side
+    public float screenXtoView(final int screenX, final Camera camera) {
+        return screenX / camera.getScreenSpaceScaling() - camera.getScreenPosX() + camera.getViewSpaceX() - camera.getWidthInProjSpc() / 2;//use left side
     }
 
     /**
@@ -425,12 +391,11 @@ public class GameView implements GameManager
      * @param camera  the camera where the position is on
      * @return view coordinate
      */
-    public float screenYtoView (final int screenY, final Camera camera)
-    {
-        return camera.getViewSpaceY () //to view space
-                + camera.getHeightInProjSpc () / 2//use top side, therefore /2
-                - screenY / camera.getScreenSpaceScaling () //to view space and then revert scaling
-                - camera.getScreenPosY (); //screen pos offset
+    public float screenYtoView(final int screenY, final Camera camera) {
+        return camera.getViewSpaceY() //to view space
+                + camera.getHeightInProjSpc() / 2//use top side, therefore /2
+                - screenY / camera.getScreenSpaceScaling() //to view space and then revert scaling
+                - camera.getScreenPosY(); //screen pos offset
     }
 
     /**
@@ -440,25 +405,21 @@ public class GameView implements GameManager
      * @param y screen space. y-up
      * @return the position on the map. deepest layer. If no camera returns map center.
      */
-    public Point screenToGameBasic (final int x, final int y)
-    {
-        if ( cameras.size () > 0 )
-        {
+    public Point screenToGameBasic(final int x, final int y) {
+        if (cameras.size() > 0) {
             //identify clicked camera
             Camera camera;
             int i = 0;
-            do
-            {
-                camera = cameras.get ( i );
+            do {
+                camera = cameras.get(i);
                 i++;
             }
-            while ( i < cameras.size () && !( x > camera.getScreenPosX () && x < camera.getScreenPosX () + camera.getWidthInScreenSpc () && y > camera.getScreenPosY () && y < camera.getScreenPosY () + camera.getHeightInScreenSpc () ) );
+            while (i < cameras.size() && !(x > camera.getScreenPosX() && x < camera.getScreenPosX() + camera.getWidthInScreenSpc() && y > camera.getScreenPosY() && y < camera.getScreenPosY() + camera.getHeightInScreenSpc()));
 
             //find points
-            return new Point ( screenXtoView ( x, camera ), screenYtoView ( y, camera ) * -2, 0 );
-        } else
-        {
-            return Controller.getMap ().getCenter ();
+            return new Point(screenXtoView(x, camera), screenYtoView(y, camera) * -2, 0);
+        } else {
+            return Controller.getMap().getCenter();
         }
     }
 
@@ -469,19 +430,16 @@ public class GameView implements GameManager
      * @param y the y position on the screen from bottom
      * @return the position on the map. can return null if no camera available
      */
-    public Intersection screenToGame (final int x, final int y)
-    {
-        if ( cameras.size () > 0 )
-        {
-            Point p = screenToGameBasic ( x, y );
+    public Intersection screenToGame(final int x, final int y) {
+        if (cameras.size() > 0) {
+            Point p = screenToGameBasic(x, y);
             //find point at top of map
-            float deltaZ = Chunk.getGameHeight () - RenderCell.GAME_EDGELENGTH - p.getZ ();
-            p.add ( 0, deltaZ * Point.SQRT2, deltaZ );//top of map
+            float deltaZ = Chunk.getGameHeight() - RenderCell.GAME_EDGELENGTH - p.getZ();
+            p.add(0, deltaZ * Point.SQRT2, deltaZ);//top of map
 
-            return p.rayMarching ( new Vector3 ( 0, -1, -RenderCell.ZAXISSHORTENING ),//shoot in viewing direction, can not find correct vector: todo. Was -Point.SQRT12
-                    Float.POSITIVE_INFINITY, this, null );
-        } else
-        {
+            return p.rayMarching(new Vector3(0, -1, -RenderCell.ZAXISSHORTENING),//shoot in viewing direction, can not find correct vector: todo. Was -Point.SQRT12
+                    Float.POSITIVE_INFINITY, this, null);
+        } else {
             return null;
         }
     }
@@ -493,9 +451,8 @@ public class GameView implements GameManager
      * @param camera
      * @return screen space
      */
-    public int viewToScreenX (int x, Camera camera)
-    {
-        return ( int ) ( x - camera.getViewSpaceX () + camera.getWidthInScreenSpc () / 2 );
+    public int viewToScreenX(int x, Camera camera) {
+        return (int) (x - camera.getViewSpaceX() + camera.getWidthInScreenSpc() / 2);
     }
 
     /**
@@ -505,9 +462,8 @@ public class GameView implements GameManager
      * @param camera
      * @return screen space
      */
-    public int viewToScreenY (int y, Camera camera)
-    {
-        return ( int ) ( y - camera.getViewSpaceY () + camera.getHeightInScreenSpc () / 2 );
+    public int viewToScreenY(int y, Camera camera) {
+        return (int) (y - camera.getViewSpaceY() + camera.getHeightInScreenSpc() / 2);
     }
 
     /**
@@ -518,18 +474,15 @@ public class GameView implements GameManager
      * @param yPos      screen space
      * @param openbatch true if begin/end shoould be called
      */
-    public void drawString (final String msg, final int xPos, final int yPos, boolean openbatch)
-    {
-        if ( openbatch )
-        {
-            spriteBatch.setProjectionMatrix ( libGDXcamera.combined );
-            spriteBatch.begin ();
+    public void drawString(final String msg, final int xPos, final int yPos, boolean openbatch) {
+        if (openbatch) {
+            spriteBatch.setProjectionMatrix(libGDXcamera.combined);
+            spriteBatch.begin();
         }
-        WE.getEngineView ().getFont ().setColor ( Color.WHITE.cpy () );
-        WE.getEngineView ().getFont ().draw ( spriteBatch, msg, xPos, yPos );
-        if ( openbatch )
-        {
-            spriteBatch.end ();
+        WE.getEngineView().getFont().setColor(Color.WHITE.cpy());
+        WE.getEngineView().getFont().draw(spriteBatch, msg, xPos, yPos);
+        if (openbatch) {
+            spriteBatch.end();
         }
     }
 
@@ -541,11 +494,10 @@ public class GameView implements GameManager
      * @param yPos  screen space
      * @param color
      */
-    public void drawString (final String msg, final int xPos, final int yPos, final Color color)
-    {
-        spriteBatch.setColor ( Color.WHITE.cpy () );
-        WE.getEngineView ().getFont ().setColor ( color );
-        WE.getEngineView ().getFont ().draw ( spriteBatch, msg, xPos, yPos );
+    public void drawString(final String msg, final int xPos, final int yPos, final Color color) {
+        spriteBatch.setColor(Color.WHITE.cpy());
+        WE.getEngineView().getFont().setColor(color);
+        WE.getEngineView().getFont().draw(spriteBatch, msg, xPos, yPos);
     }
 
     /**
@@ -553,16 +505,14 @@ public class GameView implements GameManager
      *
      * @return
      */
-    public ShapeRenderer getShapeRenderer ()
-    {
+    public ShapeRenderer getShapeRenderer() {
         return shRenderer;
     }
 
     /**
      * @return
      */
-    public Controller getController ()
-    {
+    public Controller getController() {
         return controller;
     }
 
@@ -571,8 +521,7 @@ public class GameView implements GameManager
      *
      * @return The virtual cameras rendering the scene
      */
-    public ArrayList< Camera > getCameras ()
-    {
+    public ArrayList<Camera> getCameras() {
         return cameras;
     }
 
@@ -581,10 +530,9 @@ public class GameView implements GameManager
      *
      * @return
      */
-    public LoadMenu getLoadMenu ()
-    {
-        if ( loadMenu == null )
-            loadMenu = new LoadMenu ();//lazy init
+    public LoadMenu getLoadMenu() {
+        if (loadMenu == null)
+            loadMenu = new LoadMenu();//lazy init
         return loadMenu;
     }
 
@@ -593,12 +541,11 @@ public class GameView implements GameManager
      *
      * @param camera
      */
-    protected void addCamera (final Camera camera)
-    {
-        this.cameras.add ( camera );
+    protected void addCamera(final Camera camera) {
+        this.cameras.add(camera);
         GameView.cameraIdCounter++;
-        camera.setId ( GameView.cameraIdCounter );
-        getRenderStorage ().addCamera ( camera );
+        camera.setId(GameView.cameraIdCounter);
+        getRenderStorage().addCamera(camera);
     }
 
     /**
@@ -607,17 +554,15 @@ public class GameView implements GameManager
      * @param width
      * @param height
      */
-    public void resize (final int width, final int height)
-    {
-        for ( Camera camera : cameras )
-        {
-            camera.resize ( width, height );//resizes cameras to fullscreen?
+    public void resize(final int width, final int height) {
+        for (Camera camera : cameras) {
+            camera.resize(width, height);//resizes cameras to fullscreen?
         }
         //stage.setViewport(new StretchViewport(width, height));
         //EngineView.getStage().setViewport(new StretchViewport(width, height));
-        libGDXcamera.setToOrtho ( false, width, height );
-        libGDXcamera.zoom = 1 / getEqualizationScale ();
-        libGDXcamera.update ();
+        libGDXcamera.setToOrtho(false, width, height);
+        libGDXcamera.zoom = 1 / getEqualizationScale();
+        libGDXcamera.update();
     }
 
     /**
@@ -625,8 +570,7 @@ public class GameView implements GameManager
      *
      * @return
      */
-    public Stage getStage ()
-    {
+    public Stage getStage() {
         return stage;
     }
 
@@ -635,8 +579,7 @@ public class GameView implements GameManager
      *
      * @return
      */
-    public SpriteBatch getSpriteBatch ()
-    {
+    public SpriteBatch getSpriteBatch() {
         return spriteBatch;
     }
 
@@ -644,61 +587,44 @@ public class GameView implements GameManager
      * @return
      */
     @Override
-    public boolean isInitalized ()
-    {
+    public boolean isInitalized() {
         return initalized;
     }
 
     /**
      *
      */
-    public void useDefaultShader ()
-    {
-        spriteBatch.setShader ( null );
+    public void useDefaultShader() {
+        spriteBatch.setShader(null);
         useDefaultShader = true;
     }
 
     /**
      * @return
      */
-    public boolean isUsingDefaultShader ()
-    {
+    public boolean isUsingDefaultShader() {
         return useDefaultShader;
     }
 
-    /**
-     * @param shader
-     */
-    public void setShader (ShaderProgram shader)
-    {
-        spriteBatch.setShader ( shader );
-        useDefaultShader = false;
-    }
-
-
     @Override
-    public void exit ()
-    {
+    public void exit() {
         //disable cameras
-        for ( Camera camera : cameras )
-        {
-            camera.setActive ( false );
+        for (Camera camera : cameras) {
+            camera.setActive(false);
         }
     }
 
     @Override
-    public void dispose ()
-    {
-        for ( Camera camera : cameras )
-        {
-            camera.dispose ();
+    public void dispose() {
+        for (Camera camera : cameras) {
+            camera.dispose();
         }
-        if ( this.renderstorage != null )
-            MessageManager.getInstance ().removeListener ( this.renderstorage, Events.mapChanged.getId () );
-        renderstorage.dispose ();
-        shRenderer.dispose ();
-        spriteBatch.dispose ();
-        stage.dispose ();
+        if (this.renderstorage != null)
+            MessageManager.getInstance().removeListener(this.renderstorage, Events.mapChanged.getId());
+        renderstorage.dispose();
+        shRenderer.dispose();
+        spriteBatch.dispose();
+        stage.dispose();
 
         cameraIdCounter = 0;
     }

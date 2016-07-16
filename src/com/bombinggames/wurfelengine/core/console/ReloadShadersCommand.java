@@ -7,35 +7,34 @@ package com.bombinggames.wurfelengine.core.console;
 
 import com.bombinggames.wurfelengine.WE;
 import com.bombinggames.wurfelengine.core.GameplayScreen;
+
 import java.util.StringTokenizer;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class ReloadShadersCommand implements ConsoleCommand {
 
-	@Override
-	public boolean perform(StringTokenizer parameters, GameplayScreen gameplay) {
-		try {
-			gameplay.getView().loadShaders();
-		} catch (Exception ex) {
-			WE.getConsole().add(ex.getMessage());
-		}
-		return true;
-	}
+    @Override
+    public boolean perform(StringTokenizer parameters, GameplayScreen gameplay) {
+        try {
+            gameplay.getView().loadShaders();
+        } catch (Exception ex) {
+            WE.getConsole().add(ex.getMessage());
+        }
+        return true;
+    }
 
-	@Override
-	public String getCommandName() {
-		return "reloadshaders";
-	}
+    @Override
+    public String getCommandName() {
+        return "reloadshaders";
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public String getManual() {
-		return "reloads the shaders";
-	}
+    /**
+     * @return
+     */
+    @Override
+    public String getManual() {
+        return "reloads the shaders";
+    }
 }

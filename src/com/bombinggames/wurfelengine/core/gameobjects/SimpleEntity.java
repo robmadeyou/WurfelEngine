@@ -38,35 +38,33 @@ import com.badlogic.gdx.ai.msg.Telegram;
  */
 public class SimpleEntity extends AbstractEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	/**
-	 *
-	 * @param id
-	 */
-	public SimpleEntity(byte id) {
-		super(id);
-		setName("Simple Entity");
-	}
+    /**
+     * @param id
+     */
+    public SimpleEntity(byte id) {
+        super(id);
+        setName("Simple Entity");
+    }
 
-	/**
-	 *
-	 * @param id
-	 * @param value
-	 */
-	public SimpleEntity(byte id, byte value) {
-		super(id, value);
-		setName("Simple Entity");
-	}
+    /**
+     * @param id
+     * @param value
+     */
+    public SimpleEntity(byte id, byte value) {
+        super(id, value);
+        setName("Simple Entity");
+    }
 
-	@Override
-	public void update(float dt) {
-		super.update(dt);
-	}
+    @Override
+    public void update(float dt) {
+        super.update(dt);
+    }
 
-	@Override
-	public boolean handleMessage(Telegram msg) {
-		return true;
-	}
+    @Override
+    public boolean handleMessage(Telegram msg) {
+        return true;
+    }
 
 }

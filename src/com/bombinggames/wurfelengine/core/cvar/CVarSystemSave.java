@@ -31,23 +31,24 @@
 package com.bombinggames.wurfelengine.core.cvar;
 
 import com.bombinggames.wurfelengine.core.map.Map;
+
 import java.io.File;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class CVarSystemSave extends AbstractCVarSystem {
 
-	/**
-	 * Registers hardcoded cvars.
-	 * @param path
-	 */
-	public CVarSystemSave(File path) {
-		super(path);
-		register(new IntCVar(Map.MAPVERSION), "MapVersion", CVarFlags.CVAR_ALWAYSSAVE);
-		register(new FloatCVar(0), "LEsunAzimuth");
-		register(new FloatCVar(180), "LEmoonAzimuth");
-	}
+    /**
+     * Registers hardcoded cvars.
+     *
+     * @param path
+     */
+    public CVarSystemSave(File path) {
+        super(path);
+        register(new IntCVar(Map.MAPVERSION), "MapVersion", CVarFlags.CVAR_ALWAYSSAVE);
+        register(new FloatCVar(0), "LEsunAzimuth");
+        register(new FloatCVar(180), "LEmoonAzimuth");
+    }
 
 }

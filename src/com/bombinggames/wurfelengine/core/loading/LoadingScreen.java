@@ -17,11 +17,12 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.bombinggames.wurfelengine.WE;
-import com.bombinggames.wurfelengine.core.gameobjects.AbstractGameObject;
 import com.bombinggames.wurfelengine.core.WEScreen;
+import com.bombinggames.wurfelengine.core.gameobjects.AbstractGameObject;
 
 /**
  * Class under public domain. Modified for own needs. This class renders is the default loading screen of wurfel engine.
+ *
  * @author Mats Svensson, Benedikt Vogler
  */
 public class LoadingScreen extends WEScreen {
@@ -38,49 +39,50 @@ public class LoadingScreen extends WEScreen {
 
     private Actor loadingBar;
     private float percent;
-    
+
     /**
-     *To load custom files overwrite #customLoading
+     * To load custom files overwrite #customLoading
      */
     public LoadingScreen() {
         Gdx.app.log("LoadingScreen", "Initializing");
         AssetManager manager = WE.getAssetManager();
-                
+
         // Tell the manager to load assets for the loading screen
         manager.load("com/bombinggames/wurfelengine/core/loading/loading.txt", TextureAtlas.class);
         // Wait until they are finished loading
         manager.finishLoading();
-        
+
         // Add everything to be loaded, for instance:
         //WurfelEngine.getInstance().manager.load("com/bombinggames/Game/Blockimages/Spritesheet.png", Pixmap.class);
-        manager.load(AbstractGameObject.getSpritesheetPath()+".txt", TextureAtlas.class);
-		if (WE.getCVars().getValueB("LEnormalMapRendering")) {
-			if (!Gdx.files.internal(AbstractGameObject.getSpritesheetPath()+"Normal.png").exists()){
-				Gdx.app.error("Loading", "No Normal Map Texture Found. Must be located at spritesheet path and end with the suffix \"Normal.png\". You can disable the normal map rendering to prevent a crash.");
-			} else {
-				manager.load(AbstractGameObject.getSpritesheetPath()+"Normal.png", Texture.class);
-			}
-		}
-		
+        manager.load(AbstractGameObject.getSpritesheetPath() + ".txt", TextureAtlas.class);
+        if (WE.getCVars().getValueB("LEnormalMapRendering")) {
+            if (!Gdx.files.internal(AbstractGameObject.getSpritesheetPath() + "Normal.png").exists()) {
+                Gdx.app.error("Loading", "No Normal Map Texture Found. Must be located at spritesheet path and end with the suffix \"Normal.png\". You can disable the normal map rendering to prevent a crash.");
+            } else {
+                manager.load(AbstractGameObject.getSpritesheetPath() + "Normal.png", Texture.class);
+            }
+        }
+
         manager.load("com/bombinggames/wurfelengine/core/skin/gui.txt", TextureAtlas.class);
-		manager.load("com/bombinggames/wurfelengine/core/images/bloodblur.png", Texture.class);
-        
-		WE.SOUND.loadRegisterIGSounds();
-        
+        manager.load("com/bombinggames/wurfelengine/core/images/bloodblur.png", Texture.class);
+
+        WE.SOUND.loadRegisterIGSounds();
+
         //load files from configRef
         customLoading(manager);
     }
-	/**
-	 * override and add items via {@link AssetManager#load(java.lang.String, java.lang.Class)}
-	 * @param manager 
-	 */
-	public void customLoading(AssetManager manager){
-	}
 
-    
-    
+    /**
+     * override and add items via {@link AssetManager#load(java.lang.String, java.lang.Class)}
+     *
+     * @param manager
+     */
+    public void customLoading(AssetManager manager) {
+    }
+
+
     @Override
-    public void show() {       
+    public void show() {
         // Initialize the stage where we will place everything
         stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()), WE.getEngineView().getSpriteBatch());
 
@@ -93,12 +95,12 @@ public class LoadingScreen extends WEScreen {
         screenBg = new Image(GUItexture.findRegion("screen-bg"));
         loadingBg = new Image(GUItexture.findRegion("loading-frame-bg"));
 
-      // Add the loading bar animation
+        // Add the loading bar animation
         AtlasRegion[] anitextures = new AtlasRegion[3];
         anitextures[0] = GUItexture.findRegion("loading_bar1");
         anitextures[1] = GUItexture.findRegion("loading_bar2");
         anitextures[2] = GUItexture.findRegion("loading_bar3");
-        
+
         Animation anim = new Animation(0.2f, anitextures);
         anim.setPlayMode(Animation.PlayMode.LOOP_REVERSED);
         loadingBar = new LoadingBar(anim);
@@ -159,7 +161,7 @@ public class LoadingScreen extends WEScreen {
 
         // Interpolate the percentage to make it more smooth
         percent = Interpolation.linear.apply(percent, WE.getAssetManager().getProgress(), 0.5f);
-        
+
         // Clear the screen
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -176,7 +178,7 @@ public class LoadingScreen extends WEScreen {
 
     @Override
     public void hide() {
-      
+
     }
 
     @Override
@@ -189,11 +191,11 @@ public class LoadingScreen extends WEScreen {
 
     @Override
     public void dispose() {
-		Gdx.app.debug("LoadingScreen", "disposing");
+        Gdx.app.debug("LoadingScreen", "disposing");
         // Dispose the loading assets as we no longer need them
-		if (!(boolean) WE.getCVars().get("preventUnloading").getValue()) {
-			stage.dispose();
-			WE.getAssetManager().unload("com/bombinggames/wurfelengine/core/Loading/loading.txt");//causes programm to stop and show a white screen!
-		}
+        if (!(boolean) WE.getCVars().get("preventUnloading").getValue()) {
+            stage.dispose();
+            WE.getAssetManager().unload("com/bombinggames/wurfelengine/core/Loading/loading.txt");//causes programm to stop and show a white screen!
+        }
     }
 }

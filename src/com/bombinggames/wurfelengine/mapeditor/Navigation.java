@@ -39,52 +39,52 @@ import com.bombinggames.wurfelengine.WE;
 import com.bombinggames.wurfelengine.core.map.Chunk;
 
 /**
- *A bar which schows the current fitlering level.
+ * A bar which schows the current fitlering level.
+ *
  * @author Benedikt Vogler
  */
 public class Navigation {
-    
+
     /**
-     *
      * @param view
      */
-    protected void render(EditorView view){
-            //draw layer navigation  on right side
-            ShapeRenderer sh = WE.getEngineView().getShapeRenderer();
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA,GL20.GL_ONE_MINUS_SRC_ALPHA);
-            Gdx.gl.glLineWidth(3);
+    protected void render(EditorView view) {
+        //draw layer navigation  on right side
+        ShapeRenderer sh = WE.getEngineView().getShapeRenderer();
+        Gdx.gl.glEnable(GL20.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        Gdx.gl.glLineWidth(3);
 
-            sh.begin(ShapeRenderer.ShapeType.Line);
+        sh.begin(ShapeRenderer.ShapeType.Line);
 
-            int rightborder = Gdx.graphics.getWidth();
-            int topBorder = Gdx.graphics.getHeight();
-            int steps = topBorder/(Chunk.getBlocksZ()+1);
+        int rightborder = Gdx.graphics.getWidth();
+        int topBorder = Gdx.graphics.getHeight();
+        int steps = topBorder / (Chunk.getBlocksZ() + 1);
 
-            for (int i = 1; i < Chunk.getBlocksZ()+1; i++) {
-                if (view.getRenderStorage().getZRenderingLimit() == i )
-                    sh.setColor(Color.LIGHT_GRAY.cpy().sub(0, 0, 0,0.1f));
-                else 
-                    sh.setColor(Color.GRAY.cpy().sub(0, 0, 0,0.5f));
-                sh.line(
+        for (int i = 1; i < Chunk.getBlocksZ() + 1; i++) {
+            if (view.getRenderStorage().getZRenderingLimit() == i)
+                sh.setColor(Color.LIGHT_GRAY.cpy().sub(0, 0, 0, 0.1f));
+            else
+                sh.setColor(Color.GRAY.cpy().sub(0, 0, 0, 0.5f));
+            sh.line(
                     rightborder,
-                    i*steps,
-                    rightborder-50- ( view.getRenderStorage().getZRenderingLimit() == i ?40:0),
-                    i*steps
-                );
+                    i * steps,
+                    rightborder - 50 - (view.getRenderStorage().getZRenderingLimit() == i ? 40 : 0),
+                    i * steps
+            );
 
-                //"shadow"
-                sh.setColor(Color.DARK_GRAY.cpy().sub(0, 0, 0,0.5f));
-                sh.line(
+            //"shadow"
+            sh.setColor(Color.DARK_GRAY.cpy().sub(0, 0, 0, 0.5f));
+            sh.line(
                     rightborder,
-                    i*steps+3,
-                    rightborder-50- ( view.getRenderStorage().getZRenderingLimit() == i ?40:0),
-                    i*steps+3
-                ); 
-            }
-
-            sh.end();
-            Gdx.gl.glLineWidth(1);
-            Gdx.gl.glDisable(GL20.GL_BLEND);
+                    i * steps + 3,
+                    rightborder - 50 - (view.getRenderStorage().getZRenderingLimit() == i ? 40 : 0),
+                    i * steps + 3
+            );
         }
+
+        sh.end();
+        Gdx.gl.glLineWidth(1);
+        Gdx.gl.glDisable(GL20.GL_BLEND);
+    }
 }

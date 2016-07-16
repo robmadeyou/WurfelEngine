@@ -32,49 +32,48 @@ package com.bombinggames.wurfelengine.core.cvar;
 
 import com.bombinggames.wurfelengine.core.map.CustomMapCVarRegistration;
 import com.bombinggames.wurfelengine.core.map.Map;
+
 import java.io.File;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class CVarSystemMap extends AbstractCVarSystem {
-	
-	private static CustomMapCVarRegistration customRegistration;
 
-	public static void setCustomMapCVarRegistration(CustomMapCVarRegistration customMapRegistration) {
-		customRegistration = customMapRegistration;
-	}
+    private static CustomMapCVarRegistration customRegistration;
+    private CVarSystemSave saveSystem;
 
-	private CVarSystemSave saveSystem;
-	
-	
-	public CVarSystemMap(File path) {
-		super(path);
-		register(new IntCVar(Map.MAPVERSION), "MapVersion", CVarFlags.CVAR_ALWAYSSAVE);
-		register(new IntCVar(1), "groundBlockID");
-		register(new IntCVar(10), "chunkBlocksX");
-		register(new IntCVar(40), "chunkBlocksY");
-		register(new IntCVar(10), "chunkBlocksZ");
-		register(new StringCVar(""), "mapname");
-		register(new StringCVar(""), "description");
-		register(new IntCVar(-1), "currentSaveSlot", CVarFlags.CVAR_VOLATILE);
-		
-		if (customRegistration != null) {
-			customRegistration.register(this);
-		}
-	}
+    public CVarSystemMap(File path) {
+        super(path);
+        register(new IntCVar(Map.MAPVERSION), "MapVersion", CVarFlags.CVAR_ALWAYSSAVE);
+        register(new IntCVar(1), "groundBlockID");
+        register(new IntCVar(10), "chunkBlocksX");
+        register(new IntCVar(40), "chunkBlocksY");
+        register(new IntCVar(10), "chunkBlocksZ");
+        register(new StringCVar(""), "mapname");
+        register(new StringCVar(""), "description");
+        register(new IntCVar(-1), "currentSaveSlot", CVarFlags.CVAR_VOLATILE);
 
-	public CVarSystemSave getSaveCVars() {
-		return saveSystem;
-	}
+        if (customRegistration != null) {
+            customRegistration.register(this);
+        }
+    }
 
-	/**
-	 * Set the save system for this map.
-	 * @param saveSystem 
-	 */
-	public void setSaveCVars(CVarSystemSave saveSystem) {
-		this.saveSystem = saveSystem;
-	}
-	
+    public static void setCustomMapCVarRegistration(CustomMapCVarRegistration customMapRegistration) {
+        customRegistration = customMapRegistration;
+    }
+
+    public CVarSystemSave getSaveCVars() {
+        return saveSystem;
+    }
+
+    /**
+     * Set the save system for this map.
+     *
+     * @param saveSystem
+     */
+    public void setSaveCVars(CVarSystemSave saveSystem) {
+        this.saveSystem = saveSystem;
+    }
+
 }

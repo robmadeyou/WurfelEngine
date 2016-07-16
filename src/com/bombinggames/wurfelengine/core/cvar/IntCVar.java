@@ -31,67 +31,61 @@
 package com.bombinggames.wurfelengine.core.cvar;
 
 /**
- *
  * @author Benedikt Vogler
  */
 public class IntCVar extends CVar {
-	private int value;
-	private Integer defaultValue;
+    private int value;
+    private Integer defaultValue;
 
-	/**
-	 *
-	 * @param value
-	 */
-	public IntCVar(int value) {
-		this.value = value;
-		this.defaultValue = value;
-	}
-	
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public Integer getValue() {
-		return value;
-	}
+    /**
+     * @param value
+     */
+    public IntCVar(int value) {
+        this.value = value;
+        this.defaultValue = value;
+    }
 
-	/**
-	 *
-	 * @param value
-	 */
-	@Override
-	public void setValue(Object value) {
-		if (value instanceof String) 
-			this.value = Integer.parseInt((String) value);
-		else 
-			this.value = (int) value;
-		if (flags == CVarFlags.CVAR_ARCHIVE) parent.save();
-	}
+    /**
+     * @return
+     */
+    @Override
+    public Integer getValue() {
+        return value;
+    }
+
+    /**
+     * @param value
+     */
+    @Override
+    public void setValue(Object value) {
+        if (value instanceof String)
+            this.value = Integer.parseInt((String) value);
+        else
+            this.value = (int) value;
+        if (flags == CVarFlags.CVAR_ARCHIVE) parent.save();
+    }
 
 
-	@Override
-	public String toString() {
-		return Integer.toString(value);
-	}
+    @Override
+    public String toString() {
+        return Integer.toString(value);
+    }
 
-	/**
-	 *
-	 * @return
-	 */
-	@Override
-	public Integer getDefaultValue() {
-		return defaultValue;
-	}
+    /**
+     * @return
+     */
+    @Override
+    public Integer getDefaultValue() {
+        return defaultValue;
+    }
 
-	/**
-	 *
-	 * @param defaultValue
-	 */
-	@Override
-	public void setDefaultValue(Object defaultValue) {
-		this.defaultValue = (Integer) defaultValue;
-	}
-	
-	
+    /**
+     * @param defaultValue
+     */
+    @Override
+    public void setDefaultValue(Object defaultValue) {
+        this.defaultValue = (Integer) defaultValue;
+    }
+
+
 }

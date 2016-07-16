@@ -40,51 +40,50 @@ import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
 
 /**
  * Uses sprite e22-0
+ *
  * @author Benedikt Vogler
  */
 public class Laserdot extends SimpleEntity {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private byte ignoreId;
+    private byte ignoreId;
 
-	public Laserdot() {
-		super((byte) 22);
-		setColor(new Color(1, 0, 0, 1));
-		setScaling(0.05f);
-		setSaveToDisk(false);
-		setName("Laser dot");
-		disableShadow();
-	}
+    public Laserdot() {
+        super((byte) 22);
+        setColor(new Color(1, 0, 0, 1));
+        setScaling(0.05f);
+        setSaveToDisk(false);
+        setName("Laser dot");
+        disableShadow();
+    }
 
-	
-	
-	@Override
-	public boolean handleMessage(Telegram msg) {
-		return false;
-	}
 
-	public void update(Vector3 aimDir, Point origin) {
-		if (hasPosition() && !aimDir.isZero()) {
-			
-			Intersection raycast = origin.rayMarching(aimDir,
-				12,
-				null,
-				(Byte t) -> !RenderCell.isTransparent(t,(byte) 0) && t != ignoreId
-			);
-			setHidden(raycast == null);
-			if (raycast != null && raycast.getPoint() != null) {
-				setPosition(raycast.getPoint());
-			} else {
-				getPosition().set(getPosition());
-			}
-		}
-	}
+    @Override
+    public boolean handleMessage(Telegram msg) {
+        return false;
+    }
 
-	public void ignoreBlock(byte ignoreId) {
-		this.ignoreId = ignoreId;
-	}
-	
-	
-	
+    public void update(Vector3 aimDir, Point origin) {
+        if (hasPosition() && !aimDir.isZero()) {
+
+            Intersection raycast = origin.rayMarching(aimDir,
+                    12,
+                    null,
+                    (Byte t) -> !RenderCell.isTransparent(t, (byte) 0) && t != ignoreId
+            );
+            setHidden(raycast == null);
+            if (raycast != null && raycast.getPoint() != null) {
+                setPosition(raycast.getPoint());
+            } else {
+                getPosition().set(getPosition());
+            }
+        }
+    }
+
+    public void ignoreBlock(byte ignoreId) {
+        this.ignoreId = ignoreId;
+    }
+
+
 }

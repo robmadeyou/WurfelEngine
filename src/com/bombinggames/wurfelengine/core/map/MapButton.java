@@ -40,49 +40,50 @@ import com.bombinggames.wurfelengine.WE;
 import com.bombinggames.wurfelengine.core.Controller;
 import com.bombinggames.wurfelengine.core.WorkingDirectory;
 import com.bombinggames.wurfelengine.core.cvar.CVarSystemMap;
+
 import java.io.File;
 
 /**
- *A button which creates a new save if you click on it
+ * A button which creates a new save if you click on it
+ *
  * @author Benedikt Vogler
  */
 public class MapButton extends TextButton {
 
     /**
-     *
      * @param fileName fileName of map
      */
     public MapButton(String fileName) {
-        super("",WE.getEngineView().getSkin());
+        super("", WE.getEngineView().getSkin());
         //read description and map name
         setColor(Color.LIGHT_GRAY.cpy());
         setName(fileName);
         setSize(150, 50);
-		CVarSystemMap cvars = new CVarSystemMap(
-			new File(WorkingDirectory.getMapsFolder()+"/"+fileName+"/meta.wecvar")
-		);
-		cvars.load();
-		String mapname;
-		try {
-			mapname = cvars.getValueS("mapname");
-		} catch (NullPointerException ex) {
-			mapname = "no map name set";
-		}
-		setText("/"+fileName+"/ "+mapname);
-		
-		String description;
-		try {
-			description = cvars.getValueS("description");
-		} catch (NullPointerException ex) {
-			description = "";
-		}
-		
-		if (!"".equals(description))
-			add(description);
-		else{
-			add("no description found");
-		}
-		
+        CVarSystemMap cvars = new CVarSystemMap(
+                new File(WorkingDirectory.getMapsFolder() + "/" + fileName + "/meta.wecvar")
+        );
+        cvars.load();
+        String mapname;
+        try {
+            mapname = cvars.getValueS("mapname");
+        } catch (NullPointerException ex) {
+            mapname = "no map name set";
+        }
+        setText("/" + fileName + "/ " + mapname);
+
+        String description;
+        try {
+            description = cvars.getValueS("description");
+        } catch (NullPointerException ex) {
+            description = "";
+        }
+
+        if (!"".equals(description))
+            add(description);
+        else {
+            add("no description found");
+        }
+
 //        } catch (IOException ex) {
 //            setText("/"+fileName+"/ Error reading file");
 //            setColor(Color.GRAY.cpy());
@@ -90,12 +91,12 @@ public class MapButton extends TextButton {
         addListener(new ButtonChangeListener(this));
     }
 
-    
+
     @Override
     public void draw(Batch batch, float parentAlpha) {
         WE.getEngineView().getFont().setColor(Color.GRAY.cpy());
         super.draw(batch, parentAlpha);
-                
+
         //missing: background
         //selection?
     }
@@ -109,13 +110,13 @@ public class MapButton extends TextButton {
 
         @Override
         public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-			int slot = Map.newSaveSlot(new File(WorkingDirectory.getMapsFolder()+"/"+parent.getName()));
+            int slot = Map.newSaveSlot(new File(WorkingDirectory.getMapsFolder() + "/" + parent.getName()));
             Controller.loadMap(
-				new File(WorkingDirectory.getMapsFolder()+"/"+parent.getName()),
-				slot
-			);
+                    new File(WorkingDirectory.getMapsFolder() + "/" + parent.getName()),
+                    slot
+            );
         }
     }
-    
-    
+
+
 }
