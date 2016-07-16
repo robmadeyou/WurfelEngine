@@ -54,7 +54,7 @@ public interface Renderable {
      * @param view   the view using this render method
      * @param camera The camera rendering the scene
      */
-    public void render(GameView view, Camera camera);
+    void render(GameView view, Camera camera);
 
     /**
      * Return the coordinates of the object in the game world. Copy safe.
@@ -63,7 +63,7 @@ public interface Renderable {
      * the game world.
      * @see #getPoint()
      */
-    public Position getPosition();
+    Position getPosition();
 
     /**
      * can be copy safe but must not
@@ -71,7 +71,7 @@ public interface Renderable {
      * @return
      * @see #getPosition()
      */
-    public Point getPoint();
+    Point getPoint();
 
     /**
      * can be copy safe but must not
@@ -79,13 +79,13 @@ public interface Renderable {
      * @return
      * @see #getPosition()
      */
-    public Coordinate getCoord();
+    Coordinate getCoord();
 
     /**
      * @param camera
      * @return
      */
-    public boolean shouldBeRendered(Camera camera);
+    boolean shouldBeRendered(Camera camera);
 
     /**
      * get the stuff which must be rendered before
@@ -93,5 +93,5 @@ public interface Renderable {
      * @param rs
      * @return
      */
-    public LinkedList<AbstractGameObject> getCovered(RenderStorage rs);
+    LinkedList<AbstractGameObject> getCovered(RenderStorage rs);
 }

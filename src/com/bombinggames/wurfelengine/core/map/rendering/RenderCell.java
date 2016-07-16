@@ -843,6 +843,7 @@ public class RenderCell extends AbstractGameObject {
      *              ignored
      */
     public void renderSide(final GameView view, final int xPos, final int yPos, final Side side, Color color) {
+        this.setColor(color);
         byte id = getSpriteId();
         if (id <= 0) {
             return;
@@ -875,6 +876,7 @@ public class RenderCell extends AbstractGameObject {
                 break;
         }
         sprite.setPosition(xPos, yPos);
+        sprite.setColor(color);
         if (getScaling() != 1) {
             sprite.setOrigin(0, 0);
             sprite.setScale(getScaling());
@@ -887,34 +889,21 @@ public class RenderCell extends AbstractGameObject {
             sh.rect(xPos, yPos, sprite.getWidth(), sprite.getHeight());
             sh.end();
         } else {
-            //if (color != null) {
-            //			color.r *= getLightlevelR(side);
-            //			if (color.r > 1) {//values above 1 can not be casted later
-            //				color.r = 1;
-            //			}
-            //			color.g *= getLightlevelG(side);
-            //			if (color.g > 1) {//values above 1 can not be casted later
-            //				color.g = 1;
-            //			}
-            //			color.b *= getLightlevelB(side);
-            //			if (color.b > 1) {//values above 1 can not be casted later
-            //				color.b = 1;
-            //			}
-            sprite.setColor(
-                    getLightlevel(side, 0, 0) / 2f,
-                    getLightlevel(side, 0, 1) / 2f,
-                    getLightlevel(side, 0, 2) / 2f,
-                    getLightlevel(side, 1, 0) / 2f,
-                    getLightlevel(side, 1, 1) / 2f,
-                    getLightlevel(side, 1, 2) / 2f,
-                    getLightlevel(side, 2, 0) / 2f,
-                    getLightlevel(side, 2, 1) / 2f,
-                    getLightlevel(side, 2, 2) / 2f,
-                    getLightlevel(side, 3, 0) / 2f,
-                    getLightlevel(side, 3, 1) / 2f,
-                    getLightlevel(side, 3, 2) / 2f
-            );
-            //}
+            if (color != null) {
+                color.r *= getLightlevelR();
+                if (color.r > 1) {
+                    color.r = 1;
+                }
+                color.g *= getLightlevelG();
+                if (color.g > 1) {
+                    color.g = 1;
+                }
+                color.b *= getLightlevelB();
+                if (color.b > 1) {
+                    color.b = 1;
+                }
+            }
+            sprite.setColor(color);
             sprite.draw(view.getSpriteBatch());
             increaseDrawCalls();
         }

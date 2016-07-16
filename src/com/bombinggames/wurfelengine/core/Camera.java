@@ -110,7 +110,7 @@ public class Camera {
     /**
      * the opacity of thedamage overlay
      */
-    private float damageoverlay = 0f;
+    private float damageOverlay = 0f;
     private float shakeAmplitude;
     private float shakeTime;
     private int viewSpaceWidth;
@@ -284,7 +284,7 @@ public class Camera {
                 }
             }
 
-            //aplly screen shake
+            //apply screen shake
             if (shakeTime > 0) {
                 screenshake.x = (float) (Math.random() * shakeAmplitude - shakeAmplitude / 2);
                 screenshake.y = (float) (Math.random() * shakeAmplitude - shakeAmplitude / 2);
@@ -530,7 +530,7 @@ public class Camera {
             if (WE.getCVars().getValueB("DevDebugRendering")) {
                 drawDebug(view, camera);
             }
-            if (damageoverlay > 0.0f) {
+            if (damageOverlay > 0.0f) {
                 //WE.getEngineView().getSpriteBatch().setShader(new custom shader);
                 WE.getEngineView().getSpriteBatch().begin();
                 Texture texture = WE.getAsset("com/bombinggames/wurfelengine/core/images/bloodblur.png");
@@ -541,7 +541,7 @@ public class Camera {
                         getWidthInScreenSpc(),
                         getHeightInScreenSpc() * (float) Gdx.graphics.getHeight() / getHeightInScreenSpc()
                 );
-                overlay.setColor(1, 0, 0, damageoverlay);
+                overlay.setColor(1, 0, 0, damageOverlay);
                 overlay.draw(WE.getEngineView().getSpriteBatch());
                 WE.getEngineView().getSpriteBatch().end();
             }
@@ -985,7 +985,7 @@ public class Camera {
      * @param opacity
      */
     public void setDamageoverlayOpacity(float opacity) {
-        this.damageoverlay = opacity;
+        this.damageOverlay = opacity;
     }
 
     /**

@@ -62,6 +62,7 @@ public class SideSprite extends TextureRegion {
     private boolean dirty = true;
     private Rectangle bounds;
     private int aoFlags;
+
     /**
      * An object helping with rendering a blokc made out of sides
      *
@@ -71,11 +72,11 @@ public class SideSprite extends TextureRegion {
      */
     public SideSprite(TextureRegion region, Side side, int aoFlags) {
         this.side = side;
-        setRegion(region);
-        this.aoFlags = aoFlags;
-        setColor(1, 1, 1, 1);
-        setSize(region.getRegionWidth(), region.getRegionHeight());
-        setOrigin(width / 2, height / 2);
+        this.setAoFlags(aoFlags);
+        this.setRegion(region);
+        this.setColor(1, 1, 1, 1);
+        this.setSize(region.getRegionWidth(), region.getRegionHeight());
+        this.setOrigin(width / 2, height / 2);
     }
 
     public static void setAO(float brightness) {
@@ -366,6 +367,18 @@ public class SideSprite extends TextureRegion {
         vertices[C2] = color;
         vertices[C3] = color;
         vertices[C4] = color;
+    }
+
+    /**
+     * Set a color from a Color object
+     *
+     * @param c
+     */
+    public void setColor(Color c) {
+        try {
+            this.setColor(c.r, c.g, c.b, c.a);
+        } catch (NullPointerException ex) {
+        }
     }
 
     /**

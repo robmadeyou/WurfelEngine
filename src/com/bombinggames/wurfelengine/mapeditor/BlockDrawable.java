@@ -81,10 +81,7 @@ public class BlockDrawable extends TextureRegionDrawable {
                 WE.getGameplay().getView().setShader(WE.getGameplay().getView().getShader());
                 wasDefault = true;
             }
-            //batch.setColor(new Color(1, 1, 1, 1));
             batch.begin();
-
-            //block.setColor(new Color(1, 1, 1, 1));
             block.resetLight();
             block.render(WE.getGameplay().getView(),
                     (int) (x + RenderCell.VIEW_WIDTH2 * block.getScaling()),//should be with -getLeftWidth() but then deos not align
