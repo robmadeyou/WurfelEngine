@@ -66,6 +66,7 @@ public class LightEngine {
      * display a visual representation of the data?
      */
     private boolean debuging = true;
+    private boolean controlTime = false;
     //diagramm data
     private int posX = Gdx.graphics.getWidth() / 2;
     private int posY = Gdx.graphics.getHeight() / 2;
@@ -78,15 +79,12 @@ public class LightEngine {
     private GlobalLightSource sun;
     private GlobalLightSource moon;
 
-    /**
-     *
-     */
     public LightEngine() {
         sun = new GlobalLightSource(
                 -WE.getCVars().getValueI("worldSpinAngle"),
                 0,
                 new Color(1, 1, 1, 1),
-                new Color(0.5f, 0.5f, 0.4f, 1),
+                new Color(0.8f, 0.8f, 0.8f, 1),
                 0.1f,
                 60
         );
@@ -216,7 +214,7 @@ public class LightEngine {
 
 
         //update input
-        if (Gdx.input.isButtonPressed(0) && debuging) {
+        if (Gdx.input.isButtonPressed(0) && debuging && controlTime) {
             //sun.setHeight(sun.getHeight()+Gdx.input.getDeltaY()*30f);
             sun.setAzimuth(Gdx.input.getX());
             if (moon != null) {
@@ -390,7 +388,7 @@ public class LightEngine {
      * @param pos  display the light data at this position
      */
     public void render(GameView view, Position pos) {
-        if (debuging) {
+        if (debuging && controlTime) {
 
             //g.setLineWidth(2);
             ShapeRenderer shR = view.getShapeRenderer();

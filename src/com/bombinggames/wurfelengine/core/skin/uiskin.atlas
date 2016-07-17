@@ -134,7 +134,7 @@ default-splitpane
   orig: 5, 3
   offset: 0, 0
   index: -1
-cursor
+selectionIndicator
   rotate: false
   xy: 23, 1
   size: 3, 3

@@ -34,7 +34,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.WidgetGroup;
 import com.bombinggames.wurfelengine.WE;
-import com.bombinggames.wurfelengine.core.gameobjects.Cursor;
+import com.bombinggames.wurfelengine.core.gameobjects.SelectionIndicator;
 import com.bombinggames.wurfelengine.core.map.Coordinate;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
 
@@ -50,15 +50,15 @@ public class CursorInfo extends WidgetGroup {
      * parent stage
      */
     private final Stage stage;
-    private final Cursor cursor;
+    private final SelectionIndicator selectionIndicator;
 
     /**
      * @param stage  parent stage
-     * @param cursor the selection-Entity where the block comes from
+     * @param selectionIndicator the selection-Entity where the block comes from
      */
-    public CursorInfo(Stage stage, Cursor cursor) {
+    public CursorInfo(Stage stage, SelectionIndicator selectionIndicator) {
         this.stage = stage;
-        this.cursor = cursor;
+        this.selectionIndicator = selectionIndicator;
         label = new Label("nothing selected", WE.getEngineView().getSkin());
         addActor(label);
 
@@ -68,7 +68,7 @@ public class CursorInfo extends WidgetGroup {
     public void updateFrom(int block, Coordinate coord) {
         byte id = (byte) (block & 255);
         byte value = (byte) ((block >> 8) & 255);
-        label.setText(RenderCell.getName(id, value) + " " + id + " - " + value + "@" + cursor.getPosition().toCoord().toString());
+        label.setText(RenderCell.getName(id, value) + " " + id + " - " + value + "@" + selectionIndicator.getPosition().toCoord().toString());
     }
 
     /**

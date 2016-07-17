@@ -47,7 +47,7 @@ import com.bombinggames.wurfelengine.WE;
 import com.bombinggames.wurfelengine.core.Controller;
 import com.bombinggames.wurfelengine.core.GameView;
 import com.bombinggames.wurfelengine.core.gameobjects.AbstractEntity;
-import com.bombinggames.wurfelengine.core.gameobjects.Cursor;
+import com.bombinggames.wurfelengine.core.gameobjects.SelectionIndicator;
 import com.bombinggames.wurfelengine.core.map.Coordinate;
 import com.bombinggames.wurfelengine.core.map.Point;
 import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
@@ -59,12 +59,12 @@ import com.bombinggames.wurfelengine.core.map.rendering.RenderCell;
  */
 public class Toolbar extends Window {
 
-    private final Cursor cursor;
-    private final Tool selectionRight = Tool.ERASE;
+    private final SelectionIndicator selectionIndicator;
     private final TextField valuesActor;
     private final GameView view;
     private final Image[] items = new Image[Tool.values().length];
     private Tool selectionLeft = Tool.DRAW;
+    private Tool selectionRight = Tool.ERASE;
     private PlacableTable table;
 
     /**
@@ -72,14 +72,14 @@ public class Toolbar extends Window {
      *
      * @param view
      * @param sprites
-     * @param cursor
+     * @param selectionIndicator
      * @param stage
      */
-    public Toolbar(GameView view, TextureAtlas sprites, Cursor cursor, Stage stage) {
+    public Toolbar(GameView view, TextureAtlas sprites, SelectionIndicator selectionIndicator, Stage stage) {
         super("Tools", WE.getEngineView().getSkin());
 
         this.view = view;
-        this.cursor = cursor;
+        this.selectionIndicator = selectionIndicator;
 
         setPosition(
                 view.getStage().getWidth() / 2 - items.length * 50 / 2,
@@ -177,7 +177,7 @@ public class Toolbar extends Window {
             } else {
                 this.table.hide();
             }
-            cursor.showNormal(tool.showNormal);
+            selectionIndicator.showNormal(tool.showNormal);
         }
     }
 
@@ -268,11 +268,11 @@ public class Toolbar extends Window {
         }
 
         /**
-         * @param cursor
+         * @param selectionIndicator
          * @param placableGUI
          * @return
          */
-        public Command getCommand(Cursor cursor, PlacableTable placableGUI) {
+        public Command getCommand(SelectionIndicator selectionIndicator, PlacableTable placableGUI) {
             switch (this) {
                 case DRAW:
                     return new Command() {
@@ -287,7 +287,7 @@ public class Toolbar extends Window {
                         @Override
                         public void execute() {
                             if (coord == null) {
-                                coord = cursor.getCoordInNormalDirection();
+                                coord = selectionIndicator.getCoordInNormalDirection();
                                 block = placableGUI.getBlock();
                                 previous = coord.getBlock();
                             }
@@ -308,7 +308,7 @@ public class Toolbar extends Window {
                         @Override
                         public void execute() {
                             if (coord == null) {
-                                coord = cursor.getPosition().toCoord();
+                                coord = selectionIndicator.getPosition().toCoord();
                                 block = placableGUI.getBlock();
                                 previous = coord.getBlock();
                             }
@@ -328,7 +328,7 @@ public class Toolbar extends Window {
                         @Override
                         public void execute() {
                             if (point == null) {
-                                point = cursor.getNormal().getPosition();
+                                point = selectionIndicator.getNormal().getPosition();
                                 ent = placableGUI.getEntity();
                             }
                             ent = placableGUI.getEntity();
@@ -350,7 +350,7 @@ public class Toolbar extends Window {
                         @Override
                         public void execute() {
                             if (coord == null) {
-                                coord = cursor.getPosition().toCoord();
+                                coord = selectionIndicator.getPosition().toCoord();
                                 previous = coord.getBlock();
                             }
                             Controller.getMap().setBlock(coord, (byte) 0);

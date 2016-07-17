@@ -49,7 +49,7 @@ public class CVarSystemRoot extends AbstractCVarSystem {
         super(path);
         System.out.println("Init Engine CVars…");
         register(new FloatCVar(9.81f), "gravity");
-        register(new IntCVar(-40), "worldSpinAngle");
+        register(new IntCVar(0), "worldSpinAngle");
         register(new BooleanCVar(false), "loadPixmap");
         register(new FloatCVar(0.00078125f), "LEazimutSpeed");
         register(new BooleanCVar(false), "LEnormalMapRendering");
@@ -63,10 +63,10 @@ public class CVarSystemRoot extends AbstractCVarSystem {
         register(new FloatCVar(0.17f), "fogFactor");
         register(new BooleanCVar(false), "enableAutoShade");
         register(new BooleanCVar(false), "enableScalePrototype");
-        register(new BooleanCVar(true), "enableHSD");
+        register(new BooleanCVar(false), "enableHSD");
         register(new BooleanCVar(true), "mapChunkSwitch");
         register(new BooleanCVar(true), "mapUseChunks");
-        register(new BooleanCVar(true), "DevMode");
+        register(new BooleanCVar(false), "DevMode");
         register(new BooleanCVar(false), "DevDebugRendering");
         register(new BooleanCVar(false), "editorVisible");
         register(new IntCVar(2), "groundBlockID");
@@ -126,7 +126,7 @@ public class CVarSystemRoot extends AbstractCVarSystem {
         register(new IntCVar(0), "resolutionY");
         register(new IntCVar(3500), "MaxSprites");
         register(new IntCVar(90), "CameraLeapRadius");
-        register(new FloatCVar(0.5f), "ambientOcclusion");
+        register(new FloatCVar(0.9f), "ambientOcclusion");
         register(new FloatCVar(200), "MaxDelta");//skip delta if under 5 FPS to prevent glitches
         register(new StringCVar(""), "loadedMap", CVarFlags.CVAR_VOLATILE);
         register(new StringCVar(""), "lastConsoleCommand");

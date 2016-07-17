@@ -376,7 +376,7 @@ public class SideSprite extends TextureRegion {
      */
     public void setColor(Color c) {
         try {
-            this.setColor(c.r, c.g, c.b, c.a);
+            this.setColor(c.r, c.g, c.b,1);
         } catch (NullPointerException ex) {
         }
     }

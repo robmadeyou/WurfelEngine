@@ -36,7 +36,7 @@ import com.bombinggames.wurfelengine.Command;
 import com.bombinggames.wurfelengine.WE;
 import com.bombinggames.wurfelengine.core.gameobjects.AbstractEntity;
 import com.bombinggames.wurfelengine.core.gameobjects.AbstractGameObject;
-import com.bombinggames.wurfelengine.core.gameobjects.Cursor;
+import com.bombinggames.wurfelengine.core.gameobjects.SelectionIndicator;
 import com.bombinggames.wurfelengine.core.gameobjects.EntityShadow;
 import com.bombinggames.wurfelengine.core.lightengine.LightEngine;
 import com.bombinggames.wurfelengine.core.map.Chunk;
@@ -58,7 +58,7 @@ public class Controller implements GameManager {
 
     private static LightEngine lightEngine;
     private static Map map;
-    private final Cursor cursor = new Cursor();
+    private final SelectionIndicator selectionIndicator = new SelectionIndicator();
     private final Command[] commandHistory = new Command[WE.getCVars().getValueI("undohistorySize")];
     private DevTools devtools;
     private boolean initalized = false;
@@ -312,16 +312,16 @@ public class Controller implements GameManager {
     }
 
     public void showCursor() {
-        if (!cursor.hasPosition()) {
-            cursor.spawn(
+        if (!selectionIndicator.hasPosition()) {
+            selectionIndicator.spawn(
                     new Point(0, 0, Chunk.getBlocksZ() - 1)
             );
         }
-        cursor.setHidden(false);
+        selectionIndicator.setHidden(false);
     }
 
     public void hideCursor() {
-        cursor.setHidden(true);
+        selectionIndicator.setHidden(true);
     }
 
     /**
@@ -382,7 +382,7 @@ public class Controller implements GameManager {
      */
     public void setSelectedEnt(ArrayList<AbstractEntity> newSel) {
         this.selectedEntities = newSel;
-        selectedEntities.remove(cursor);
+        selectedEntities.remove(selectionIndicator);
         selectedEntities.removeIf(ent
                         -> ent.getName().equals("normal")
                         || ent instanceof EntityShadow
@@ -391,11 +391,11 @@ public class Controller implements GameManager {
     }
 
     /**
-     * Get the entity laying under the cursor.
+     * Get the entity laying under the selectionIndicator.
      *
      * @return
      */
-    public Cursor getCursor() {
-        return cursor;
+    public SelectionIndicator getSelectionIndicator() {
+        return selectionIndicator;
     }
 }
