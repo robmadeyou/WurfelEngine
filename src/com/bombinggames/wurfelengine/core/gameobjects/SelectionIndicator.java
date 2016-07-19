@@ -91,7 +91,7 @@ public class SelectionIndicator extends AbstractEntity {
             isectP.setZ((isectP.getZGrid()) * RenderCell.GAME_EDGELENGTH);
         }
         normal.getPosition().set(isectP);
-        selDet.updateFrom(pos.getBlock(), coord);
+        selDet.updateFrom(pos.getBlock());
     }
 
     /**

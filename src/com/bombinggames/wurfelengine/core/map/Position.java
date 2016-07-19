@@ -53,7 +53,7 @@ public interface Position extends Serializable {
     /**
      * half of square root of two
      */
-    public static final float SQRT12 = 0.7071067811865475244008443621048490392848359376884740f;
+    public static final float SQRT12 = SQRT2 / 2;
 
 
     /**

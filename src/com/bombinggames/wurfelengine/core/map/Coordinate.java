@@ -89,9 +89,19 @@ public class Coordinate implements Position {
      * @param coord the Coordinate you want to copy
      */
     public Coordinate(Coordinate coord) {
+        super();
         this.x = coord.x;
         this.y = coord.y;
         this.z = coord.z;
+    }
+
+    public Coordinate(Point point) {
+        super();
+        setFromPoint(point);
+    }
+
+    public Coordinate() {
+        super();
     }
 
     /**
@@ -232,8 +242,8 @@ public class Coordinate implements Position {
     public Coordinate setFromPoint(Point from) {
         set(Math.floorDiv((int) from.getX(), RenderCell.GAME_DIAGLENGTH),
                 Math.floorDiv((int) from.getY(), RenderCell.GAME_DIAGLENGTH) * 2 + 1,
-                Math.floorDiv((int) from.getZ(), RenderCell.GAME_EDGELENGTH)
-        );
+                Math.floorDiv((int) from.getZ(), RenderCell.GAME_EDGELENGTH));
+
         return goToNeighbour(Coordinate.getNeighbourSide(from.getX() % RenderCell.GAME_DIAGLENGTH,
                 from.getY() % RenderCell.GAME_DIAGLENGTH
         ));

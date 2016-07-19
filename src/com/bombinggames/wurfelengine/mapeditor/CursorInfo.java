@@ -65,7 +65,7 @@ public class CursorInfo extends WidgetGroup {
         setPosition(stage.getWidth() * 0.8f, stage.getHeight() * 0.02f);
     }
 
-    public void updateFrom(int block, Coordinate coord) {
+    public void updateFrom(int block) {
         byte id = (byte) (block & 255);
         byte value = (byte) ((block >> 8) & 255);
         label.setText(RenderCell.getName(id, value) + " " + id + " - " + value + "@" + selectionIndicator.getPosition().toCoord().toString());

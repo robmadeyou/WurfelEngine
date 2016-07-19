@@ -130,15 +130,7 @@ public class Point extends Vector3 implements Position {
      */
     @Override
     public Coordinate toCoord() {
-        //find out where the position is (basic)
-        return new Coordinate(
-                Math.floorDiv((int) x, RenderCell.GAME_DIAGLENGTH),
-                Math.floorDiv((int) y, RenderCell.GAME_DIAGLENGTH) * 2 + 1, //maybe dangerous to optimize code here!
-                Math.floorDiv((int) z, RenderCell.GAME_EDGELENGTH)
-        ).goToNeighbour(Coordinate.getNeighbourSide( //find the specific coordinate (detail)
-                x % RenderCell.GAME_DIAGLENGTH,
-                y % RenderCell.GAME_DIAGLENGTH
-        ));
+        return new Coordinate(this);
     }
 
     @Override
@@ -539,7 +531,7 @@ public class Point extends Vector3 implements Position {
      * Sends a ray by moving a coordiante though the map. Slow but it works.<br>
      * Stops at first point where the criteria are met, so positions relative to coordinate may differ.
      *
-     * @param dir
+     * @param direction
      * @param maxDistance  game space in meters
      * @param view
      * @param hitCondition can be null
@@ -547,21 +539,20 @@ public class Point extends Vector3 implements Position {
      * @see #raycast(com.badlogic.gdx.math.Vector3, float, com.bombinggames.wurfelengine.core.GameView, java.util.function.Predicate)
      */
     public Intersection rayMarching(
-            final Vector3 dir,
+            final Vector3 direction,
             float maxDistance,
             final GameView view,
             final Predicate<Byte> hitCondition
     ) {
-        if (dir == null) {
+        if (direction == null) {
             throw new NullPointerException("Direction of raycasting not defined");
         }
 
-        if (dir.isZero()) {
+        if (direction.isZero()) {
             throw new Error("Raycast in zero direction!");
         }
 
         Point traverseP = cpy();
-        dir.cpy().nor().scl(3);
         Coordinate isectC = traverseP.toCoord();
         int lastCoordX = 0;
         int lastCoordY = 0;
@@ -576,7 +567,7 @@ public class Point extends Vector3 implements Position {
                         && distanceToSquared(traverseP) < maxDistance * RenderCell.GAME_EDGELENGTH * maxDistance * RenderCell.GAME_EDGELENGTH
                 ) {
             //move
-            traverseP.add(dir);
+            traverseP.add(direction);
             isectC.setFromPoint(traverseP);
             lastCoordX = isectC.getX();
             lastCoordY = isectC.getY();
